@@ -1,0 +1,3 @@
+class InvalidDistanceMetricException(Exception):
+    "Raised when the p parameter in distance metric is not valid."
+    ...
