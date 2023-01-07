@@ -8,13 +8,15 @@ import scipy
 from lib.distance import get_lambda_minkowski, lk_norm_matrix
 
 
-testdata = [
-    (np.array([[-2.743351, 8.78014917], [ 6.21909165, 2.74060441]]), 0.001),
-    (np.array([[-8.743351, 0.4917], [ -4.9165, 15.]]), 0.01),
+test_inputs = [
+    np.array([[-2.743351, 8.78014917], [ 6.21909165, 2.74060441]]),
+    np.array([[-8.743351, 0.4917], [ -4.9165, 15.]]),
     ]
+test_parameters = [0.1, 0.01, 2]
 
 
-@pytest.mark.parametrize("input_array, parameter", testdata)
+@pytest.mark.parametrize("input_array", test_inputs)
+@pytest.mark.parametrize("parameter", test_parameters)
 def test_quality_lk_norm_matrix(input_array, parameter):
     """Test for lk_norm."""
     res_minkowski = lk_norm_matrix(input_array, input_array, parameter)
@@ -25,7 +27,8 @@ def test_quality_lk_norm_matrix(input_array, parameter):
     np.testing.assert_array_equal(res_minkowski, res_custom)
 
 
-@pytest.mark.parametrize("input_array, parameter", testdata)
+@pytest.mark.parametrize("input_array", test_inputs)
+@pytest.mark.parametrize("parameter", test_parameters)
 def test_time_lk_norm_matrix(input_array, parameter):
     """Test for lk_norm."""
     iterations = 500

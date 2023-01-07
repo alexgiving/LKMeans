@@ -3,13 +3,19 @@ from copy import deepcopy
 
 import numpy as np
 
+from lib.errors import InvalidDistanceMetricException, InvalidAxesException
+
 
 class KMeans:
     """KMeans class."""
-    def __init__(self, k=3, max_iter=1_000_000):
+    def __init__(self, k=3, max_iter=1_000_000, parameter=0.1):
         """Initialize KMeans."""
         self.k = k
         self.max_iter = max_iter
+        self.parameter = parameter
+
+        if parameter <= 0:
+            raise InvalidDistanceMetricException("parameter cannot be less or equal 0")
 
 
     def generate_random_centers(self, data):
@@ -19,16 +25,29 @@ class KMeans:
         centers = np.random.randn(self.k, data.shape[1])*std + mean
         return centers
 
+
+    def get_metric(self, axis=0):
+        """Get metric."""
+        if axis == 0:
+            return lambda u, v: np.sum(np.abs(u-v)**self.parameter)**(1/self.parameter)
+        if axis == 1:
+            return lambda u, v: np.sum(np.abs(u-v)**self.parameter, axis=1)**(1/self.parameter)
+        raise InvalidAxesException("axis parameter can be only 0 or 1")
+
+
     def calculate_error(self, centers_new, centers_old):
         """Calculate error."""
-        return np.linalg.norm(centers_new - centers_old)
+        func = self.get_metric()
+        res = func(centers_new, centers_old)
+        return res
 
 
     def calculate_distance(self, data, centers):
         """Calculate distance to every center."""
         distances = np.zeros((data.shape[0], self.k))
+        func = self.get_metric(axis=1)
         for i in range(self.k):
-            distances[:,i] = np.linalg.norm(data - centers[i], axis=1)
+            distances[:,i] = func(data, centers[i])
         return distances
 
 

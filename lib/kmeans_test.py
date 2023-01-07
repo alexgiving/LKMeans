@@ -34,12 +34,13 @@ def plot(data, centers, name_postfix=""):
     plt.close()
 
 
-@pytest.mark.parametrize("k", [2, 3])
-def test_kmeans(k):
+@pytest.mark.parametrize("k", [2, 3, 4])
+@pytest.mark.parametrize("parameter", [2, 0.1, 0.01])
+def test_kmeans(k, parameter):
     """Test KMeans."""
     centres = generate_random_centers(0, 10, k)
     data = generate_random_data_by_centers(200, centres)
 
-    kmeans = KMeans(k=k)
+    kmeans = KMeans(k=k, parameter=parameter)
     centers = kmeans.fit(data)
     plot(data, centers, name_postfix=k)
