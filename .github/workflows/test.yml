@@ -20,9 +20,12 @@ jobs:
         pip install pylint
         pip install -r requirements.txt
         export PYTHONPATH=${PYTHONPATH}:.
+        echo $PYTHONPATH
     # - name: Analysing the code with pylint
     #   run: |
     #     pylint $(git ls-files '*.py')
     - name: Tests
       run: |
+        export PYTHONPATH=${PYTHONPATH}:.
+        echo $PYTHONPATH
         pytest lib/*_test.py -v
