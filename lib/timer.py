@@ -1,7 +1,9 @@
+"""Timer decorator for timing functions."""
 import time
 
 
 def timer(func):
+    """Decorator for timing functions."""
     def wrapper(*args, **kwargs):
         start = time.time()
         result = func(*args, **kwargs)

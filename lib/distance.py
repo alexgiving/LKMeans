@@ -1,3 +1,4 @@
+"""Module providing Distance metric functions."""
 import numpy as np
 import scipy
 
@@ -6,76 +7,61 @@ from lib.errors import InvalidDistanceMetricException
 
 
 @deprecated
-def lk_norm_XY(x, y, p=2):
-    """Lk norm of two vectors x and y.
-    
+def lk_norm_vector(vector_1, vector_2, parameter=2):
+    """Lk norm of two vectors vector_1 and vector_2.
+
     Parameters
     ----------
-    x : array-like
+    vector_1 : array-like
         First vector.
-    y : array-like
+    vector_2 : array-like
         Second vector.
-    p : float
+    parameter : float
         The order of the norm. Default is 2 'Euclidean'.
-    
+
     Returns
     -------
     dist : float
         Distance between the input arrays.
-        
+
     Examples
     --------
-    >>> lk_norm([10, 1, 2], [3, 4, 5], p=0.1)
+    >>> lk_norm([10, 1, 2], [3, 4, 5], 0.1)
     236858.47165907384
-    
+
     """
-    x = np.asarray(x)
-    y = np.asarray(y)
-    if p == 0:
-        raise InvalidDistanceMetricException("p cannot be 0.")
-    dist = np.sum(np.abs(x-y)**p)**(1/p)
+    vector_1 = np.asarray(vector_1)
+    vector_2 = np.asarray(vector_2)
+    if parameter == 0:
+        raise InvalidDistanceMetricException("parameter cannot be 0.")
+    dist = np.sum(np.abs(vector_1-vector_2)**parameter)**(1/parameter)
     return dist
 
 
-def get_lambda_minkowski(p):
-    metric = lambda u, v: np.sum(np.abs(u-v)**p)**(1/p)
-    return metric
+def get_lambda_minkowski(parameter):
+    """Get lambda function for Minkowski distance."""
+    return lambda u, v: np.sum(np.abs(u-v)**parameter)**(1/parameter)
 
 
-def lk_norm_test(x, y, p=2):
-    x = np.asarray(x)
-    y = np.asarray(y)
-    l_p_norm = get_lambda_minkowski(p)
+def lk_norm_matrix(vector_1, vector_2, parameter=2):
+    """Lk norm of two vectors x and y.
 
-    import time
-    N = 10000
-    
-    first = []
-    for _ in range(N):
-        st = time.time()
-        dist_1 = scipy.spatial.distance.cdist(x, y, 'minkowski', p=p)
-        et = time.time()
-        first.append(et-st)
-    print(f"Elapsed time: {np.mean(first)} seconds")
-    
+    Parameters
+    ----------
+    vector_1 : array-like
+        First vector.
+    vector_2 : array-like
+        Second vector.
+    parameter : float
+        The order of the norm. Default is 2 'Euclidean'.
 
-    sec = []
-    for _ in range(N):
-        st = time.time()
-        dist_2 = scipy.spatial.distance.cdist(x, y, l_p_norm)
-        et = time.time()
-        sec.append(et-st)
-    print(f"Elapsed time: {np.mean(sec)} seconds")
+    Returns
+    -------
+    dist : matrix of floats
+        Distance between each point of input arrays.
+    """
+    vector_1 = np.asarray(vector_1)
+    vector_2 = np.asarray(vector_2)
 
-    print(f"Custom is faster?: {np.mean(sec) < np.mean(first)}")
-
-    return dist_1==dist_2
-
-
-def lk_norm(x, y, p=2):
-    x = np.asarray(x)
-    y = np.asarray(y)
-
-    dist = scipy.spatial.distance.cdist(x, y, 'minkowski', p=p)
+    dist = scipy.spatial.distance.cdist(vector_1, vector_2, 'minkowski', p=parameter)
     return dist
-
