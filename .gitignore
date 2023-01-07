@@ -3,3 +3,4 @@ lib/__pycache__
 notebooks/.ipynb_checkpoints
 .pytest_cache
 images
+cache

@@ -22,7 +22,7 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         export PYTHONPATH=${PYTHONPATH}:.
-        pylint $(git ls-files '*.py')  --fail-under=9.82
+        pylint $(git ls-files '*.py')  --fail-under=9.94
     - name: Tests
       run: |
         mkdir -p images

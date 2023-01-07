@@ -1,4 +1,8 @@
 """Test KMeans."""
+import time
+from pathlib import Path
+
+import imageio
 import numpy as np
 import pytest
 import seaborn as sns
@@ -39,7 +43,7 @@ def plot(data, centers, name_postfix=""):
     plt.close()
 
 
-def plot_colored(data, centers, labels, name_postfix=""):
+def plot_colored(data, centers, labels, name_postfix="", title=""):
     """Plot data and centers."""
     sns.scatterplot(x=data[:,0],
                     y=data[:,1],
@@ -48,6 +52,8 @@ def plot_colored(data, centers, labels, name_postfix=""):
                     legend=None
                     )
     plt.plot(centers[:,0], centers[:,1], 'k+', markersize=10)
+    if title:
+        plt.title(title)
     if name_postfix:
         plt.savefig(f'images/myfig_{name_postfix}.png')
     else:
@@ -59,10 +65,39 @@ def plot_colored(data, centers, labels, name_postfix=""):
 @pytest.mark.parametrize("parameters", [[0.01, 0.1, 2]])
 def test_kmeans(k, parameters):
     """Test KMeans."""
-    data, labels, *_ = make_blobs(n_samples=200, centers=k)
+    data, *_ = make_blobs(n_samples=200, centers=k)
 
     for parameter in parameters:
         kmeans = KMeans(k=k, parameter=parameter)
+        _ = kmeans.fit(data)
+
+
+def make_gif():
+    """Make gif."""
+    k = 4
+    data, labels, *_ = make_blobs(n_samples=200, centers=k)
+
+    for parameter in [2, 0.1, 0.01]:
+        start_time = time.time()
+        kmeans = KMeans(k=k, parameter=parameter)
         centers = kmeans.fit(data)
-        plot_colored(data, centers, labels, name_postfix=f"{k}_{parameter}")
-        print('creating gif\n')
+        print(f"({k}, {parameter}) - Time: {time.time() - start_time}")
+        plot_colored(data, centers, labels, name_postfix=f"{k}_{parameter}",
+                    title=f"KMeans with L_{parameter} norm")
+
+    frames_per_sec = 0.5
+    path = Path('images')
+    image_paths = path.glob('*.png')
+    gif_name = Path("cache") / f"gif_{k}_{frames_per_sec}.gif"
+
+    index = 0
+    while gif_name.exists():
+        index += 1
+        gif_name = Path("cache") / f"gif_{k}_{frames_per_sec}_v{index}.gif"
+    frames = [imageio.imread(filename) for filename in image_paths]
+    imageio.mimsave(gif_name, frames, format='GIF', fps=frames_per_sec)
+    # Add coloring clusters, not original data points
+
+
+if __name__ == "__main__":
+    make_gif()
