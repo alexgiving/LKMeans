@@ -74,7 +74,7 @@ def test_kmeans(k, parameters):
 
 @pytest.mark.parametrize("k", [1, 5, 10])
 @pytest.mark.parametrize("parameters", [[0.01, 0.1, 2]])
-def test_kmeans(k, parameters):
+def test_fit_transform_kmeans(k, parameters):
     """
     Provides the algorithm work status.
     API same as skitlearn
@@ -84,8 +84,8 @@ def test_kmeans(k, parameters):
     for parameter in parameters:
         kmeans = KMeans(k=k, parameter=parameter)
         centers = kmeans.fit(data)
-        clusters = kmeans.transform(centers, data)
-        clusters = kmeans.fit_transform(data)
+        _ = kmeans.transform(centers, data)
+        _ = kmeans.fit_transform(data)
 
 
 def make_gif():
@@ -115,7 +115,7 @@ def make_gif():
     # Add coloring clusters, not original data points
 
 
-def kmeans():
+def test_main():
     """Test KMeans."""
     k = 3
     # 768 - embedding of BERT model
@@ -131,4 +131,4 @@ def kmeans():
         print(clusters)
 
 if __name__ == "__main__":
-    kmeans()
+    test_main()

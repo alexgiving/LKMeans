@@ -75,13 +75,15 @@ class KMeans:
             error = self.calculate_error(centers_new, centers_old)
             iteration += 1
         return centers_new
-    
+
     def transform(self, centers, data):
+        '''Align input data for their clusters'''
         distances = self.calculate_distance(data, centers)
         clusters = np.argmin(distances, axis = 1)
         return clusters
 
     def fit_transform(self, data):
+        '''Fit data and align input data for their clusters'''
         centers = self.fit(data)
         clusters = self.transform(centers, data)
         return clusters
