@@ -31,6 +31,7 @@ def generate_random_data_by_centers(n_dots, centers):
         data.append(new_sample)
     return np.concatenate(data, axis = 0)
 
+
 @deprecated
 def plot(data, centers, name_postfix=""):
     """Plot data and centers."""
@@ -65,7 +66,7 @@ def plot_colored(data, centers, labels, name_postfix="", title=""):
 @pytest.mark.parametrize("parameters", [[0.01, 0.1, 2]])
 def test_kmeans(k, parameters):
     """Test KMeans."""
-    data, *_ = make_blobs(n_samples=200, centers=k, n_features=768)
+    data, *_ = make_blobs(n_samples=200, centers=k, n_features=200)
 
     for parameter in parameters:
         kmeans = KMeans(k=k, parameter=parameter)
@@ -79,7 +80,7 @@ def test_fit_transform_kmeans(k, parameters):
     Provides the algorithm work status.
     API same as skitlearn
     """
-    data, *_ = make_blobs(n_samples=200, centers=k, n_features=768)
+    data, *_ = make_blobs(n_samples=200, centers=k, n_features=200)
 
     for parameter in parameters:
         kmeans = KMeans(k=k, parameter=parameter)
