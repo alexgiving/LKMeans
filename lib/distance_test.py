@@ -18,12 +18,24 @@ test_parameters = [0.1, 0.01, 2]
 @pytest.mark.parametrize("input_array", test_inputs)
 @pytest.mark.parametrize("parameter", test_parameters)
 def test_quality_lk_norm_matrix(input_array, parameter):
-    """Test for lk_norm."""
+    '''
+    Test that provides equals of calculations of lk norm
+    via lambda function and scipy builtin minkowski
+    Run pytest -s to see boopst of builtin calculations.
+    '''
+    start_time = time.time()
     res_minkowski = lk_norm_matrix(input_array, input_array, parameter)
+    end_time = time.time()
+    builtin_time = end_time - start_time
 
+    start_time = time.time()
     metric = get_lambda_minkowski(parameter)
     res_custom = scipy.spatial.distance.cdist(input_array, input_array, metric)
+    end_time = time.time()
+    custom_time = end_time - start_time
 
+    print(f"Lambda: {parameter}\nOriginal time: {builtin_time}\n",
+            f"Lambda time: {custom_time}\nOriginal faster in {custom_time/builtin_time}x times\n")
     np.testing.assert_array_equal(res_minkowski, res_custom)
 
 
