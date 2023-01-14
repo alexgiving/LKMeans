@@ -42,7 +42,10 @@ def test_quality_lk_norm_matrix(input_array, parameter):
 @pytest.mark.parametrize("input_array", test_inputs)
 @pytest.mark.parametrize("parameter", test_parameters)
 def test_time_lk_norm_matrix(input_array, parameter):
-    """Test for lk_norm."""
+    """
+    Time test for lk_norm.
+    Provides the average boost of builtin vs custom lambda calcultions.
+    """
     iterations = 500
 
     original_times = []
