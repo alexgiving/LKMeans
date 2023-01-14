@@ -65,11 +65,27 @@ def plot_colored(data, centers, labels, name_postfix="", title=""):
 @pytest.mark.parametrize("parameters", [[0.01, 0.1, 2]])
 def test_kmeans(k, parameters):
     """Test KMeans."""
-    data, *_ = make_blobs(n_samples=200, centers=k)
+    data, *_ = make_blobs(n_samples=200, centers=k, n_features=768)
 
     for parameter in parameters:
         kmeans = KMeans(k=k, parameter=parameter)
         _ = kmeans.fit(data)
+
+
+@pytest.mark.parametrize("k", [1, 5, 10])
+@pytest.mark.parametrize("parameters", [[0.01, 0.1, 2]])
+def test_kmeans(k, parameters):
+    """
+    Provides the algorithm work status.
+    API same as skitlearn
+    """
+    data, *_ = make_blobs(n_samples=200, centers=k, n_features=768)
+
+    for parameter in parameters:
+        kmeans = KMeans(k=k, parameter=parameter)
+        centers = kmeans.fit(data)
+        clusters = kmeans.transform(centers, data)
+        clusters = kmeans.fit_transform(data)
 
 
 def make_gif():
@@ -99,5 +115,20 @@ def make_gif():
     # Add coloring clusters, not original data points
 
 
+def kmeans():
+    """Test KMeans."""
+    k = 3
+    # 768 - embedding of BERT model
+    data, *_ = make_blobs(n_samples=1000, centers=k, n_features=768)
+
+    for parameter in [0.01]:
+        kmeans = KMeans(k=k, parameter=parameter)
+        centers = kmeans.fit(data)
+        clusters = kmeans.transform(centers, data)
+        print(clusters)
+
+        clusters = kmeans.fit_transform(data)
+        print(clusters)
+
 if __name__ == "__main__":
-    make_gif()
+    kmeans()

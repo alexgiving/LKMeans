@@ -7,7 +7,9 @@ from lib.errors import InvalidDistanceMetricException, InvalidAxesException
 
 
 class KMeans:
-    """KMeans class."""
+    """
+    Base class for KMeans algotithm.
+    """
     def __init__(self, k=3, max_iter=1_000_000, parameter=0.1):
         """Initialize KMeans."""
         self.k = k
@@ -18,10 +20,10 @@ class KMeans:
             raise InvalidDistanceMetricException("parameter cannot be less or equal 0")
 
 
-    def generate_random_centers(self, data):
+    def _generate_random_centers(self, data):
         """Generate random centers."""
         mean = np.mean(data, axis = 0)
-        std  = np.std(data,  axis = 0)
+        std = np.std(data,  axis = 0)
         centers = np.random.randn(self.k, data.shape[1])*std + mean
         return centers
 
@@ -53,7 +55,7 @@ class KMeans:
 
     def fit(self, data):
         """Fit data."""
-        centers = self.generate_random_centers(data)
+        centers = self._generate_random_centers(data)
 
         centers_old = np.zeros(centers.shape)
         centers_new = deepcopy(centers)
@@ -73,3 +75,13 @@ class KMeans:
             error = self.calculate_error(centers_new, centers_old)
             iteration += 1
         return centers_new
+    
+    def transform(self, centers, data):
+        distances = self.calculate_distance(data, centers)
+        clusters = np.argmin(distances, axis = 1)
+        return clusters
+
+    def fit_transform(self, data):
+        centers = self.fit(data)
+        clusters = self.transform(centers, data)
+        return clusters
