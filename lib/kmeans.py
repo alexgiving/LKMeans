@@ -71,7 +71,8 @@ class KMeans:
             centers_old = deepcopy(centers_new)
             # Calculate mean for every cluster and update the center
             for i in range(self.k):
-                centers_new[i] = np.mean(data[clusters == i], axis=0)
+                centers_new[i] = np.median(data[clusters == i], axis=0)
+                # centers_new[i] = np.mean(data[clusters == i], axis=0)
             error = self.calculate_error(centers_new, centers_old)
             iteration += 1
         return centers_new

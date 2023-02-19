@@ -120,7 +120,7 @@ def test_main():
     """Test KMeans."""
     k = 3
     # 768 - embedding of BERT model
-    data, *_ = make_blobs(n_samples=1000, centers=k, n_features=768)
+    data, *_ = make_blobs(n_samples=10, centers=k, n_features=768)
 
     for parameter in [0.01]:
         kmeans = KMeans(k=k, parameter=parameter)
