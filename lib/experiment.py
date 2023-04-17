@@ -9,9 +9,7 @@ from lib.decomposition import get_tsne_clusters
 from lib.experiment_metrics import get_average_experiment_metrics
 from lib.kmeans import KMeans
 from lib.metric_meter import MetricTable, insert_hline
-from lib.points_generator import (generate_2_mix_distribution,
-                                  generate_cluster_centroids,
-                                  generate_gaussian_clusters)
+from lib.points_generator import generate_2_mix_distribution
 
 
 def run_experiment(
@@ -22,7 +20,8 @@ def run_experiment(
         repeats: int,
         n_points: int,
         experiment_name: str,
-        output_path: Path) -> None:
+        output_path: Path,
+        makes_plot: bool = False) -> None:
     '''Function for evaluation experiment'''
 
     output_path.mkdir(exist_ok=True, parents=True)
@@ -37,12 +36,15 @@ def run_experiment(
 
             for _ in range(repeats):
 
+                sigma_1 = 1
+                sigma_2 = 1
+
                 clusters, labels = generate_2_mix_distribution(
                     probability=0.5,
                     mu_1=np.array([[-2, 0] + [0] * (dimension-2)]),
                     mu_2=np.array([[2, 0] + [0] * (dimension-2)]),
-                    sigma_1=np.eye(dimension),
-                    sigma_2=np.eye(dimension),
+                    cov_matrix_1=np.eye(dimension) * sigma_1,
+                    cov_matrix_2=np.eye(dimension) * sigma_2,
                     n_samples=n_points,
                     t=t
                     )
@@ -62,9 +64,10 @@ def run_experiment(
         # To add midrule
         metrics.add_empty_frame(True)
 
-        # log_name = f'factor_{distance_factor_name}'.replace('.', '_')
-        # fig = get_tsne_clusters(clusters, labels, centroid)
-        # fig.savefig(output_path / f'{log_name}.png')
+        if makes_plot:
+            figure_name = f'factor_{t:.1f}'.replace('.', '_')
+            fig = get_tsne_clusters(clusters, labels, None)
+            fig.savefig(output_path / f'{figure_name}.png')
 
     table_name = 'experiment 1'
     table = metrics.get_latex_table(caption='Experiment 1')

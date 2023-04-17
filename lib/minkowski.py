@@ -28,4 +28,4 @@ def minkowski_loss(cluster: np.ndarray, centroid: np.ndarray, p: float) -> np.nd
 
 
 def minkowski_1_derivative(parameter_to_solve: np.ndarray, cluster: np.ndarray, p: float):
-    return np.sum([np.sign(point-parameter_to_solve)*np.abs(point-parameter_to_solve)**(p-1) for point in cluster], axis=0)
+    return np.sum([np.abs(point-parameter_to_solve)**(p-1) for point in cluster], axis=0)
