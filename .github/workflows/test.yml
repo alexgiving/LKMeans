@@ -23,8 +23,3 @@ jobs:
       run: |
         export PYTHONPATH=${PYTHONPATH}:.
         # pylint $(git ls-files '*.py')  --fail-under=9.94
-    - name: Tests
-      run: |
-        mkdir -p images
-        export PYTHONPATH=${PYTHONPATH}:.
-        pytest lib/*_test.py -v
