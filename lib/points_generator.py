@@ -40,3 +40,48 @@ def generate_cluster_centroids(
 
     centroid_locations = np.stack([np.random.random(dimension) * distance_factor for _ in range(n_clusters)])
     return centroid_locations
+
+
+def move_towards_mean(mu: np.ndarray, mu_mean: np.ndarray, t: float) -> np.ndarray:
+    '''
+    Returns a new point that is moved towards the mean according to the rule:
+    point(t) = point + t * (mean - point), 0 ≤ t ≤ 1
+    '''
+    new_mu = mu + t * (mu_mean - mu)
+    return new_mu
+
+
+
+def generate_2_mix_distribution(
+        probability: float,
+        mu_1: np.ndarray,
+        mu_2: np.ndarray,
+        sigma_1: np.ndarray,
+        sigma_2: np.ndarray,
+        n_samples: int,
+        t: float
+        ) -> Tuple[np.ndarray, np.ndarray]:
+
+
+    mu_mean = (mu_1 + mu_2) / 2
+    assert mu_mean.sum() == 0
+
+    n_1 = int(probability * n_samples)
+    mu_2 = move_towards_mean(mu_2, mu_mean, t)
+
+    n_2 = n_samples - n_1
+    mu_1 = move_towards_mean(mu_1, mu_mean, t)
+
+    distribution_1 = np.random.multivariate_normal(np.squeeze(mu_1, axis=0), sigma_1, n_1)
+    distribution_2 = np.random.multivariate_normal(np.squeeze(mu_2, axis=0), sigma_2, n_2)
+
+    samples = np.concatenate((distribution_1, distribution_2), axis=0)
+    labels = np.concatenate((np.zeros(n_1), np.ones(n_2)))
+
+
+    # Shuffle the samples and labels
+    permutation = np.random.permutation(n_samples)
+    samples = samples[permutation]
+    labels = labels[permutation]
+
+    return samples, labels
