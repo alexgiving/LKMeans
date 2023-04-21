@@ -1,8 +1,63 @@
+from typing import Union
+
 import numpy as np
 from scipy.optimize import minimize, root
 
-from lib.minkowski import (minkowski_1_derivative, minkowski_distance,
-                           minkowski_loss)
+from lib.minkowski import minkowski_distance, minkowski_loss
+
+
+def sgd_optimizer(
+    cluster: np.ndarray,
+    p: Union[float, int],
+    learning_rate: float = 0.01,
+    grad_descent: float = 0.1,
+    n_iters: int = 50 ) -> np.ndarray:
+    '''
+    SGD optimizer
+    Amorim, Renato. (2012). Feature Weighting for Clustering: Using K-Means and the Minkowski Metric. 
+    '''
+
+    def minkowski_loss(cluster: np.ndarray, centroid: np.ndarray, p: float) -> np.ndarray:
+        '''
+        SGD Minkowski Loss function.
+        Return the coordinate sum of the Minkowski differences
+        Formula: [∑_j (xji - ci)^p]
+        '''
+        loss = []
+        for point in cluster:
+            absolute_difference = np.abs(point - centroid)
+            power_in_sum = np.power(absolute_difference, p)
+            loss.append(power_in_sum)
+        loss = np.array(loss)
+        dim_loss = np.sum(loss, axis=0)
+        return dim_loss
+
+
+    learning_rate = 0.01
+    grad_descent = 0.1
+    n_iters = 50
+    centroid = np.mean(cluster, axis=0)
+
+    for sgd_iteration in range(n_iters):
+        if sgd_iteration == n_iters / 2:
+            learning_rate *= grad_descent
+        elif sgd_iteration == n_iters / 4:
+            learning_rate *= grad_descent
+        loss = minkowski_loss(cluster, centroid, p)
+        grad = np.gradient(loss, axis=0)
+        centroid -= learning_rate * grad
+    return centroid
+
+
+def extremum_optimizer(cluster: np.ndarray, p: Union[float, int]) -> np.ndarray:
+    '''
+    Find extremum of minkowski function by root of 1 derivative.
+    '''
+    def minkowski_1_derivative(parameter_to_solve: np.ndarray, cluster: np.ndarray, p: float):
+        return np.sum([np.abs(point-parameter_to_solve)**(p-1) for point in cluster], axis=0)
+
+    sol = root(minkowski_1_derivative, np.mean(cluster, axis=0), args=(cluster, p), method='hybr')
+    return sol.x
 
 
 class KMeans:
@@ -38,30 +93,9 @@ class KMeans:
                 elif self.p == 1:
                     self.centroids[cluster_id] = np.median(cluster, axis=0)
                 elif self.p > 1:
-                    '''
-                    SGD optimizer
-                    Amorim, Renato. (2012). Feature Weighting for Clustering: Using K-Means and the Minkowski Metric. 
-                    '''
-                    learning_rate = 0.01
-                    grad_descent = 0.1
-                    n_iters = 50
-                    centroid = np.mean(cluster, axis=0)
-
-                    for sgd_iteration in range(n_iters):
-                        if sgd_iteration == n_iters / 2:
-                            learning_rate *= grad_descent
-                        elif sgd_iteration == n_iters / 4:
-                            learning_rate *= grad_descent
-                        loss = minkowski_loss(cluster, centroid, self.p)
-                        grad = np.gradient(loss, axis=0)
-                        centroid -= learning_rate * grad
-                    self.centroids[cluster_id] = centroid
+                    self.centroids[cluster_id] = sgd_optimizer(cluster, self.p)
                 elif 0 < self.p < 1:
-                    '''
-                    Find extremum of minkowski function by root of 1 derivative.
-                    '''
-                    sol = root(minkowski_1_derivative, np.mean(cluster, axis=0), args=(cluster, self.p), method='hybr')
-                    self.centroids[cluster_id] = sol.x
+                    self.centroids[cluster_id] = extremum_optimizer(cluster, self.p)
                 else:
                     raise ValueError(f'Unsupported value of p: {self.p}')
                     # if self.optimizer == 'SLSQP':

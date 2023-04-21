@@ -4,5 +4,6 @@ notebooks/.ipynb_checkpoints
 .pytest_cache
 images
 cache
+.env
 
 *.png
