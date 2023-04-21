@@ -47,7 +47,7 @@ def run_experiment(
                     cov_matrix_2=np.eye(dimension) * sigma_2,
                     n_samples=n_points,
                     t=t
-                    )
+                )
 
                 experiment_time = time.perf_counter()
                 kmeans = KMeans(n_clusters=n_clusters, p=p)
