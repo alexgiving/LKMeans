@@ -14,7 +14,7 @@ class KMeans:
         self.centroids = []
         self.labels = []
 
-    def fit(self, X):
+    def fit(self, X: np.ndarray):
         # initialize centroids randomly
         self.centroids = [X[i] for i in np.random.choice(
             X.shape[0], self.n_clusters, replace=False)]
@@ -34,8 +34,6 @@ class KMeans:
 
             # update centroids using the specified optimizer
             for cluster_id, cluster in enumerate(clusters):
-                if len(cluster) == 0:
-                    continue
                 cluster = np.array(cluster)
                 data_dimension = cluster.shape[0]
                 new_centroid = np.array([])
@@ -53,7 +51,7 @@ class KMeans:
                     else:
                         raise ValueError(f'Unsupported value of p: {self.p}')
 
-                    np.append(new_centroid, value)
+                    new_centroid = np.append(new_centroid, value)
                     # elif self.optimizer in ('Powell', 'CG', 'BFGS', 'L-BFGS-B', 'TNC', 'COBYLA', 'trust-constr'):
                     #     self.centroids[j] = minimize(lambda x: minkowski_distance(x, cluster, self.p), self.centroids[j], method=self.optimizer).x.copy()
                 self.centroids[cluster_id] = new_centroid
