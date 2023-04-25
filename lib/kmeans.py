@@ -7,11 +7,11 @@ from lib.minkowski import minkowski_distance
 
 
 def sgd_optimizer(
-    cluster: np.ndarray,
-    p: Union[float, int],
-    learning_rate: float = 0.01,
-    grad_descent: float = 0.1,
-    n_iters: int = 50 ) -> np.ndarray:
+        cluster: np.ndarray,
+        p: Union[float, int],
+        learning_rate: float = 0.01,
+        grad_descent: float = 0.1,
+        n_iters: int = 50) -> np.ndarray:
     '''
     SGD optimizer
     Amorim, Renato. (2012). Feature Weighting for Clustering: Using K-Means and the Minkowski Metric. 
@@ -31,7 +31,6 @@ def sgd_optimizer(
         loss = np.array(loss)
         dim_loss = np.sum(loss, axis=0)
         return dim_loss
-
 
     learning_rate = 0.01
     grad_descent = 0.1
@@ -56,29 +55,45 @@ def extremum_optimizer(cluster: np.ndarray, p: Union[float, int]) -> np.ndarray:
     def minkowski_1_derivative(parameter_to_solve: np.ndarray, cluster: np.ndarray, p: float):
         return np.sum([np.abs(point-parameter_to_solve)**(p-1) for point in cluster], axis=0)
 
-    sol = root(minkowski_1_derivative, np.mean(cluster, axis=0), args=(cluster, p), method='hybr')
+    sol = root(minkowski_1_derivative, np.mean(
+        cluster, axis=0), args=(cluster, p), method='hybr')
     return sol.x
 
 
-def segment_solver_optimizer(cluster: np.ndarray, p: Union[float, int], x0: np.ndarray) -> np.ndarray:
+def segment_solver_optimizer(cluster: np.ndarray, p: Union[float, int]) -> np.ndarray:
     data_dimension = cluster.shape[0]
     new_centroid = []
+
     for coordinate_id in range(data_dimension):
-        points = cluster[coordinate_id, :]
+        coordinate_sliced_points = cluster[coordinate_id, :]
+        unique_coordinate_sliced_points = sorted(set(coordinate_sliced_points))
 
         research_minima_value = np.inf
-        unique_points = list(set(points))
-        for i in range(len(unique_points) - 1):
-            bounds = [(unique_points[i], unique_points[i+1])]
-            point = minimize(
-                fun = lambda x: minkowski_distance(x, cluster, p),
-                x0 = x0.flatten(),
+        research_minimal_coordinate = np.mean(coordinate_sliced_points)
+
+        for bound_id in range(len(unique_coordinate_sliced_points) - 1):
+
+            bounds = [(unique_coordinate_sliced_points[bound_id],
+                       unique_coordinate_sliced_points[bound_id+1])]
+
+            start_value = np.mean(bounds)
+
+            minima_point = minimize(
+                fun=lambda x: minkowski_distance(
+                    x, coordinate_sliced_points, p),
+                x0=start_value,
                 method='SLSQP',
                 bounds=bounds
             ).x
-            research_minima_value = min(research_minima_value, point)
+            minimal_point_value = minkowski_distance(
+                minima_point, coordinate_sliced_points, p)
 
-    return None
+            if minimal_point_value < research_minima_value:
+                research_minima_value = minimal_point_value
+                research_minimal_coordinate = minima_point
+        new_centroid.append(np.mean(coordinate_sliced_points))
+    assert len(new_centroid) == data_dimension
+    return np.array(new_centroid)
 
 
 class KMeans:
@@ -91,7 +106,8 @@ class KMeans:
 
     def fit(self, X):
         # initialize centroids randomly
-        self.centroids = [X[i] for i in np.random.choice(X.shape[0], self.n_clusters, replace=False)]
+        self.centroids = [X[i] for i in np.random.choice(
+            X.shape[0], self.n_clusters, replace=False)]
 
         for _ in range(self.max_iter):
             clusters = [[] for _ in range(self.n_clusters)]
@@ -99,7 +115,8 @@ class KMeans:
 
             # assign each data point to the closest centroid
             for x in X:
-                distances_to_each_cebtroid = [minkowski_distance(x, centroid, self.p) for centroid in self.centroids]
+                distances_to_each_cebtroid = [minkowski_distance(
+                    x, centroid, self.p) for centroid in self.centroids]
                 closest_centroid = np.argmin(distances_to_each_cebtroid)
                 clusters[closest_centroid].append(x)
                 self.labels.append(closest_centroid)
@@ -116,7 +133,8 @@ class KMeans:
                 elif self.p > 1:
                     self.centroids[cluster_id] = sgd_optimizer(cluster, self.p)
                 elif 0 < self.p < 1:
-                    self.centroids[cluster_id] = segment_solver_optimizer(cluster, self.p, x0 = np.mean(cluster, axis=0))
+                    self.centroids[cluster_id] = segment_solver_optimizer(
+                        cluster, self.p)
                 else:
                     raise ValueError(f'Unsupported value of p: {self.p}')
                     # if self.optimizer == 'SLSQP':
