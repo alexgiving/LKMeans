@@ -3,7 +3,7 @@ from typing import Union
 import numpy as np
 from scipy.optimize import minimize, root
 
-from lib.minkowski import minkowski_distance, minkowski_loss
+from lib.minkowski import minkowski_distance
 
 
 def sgd_optimizer(
@@ -60,6 +60,27 @@ def extremum_optimizer(cluster: np.ndarray, p: Union[float, int]) -> np.ndarray:
     return sol.x
 
 
+def segment_solver_optimizer(cluster: np.ndarray, p: Union[float, int], x0: np.ndarray) -> np.ndarray:
+    data_dimension = cluster.shape[0]
+    new_centroid = []
+    for coordinate_id in range(data_dimension):
+        points = cluster[coordinate_id, :]
+
+        research_minima_value = np.inf
+        unique_points = list(set(points))
+        for i in range(len(unique_points) - 1):
+            bounds = [(unique_points[i], unique_points[i+1])]
+            point = minimize(
+                fun = lambda x: minkowski_distance(x, cluster, p),
+                x0 = x0.flatten(),
+                method='SLSQP',
+                bounds=bounds
+            ).x
+            research_minima_value = min(research_minima_value, point)
+
+    return None
+
+
 class KMeans:
     def __init__(self, n_clusters, max_iter=100, p=2):
         self.n_clusters = n_clusters
@@ -95,7 +116,7 @@ class KMeans:
                 elif self.p > 1:
                     self.centroids[cluster_id] = sgd_optimizer(cluster, self.p)
                 elif 0 < self.p < 1:
-                    self.centroids[cluster_id] = extremum_optimizer(cluster, self.p)
+                    self.centroids[cluster_id] = segment_solver_optimizer(cluster, self.p, x0 = np.mean(cluster, axis=0))
                 else:
                     raise ValueError(f'Unsupported value of p: {self.p}')
                     # if self.optimizer == 'SLSQP':
