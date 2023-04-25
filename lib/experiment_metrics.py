@@ -5,11 +5,10 @@ import pandas as pd
 
 
 def get_average_experiment_metrics(
-    ari: List,
-    ami: List,
-    name: Optional[str] = 'Experiment',
-    p: Optional[float] = None,
-    time: Optional[float] = None) -> pd.DataFrame:
+        ari: List,
+        ami: List,
+        name: Optional[str] = 'Experiment',
+        time: Optional[List[float]] = None) -> pd.DataFrame:
 
     data = {'ARI': f'{np.mean(ari):.2f}', 'AMI': f'{np.mean(ami):.2f}'}
     if time:

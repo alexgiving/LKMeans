@@ -1,6 +1,6 @@
 import time
 from pathlib import Path
-from typing import List, Union
+from typing import List
 
 import numpy as np
 from sklearn.metrics import adjusted_mutual_info_score, adjusted_rand_score
@@ -10,13 +10,18 @@ from lib.experiment_metrics import get_average_experiment_metrics
 from lib.kmeans import KMeans
 from lib.metric_meter import MetricTable, insert_hline
 from lib.points_generator import generate_2_mix_distribution
+from lib.types import p_type
+
+
+def get_covariance_matrix(sigma: float, dimension: int) -> np.ndarray:
+    return np.eye(dimension) * sigma
 
 
 def run_experiment(
         dimension: int,
         n_clusters: int,
         distance_parameters: List[float],
-        minkowski_parameters: List[Union[int, float]],
+        minkowski_parameters: List[p_type],
         repeats: int,
         n_points: int,
         experiment_name: str,
@@ -38,13 +43,20 @@ def run_experiment(
 
                 sigma_1 = 1
                 sigma_2 = 1
+                prob = 0.5
+
+                cov_1 = get_covariance_matrix(sigma_1, dimension)
+                cov_2 = get_covariance_matrix(sigma_2, dimension)
+
+                mu_1 = np.array([[-2, 0] + [0] * (dimension-2)])
+                mu_2 = np.array([[2, 0] + [0] * (dimension-2)])
 
                 clusters, labels = generate_2_mix_distribution(
-                    probability=0.5,
-                    mu_1=np.array([[-2, 0] + [0] * (dimension-2)]),
-                    mu_2=np.array([[2, 0] + [0] * (dimension-2)]),
-                    cov_matrix_1=np.eye(dimension) * sigma_1,
-                    cov_matrix_2=np.eye(dimension) * sigma_2,
+                    probability=prob,
+                    mu_1=mu_1,
+                    mu_2=mu_2,
+                    cov_matrix_1=cov_1,
+                    cov_matrix_2=cov_2,
                     n_samples=n_points,
                     t=t
                 )
@@ -54,11 +66,14 @@ def run_experiment(
                 _, generated_labels = kmeans.fit(clusters)
 
                 repeats_time.append(time.perf_counter()-experiment_time)
-                repeats_ari.append(adjusted_rand_score(labels, generated_labels))
-                repeats_ami.append(adjusted_mutual_info_score(labels, generated_labels))
+                repeats_ari.append(adjusted_rand_score(
+                    labels, generated_labels))
+                repeats_ami.append(adjusted_mutual_info_score(
+                    labels, generated_labels))
 
             name = f'{experiment_name}, T:{t:.1f}, P:{p}'
-            frame = get_average_experiment_metrics(repeats_ari, repeats_ami, name=name, time=repeats_time)
+            frame = get_average_experiment_metrics(
+                repeats_ari, repeats_ami, name=name, time=repeats_time)
             metrics.add_frame(frame)
 
         # To add midrule
@@ -68,6 +83,7 @@ def run_experiment(
             figure_name = f'factor_{t:.1f}'.replace('.', '_')
             fig = get_tsne_clusters(clusters, labels, None)
             fig.savefig(output_path / f'{figure_name}.png')
+    print(metrics.get_table())
 
     table_name = 'experiment 1'
     table = metrics.get_latex_table(caption='Experiment 1')
