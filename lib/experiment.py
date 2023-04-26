@@ -9,7 +9,7 @@ from lib.decomposition import get_tsne_clusters
 from lib.experiment_metrics import get_average_experiment_metrics
 from lib.kmeans import KMeans
 from lib.metric_meter import MetricTable, insert_hline
-from lib.points_generator import generate_2_mix_distribution
+from lib.points_generator import generate_mix_distribution
 from lib.types import p_type
 
 
@@ -24,12 +24,18 @@ def run_experiment(
         minkowski_parameters: List[p_type],
         repeats: int,
         n_points: int,
+        sigma_list: List[int],
+        prob: float,
+        mu_list: List[np.ndarray],
         experiment_name: str,
         output_path: Path,
         makes_plot: bool = False) -> None:
     '''Function for evaluation experiment'''
 
     output_path.mkdir(exist_ok=True, parents=True)
+
+    cov_matrix_list = [get_covariance_matrix(
+        sigma, dimension) for sigma in sigma_list]
 
     metrics = MetricTable()
     for t in distance_parameters:
@@ -41,22 +47,10 @@ def run_experiment(
 
             for _ in range(repeats):
 
-                sigma_1 = 1
-                sigma_2 = 1
-                prob = 0.5
-
-                cov_1 = get_covariance_matrix(sigma_1, dimension)
-                cov_2 = get_covariance_matrix(sigma_2, dimension)
-
-                mu_1 = np.array([[-2, 0] + [0] * (dimension-2)])
-                mu_2 = np.array([[2, 0] + [0] * (dimension-2)])
-
-                clusters, labels = generate_2_mix_distribution(
+                clusters, labels = generate_mix_distribution(
                     probability=prob,
-                    mu_1=mu_1,
-                    mu_2=mu_2,
-                    cov_matrix_1=cov_1,
-                    cov_matrix_2=cov_2,
+                    mu_list=mu_list,
+                    cov_matrix_list=cov_matrix_list,
                     n_samples=n_points,
                     t=t
                 )
