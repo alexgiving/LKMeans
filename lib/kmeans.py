@@ -29,12 +29,11 @@ class KMeans:
 
     def fit(self, X: np.ndarray):
         # initialize centroids randomly
-
         indices = np.random.choice(X.shape[0], self.n_clusters, replace=False)
         self.centroids = X[indices]
 
         for _ in range(self.max_iter):
-            clusters, self.labels = self.assign_to_cluster(
+            clusters, _ = self.assign_to_cluster(
                 X, self.centroids, self.n_clusters, self.p)
 
             # update centroids using the specified optimizer
@@ -61,7 +60,7 @@ class KMeans:
                     #     self.centroids[j] = minimize(lambda x: minkowski_distance(x, cluster, self.p), self.centroids[j], method=self.optimizer).x.copy()
                 self.centroids[cluster_id] = new_centroid
 
-        _, self.labels = self.assign_to_cluster(
+        _, labels = self.assign_to_cluster(
             X, self.centroids, self.n_clusters, self.p)
 
-        return self.centroids, self.labels
+        return self.centroids, labels
