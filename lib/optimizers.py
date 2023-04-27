@@ -3,26 +3,26 @@ import warnings
 import numpy as np
 from scipy.optimize import minimize
 
-from lib.minkowski import minkowski_function
+from lib.minkowski import minkowski_distance
 from lib.types import p_type
 
 
 def median_optimizer(dimension_slice: np.ndarray):
-    value = np.median(dimension_slice)
-    return value
+    return np.median(dimension_slice)
 
 
 def mean_optimizer(dimension_slice: np.ndarray):
-    value = np.mean(dimension_slice)
-    return value
+    return np.mean(dimension_slice)
 
 
-def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type):
+def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type, tol: float = 1e-1_000_000_000):
     dimension_slice = np.unique(dimension_slice)
 
-    research_minima_value = np.inf
-    value = np.median(dimension_slice)
+    median = np.median(dimension_slice)
+    fun_median = minkowski_distance(
+        np.array(median), dimension_slice, p)
 
+    minimized_fun_median = fun_median
     for bound_id in range(len(dimension_slice) - 1):
 
         bounds = [(dimension_slice[bound_id],
@@ -33,21 +33,21 @@ def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type):
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             res = minimize(
-                fun=lambda x: minkowski_function(x, dimension_slice, p),
+                fun=lambda centre: minkowski_distance(
+                    centre, dimension_slice, p),
                 x0=x0,
                 method='SLSQP',
                 bounds=bounds,
-                tol=1e-10
+                tol=tol
             )
 
         if res.success:
             minima_point = res.x[0]
             minimal_point_value = res.fun
-            if minimal_point_value < research_minima_value:
-                research_minima_value = minimal_point_value
-                value = minima_point
-
-    return value
+            if minimal_point_value < minimized_fun_median:
+                minimized_fun_median = minimal_point_value
+                median = minima_point
+    return median
 
 
 # def sgd_optimizer(
