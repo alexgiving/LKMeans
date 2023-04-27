@@ -24,7 +24,7 @@ def run_experiment(
         minkowski_parameters: List[p_type],
         repeats: int,
         n_points: int,
-        sigma_list: List[int],
+        sigma_list: List[p_type],
         prob: float,
         mu_list: List[np.ndarray],
         experiment_name: str,
@@ -69,9 +69,6 @@ def run_experiment(
             frame = get_average_experiment_metrics(
                 repeats_ari, repeats_ami, name=name, time=repeats_time)
             metrics.add_frame(frame)
-
-        # To add midrule
-        metrics.add_empty_frame(True)
 
         if makes_plot:
             figure_name = f'factor_{t:.1f}'.replace('.', '_')

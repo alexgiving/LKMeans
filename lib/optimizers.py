@@ -3,7 +3,7 @@ import warnings
 import numpy as np
 from scipy.optimize import minimize
 
-from lib.minkowski import minkowski_distance
+from lib.minkowski import minkowski_function
 from lib.types import p_type
 
 
@@ -28,14 +28,16 @@ def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type):
         bounds = [(dimension_slice[bound_id],
                    dimension_slice[bound_id + 1])]
 
-        x0 = np.median(bounds)
+        x0 = np.mean(bounds)
+
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+            warnings.simplefilter('ignore')
             res = minimize(
-                fun=lambda x: minkowski_distance(x, dimension_slice, p),
+                fun=lambda x: minkowski_function(x, dimension_slice, p),
                 x0=x0,
                 method='SLSQP',
-                bounds=bounds
+                bounds=bounds,
+                tol=1e-10
             )
 
         if res.success:

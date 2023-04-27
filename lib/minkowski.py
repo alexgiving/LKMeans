@@ -7,12 +7,25 @@ def minkowski_distance(point_a: np.ndarray, point_b: np.ndarray, p: float) -> np
     '''
     Minkowski distance function.
     '''
+    # return minkowski_function(point_a, point_b, p)
 
     difference = point_a - point_b
     absolute_difference = np.abs(difference)
     power_in_sum = np.power(absolute_difference, p)
     summa = np.sum(power_in_sum)
     return np.power(summa, 1/p)
+
+
+def minkowski_function(point_a: np.ndarray, point_b: np.ndarray, p: float) -> np.ndarray:
+    '''
+    Minkowski distance function.
+    '''
+
+    difference = point_a - point_b
+    difference = np.abs(difference)  # ?
+    power_in_sum = np.power(difference, p)
+    summa = np.sum(power_in_sum)
+    return summa
 
 
 def pairwise_minkowski_distance(point_a: np.ndarray, points: Union[np.ndarray, List], p: float) -> np.ndarray:
