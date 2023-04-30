@@ -26,3 +26,6 @@ jobs:
     - name: Test optimizers
       run: |
         pytest tests -v -m optimizers
+    - name: Test KMeans
+      run: |
+        pytest tests -v -m kmeans
