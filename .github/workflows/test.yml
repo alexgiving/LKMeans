@@ -21,10 +21,13 @@ jobs:
         pip install -r requirements.txt
     - name: Analysing the code with pylint
       run: |
-        export PYTHONPATH=${PYTHONPATH}:.
-        # pylint $(git ls-files '*.py')  --fail-under=9.94
-    - name: Tests
+        export PYTHONPATH=${PYTHONPATH}:$(pwd)
+        pylint $(git ls-files '*.py') --rcfile .github/.pylintrc
+    - name: Test optimizers
       run: |
-        mkdir -p images
-        export PYTHONPATH=${PYTHONPATH}:.
-        pytest lib/*_test.py -v
+        export PYTHONPATH=${PYTHONPATH}:$(pwd)
+        pytest tests -v -m optimizers
+    - name: Test KMeans
+      run: |
+        export PYTHONPATH=${PYTHONPATH}:$(pwd)
+        pytest tests -v -m kmeans

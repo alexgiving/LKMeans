@@ -1,90 +1,75 @@
-"""KMeans class."""
-from copy import deepcopy
-
 import numpy as np
 
-from lib.errors import InvalidDistanceMetricException, InvalidAxesException
+from lib.minkowski import pairwise_minkowski_distance
+from lib.optimizers import (mean_optimizer, median_optimizer,
+                            segment_SLSQP_optimizer)
+from lib.types import p_type
 
 
+def assign_to_cluster(X: np.ndarray, centroids: np.ndarray, n_clusters: int, p: p_type):
+    clusters = [[] for _ in range(n_clusters)]
+    labels = []
+
+    for point in X:
+        distances_to_each_cebtroid = pairwise_minkowski_distance(
+            point, centroids, p)
+
+        closest_centroid = np.argmin(distances_to_each_cebtroid)
+        clusters[closest_centroid].append(point)
+        labels.append(closest_centroid)
+    return clusters, labels
+
+
+# pylint: disable= too-few-public-methods
 class KMeans:
-    """
-    Base class for KMeans algotithm.
-    """
-    def __init__(self, k=3, max_iter=1_000_000, parameter=0.1):
-        """Initialize KMeans."""
-        self.k = k
+    def __init__(self, n_clusters: int, max_iter: int = 100, p: p_type = 2):
+        self.n_clusters = n_clusters
         self.max_iter = max_iter
-        self.parameter = parameter
+        self.p = p
+        self.max_iter_with_no_progress = 15
+        self.centroids = np.array([])
 
-        if parameter <= 0:
-            raise InvalidDistanceMetricException("parameter cannot be less or equal 0")
+    def fit(self, X: np.ndarray):
+        # initialize centroids randomly
+        indices = np.random.choice(X.shape[0], self.n_clusters, replace=False)
+        self.centroids = X[indices]
 
+        iter_with_no_progress = 0
 
-    def _generate_random_centers(self, data):
-        """Generate random centers."""
-        mean = np.mean(data, axis = 0)
-        std = np.std(data,  axis = 0)
-        centers = np.random.randn(self.k, data.shape[1])*std + mean
-        return centers
+        for _ in range(self.max_iter):
+            if iter_with_no_progress >= self.max_iter_with_no_progress:
+                break
+            bias_centroids = self.centroids.copy()
+            clusters, _ = assign_to_cluster(
+                X, self.centroids, self.n_clusters, self.p)
 
+            # update centroids using the specified optimizer
+            for cluster_id, cluster in enumerate(clusters):
+                cluster = np.array(cluster, copy=True)
+                data_dimension = cluster.shape[1]
+                new_centroid = np.array([])
 
-    def get_metric(self, axis=0):
-        """Get metric."""
-        if axis == 0:
-            return lambda u, v: np.sum(np.abs(u-v)**self.parameter)**(1/self.parameter)
-        if axis == 1:
-            return lambda u, v: np.sum(np.abs(u-v)**self.parameter, axis=1)**(1/self.parameter)
-        raise InvalidAxesException("axis parameter can be only 0 or 1")
+                for coordinate_id in range(data_dimension):
+                    dimension_slice = cluster[:, coordinate_id]
 
+                    if self.p == 2:
+                        value = mean_optimizer(dimension_slice)
+                    elif self.p == 1:
+                        value = median_optimizer(dimension_slice)
+                    elif 0 < self.p < 1:
+                        value = segment_SLSQP_optimizer(
+                            dimension_slice, self.p)
+                    else:
+                        raise ValueError(f'Unsupported value of p: {self.p}')
+                    new_centroid = np.append(new_centroid, value)
+                self.centroids[cluster_id] = new_centroid.copy()
 
-    def calculate_error(self, centers_new, centers_old):
-        """Calculate error."""
-        func = self.get_metric()
-        res = func(centers_new, centers_old)
-        return res
+            if np.array_equal(bias_centroids, self.centroids):
+                iter_with_no_progress += 1
+            else:
+                iter_with_no_progress = 0
 
+        _, labels = assign_to_cluster(
+            X, self.centroids, self.n_clusters, self.p)
 
-    def calculate_distance(self, data, centers):
-        """Calculate distance to every center."""
-        distances = np.zeros((data.shape[0], self.k))
-        func = self.get_metric(axis=1)
-        for i in range(self.k):
-            distances[:,i] = func(data, centers[i])
-        return distances
-
-
-    def fit(self, data):
-        """Fit data."""
-        centers = self._generate_random_centers(data)
-
-        centers_old = np.zeros(centers.shape)
-        centers_new = deepcopy(centers)
-
-        clusters = np.zeros(data.shape[0])
-        error = self.calculate_error(centers_new, centers_old)
-
-        iteration = 0
-        while error != 0 and iteration < self.max_iter:
-            distances = self.calculate_distance(data, centers)
-            # Assign all training data to closest center
-            clusters = np.argmin(distances, axis = 1)
-            centers_old = deepcopy(centers_new)
-            # Calculate mean for every cluster and update the center
-            for i in range(self.k):
-                centers_new[i] = np.median(data[clusters == i], axis=0)
-                # centers_new[i] = np.mean(data[clusters == i], axis=0)
-            error = self.calculate_error(centers_new, centers_old)
-            iteration += 1
-        return centers_new
-
-    def transform(self, centers, data):
-        '''Align input data for their clusters'''
-        distances = self.calculate_distance(data, centers)
-        clusters = np.argmin(distances, axis = 1)
-        return clusters
-
-    def fit_transform(self, data):
-        '''Fit data and align input data for their clusters'''
-        centers = self.fit(data)
-        clusters = self.transform(centers, data)
-        return clusters
+        return self.centroids, labels
