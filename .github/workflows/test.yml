@@ -25,7 +25,9 @@ jobs:
         pylint $(git ls-files '*.py') --rcfile .github/.pylintrc
     - name: Test optimizers
       run: |
+        export PYTHONPATH=${PYTHONPATH}:.
         pytest tests -v -m optimizers
     - name: Test KMeans
       run: |
+        export PYTHONPATH=${PYTHONPATH}:.
         pytest tests -v -m kmeans
