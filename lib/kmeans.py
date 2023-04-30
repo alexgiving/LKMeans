@@ -20,12 +20,14 @@ def assign_to_cluster(X: np.ndarray, centroids: np.ndarray, n_clusters: int, p: 
     return clusters, labels
 
 
+# pylint: disable= too-few-public-methods
 class KMeans:
     def __init__(self, n_clusters: int, max_iter: int = 100, p: p_type = 2):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.p = p
         self.max_iter_with_no_progress = 15
+        self.centroids = np.array([])
 
     def fit(self, X: np.ndarray):
         # initialize centroids randomly

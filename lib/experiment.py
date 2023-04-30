@@ -17,6 +17,7 @@ def get_covariance_matrix(sigma: float, dimension: int) -> np.ndarray:
     return np.eye(dimension) * sigma
 
 
+# pylint: disable= too-many-arguments, too-many-locals
 def run_experiment(
         dimension: int,
         n_clusters: int,

@@ -1,6 +1,5 @@
 from typing import List, Tuple
 
-import random
 import numpy as np
 
 
@@ -13,6 +12,7 @@ def move_towards_mean(mu: np.ndarray, mu_mean: np.ndarray, t: float) -> np.ndarr
     return new_mu
 
 
+# pylint: disable= too-many-locals
 def generate_mix_distribution(
     probability: float,
     mu_list: List[np.ndarray],
@@ -31,7 +31,7 @@ def generate_mix_distribution(
     for mu in mu_list:
         modified_mu_list.append(move_towards_mean(mu, mu_mean, t))
 
-    # need be dunamic
+    # need be dynamic
     if len(mu_list) == 2:
         n_1 = int(probability * n_samples)
         n_list = [n_1, n_samples - n_1]

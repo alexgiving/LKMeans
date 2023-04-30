@@ -1,6 +1,8 @@
 from pathlib import Path
-from lib import run_experiment
+
 import numpy as np
+
+from lib import run_experiment
 
 
 def main():

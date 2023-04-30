@@ -58,7 +58,8 @@ def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type, tol: float =
 #         n_iters: int = 50) -> np.ndarray:
 #     '''
 #     SGD optimizer
-#     Amorim, Renato. (2012). Feature Weighting for Clustering: Using K-Means and the Minkowski Metric.
+#     Amorim, Renato. (2012). Feature Weighting for Clustering:
+#     Using K-Means and the Minkowski Metric.
 #     '''
 
 #     def minkowski_loss(cluster: np.ndarray, centroid: np.ndarray, p: p_type) -> np.ndarray:

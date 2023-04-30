@@ -31,7 +31,7 @@ def insert_hline(latex_str: str) -> str:
 
     for line in lines_strings:
         if 'N/A' in line:
-            result.append('\midrule')
+            result.append('\\midrule')
         else:
             result.append(line)
     result = '\n'.join(result)
