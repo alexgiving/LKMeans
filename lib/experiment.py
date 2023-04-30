@@ -47,7 +47,7 @@ def run_experiment(
 
             for _ in range(repeats):
 
-                clusters, labels = generate_mix_distribution(
+                clusters, labels, centroids = generate_mix_distribution(
                     probability=prob,
                     mu_list=mu_list,
                     cov_matrix_list=cov_matrix_list,
@@ -72,7 +72,7 @@ def run_experiment(
 
         if makes_plot:
             figure_name = f'factor_{t:.1f}'.replace('.', '_')
-            fig = get_tsne_clusters(clusters, labels, None)
+            fig = get_tsne_clusters(clusters, labels, centroids)
             fig.savefig(output_path / f'{figure_name}.png')
     print(metrics.get_table())
 

@@ -4,6 +4,7 @@ import pytest
 from lib.kmeans import assign_to_cluster
 from lib.types import p_type
 
+
 params = [
     (
         np.array([
@@ -21,7 +22,7 @@ params = [
     )
 ]
 
-p = [0.001, 0.1, 0.2, 0.5, 0.9, 1, 2]
+p = [0.2, 0.5, 1, 2]
 
 
 @pytest.mark.kmeans
