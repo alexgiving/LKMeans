@@ -20,9 +20,10 @@ def main():
     mu_list = [np.array([x + [0] * (dimension-2)])
                for x in [[-4, 0], [4, 0]]]
 
-    repeats = 5
+    repeats = 20
     n_points = [100]
     T_parameter = [0, 0.2, 0.4, 0.6, 0.8]
+    minkowski_parameter = [0.2, 0.5, 0.7, 0.9, 1, 2]
 
     for points in n_points:
         experiment_name = f'Experiment 1, N_points:{points}'

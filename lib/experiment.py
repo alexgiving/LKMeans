@@ -85,10 +85,10 @@ def run_experiment(
             figure_name = f'factor_{t:.1f}_{metric_graph}'.replace('.', '_')
             fig = graphic_metrics.get_graph(metric_graph)
             fig.savefig(str(output_path / f'{figure_name}.png'))
-        # if makes_plot:
-        #     figure_name = f'factor_{t:.1f}'.replace('.', '_')
-        #     fig = get_tsne_clusters(clusters, labels, centroids)
-        #     fig.savefig(output_path / f'{figure_name}.png')
+        if makes_plot:
+            figure_name = f'factor_{t:.1f}'.replace('.', '_')
+            fig = get_tsne_clusters(clusters, labels, centroids)
+            fig.savefig(output_path / f'{figure_name}.png')
 
     print(table.get_table())
 

@@ -21,7 +21,7 @@ def assign_to_cluster(X: np.ndarray, centroids: np.ndarray, n_clusters: int, p: 
     return clusters, labels
 
 
-# pylint: disable= too-few-public-methods
+# pylint: disable= too-few-public-methods, too-many-arguments
 class KMeans:
     def __init__(self,
                  n_clusters: int,

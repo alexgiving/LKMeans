@@ -61,7 +61,8 @@ class MetricMeter:
         self.time.append(value)
 
     def get_average(self) -> Tuple[float, float, float, float]:
-        return float(np.mean(self.ari)), float(np.mean(self.ami)), float(np.mean(self.inertia)), float(np.mean(self.time))
+        return float(np.mean(self.ari)), float(np.mean(self.ami)), \
+            float(np.mean(self.inertia)), float(np.mean(self.time))
 
 
 class GraphicMeter(MetricMeter):
