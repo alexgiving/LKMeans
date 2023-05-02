@@ -1,8 +1,11 @@
+from typing import List, Tuple
+
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 
 class MetricTable:
-
     def __init__(self) -> None:
         self.frames = []
 
@@ -36,3 +39,44 @@ def insert_hline(latex_str: str) -> str:
             result.append(line)
     result = '\n'.join(result)
     return result
+
+
+class MetricMeter:
+    def __init__(self) -> None:
+        self.ari = []
+        self.ami = []
+        self.inertia = []
+        self.time = []
+
+    def add_ari(self, value: float) -> None:
+        self.ari.append(value)
+
+    def add_ami(self, value: float) -> None:
+        self.ami.append(value)
+
+    def add_inertia(self, value: float) -> None:
+        self.inertia.append(value)
+
+    def add_time(self, value: float) -> None:
+        self.time.append(value)
+
+    def get_average(self) -> Tuple[float, float, float, float]:
+        return float(np.mean(self.ari)), float(np.mean(self.ami)), float(np.mean(self.inertia)), float(np.mean(self.time))
+
+
+class GraphicMeter(MetricMeter):
+    def __init__(self, p: List) -> None:
+        super().__init__()
+        self.p = p
+
+    def get_graph(self, key: str):
+        values = {'ARI': self.ari, 'AMI': self.ami,
+                  'Inertia': self.inertia, 'Time': self.time}
+
+        fig, ax = plt.subplots()
+        ax.set_xlabel('p')
+
+        ax.plot(self.p, values[key], '-o')
+        ax.set_ylabel(key)
+        ax.set_title(f'{key} vs. p')
+        return fig

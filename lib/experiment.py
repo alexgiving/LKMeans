@@ -8,7 +8,8 @@ from sklearn.metrics import adjusted_mutual_info_score, adjusted_rand_score
 from lib.decomposition import get_tsne_clusters
 from lib.experiment_metrics import get_average_experiment_metrics
 from lib.kmeans import KMeans
-from lib.metric_meter import MetricTable, insert_hline
+from lib.metric_meter import (GraphicMeter, MetricMeter, MetricTable,
+                              insert_hline)
 from lib.points_generator import generate_mix_distribution
 from lib.types import p_type
 
@@ -38,14 +39,13 @@ def run_experiment(
     cov_matrix_list = [get_covariance_matrix(
         sigma, dimension) for sigma in sigma_list]
 
-    metrics = MetricTable()
+    table = MetricTable()
     for t in distance_parameters:
+
+        graphic_metrics = GraphicMeter(minkowski_parameters)
         for p in minkowski_parameters:
 
-            repeats_ari = []
-            repeats_ami = []
-            repeats_time = []
-
+            repeat_metric_meter = MetricMeter()
             for _ in range(repeats):
 
                 clusters, labels, centroids = generate_mix_distribution(
@@ -58,27 +58,42 @@ def run_experiment(
 
                 experiment_time = time.perf_counter()
                 kmeans = KMeans(n_clusters=n_clusters, p=p)
-                _, generated_labels = kmeans.fit(clusters)
+                centroids, generated_labels = kmeans.fit(clusters)
+                experiment_time = time.perf_counter() - experiment_time
 
-                repeats_time.append(time.perf_counter()-experiment_time)
-                repeats_ari.append(adjusted_rand_score(
+                repeat_metric_meter.add_ami(float(adjusted_mutual_info_score(
+                    labels, generated_labels)))
+                repeat_metric_meter.add_ari(adjusted_rand_score(
                     labels, generated_labels))
-                repeats_ami.append(adjusted_mutual_info_score(
-                    labels, generated_labels))
+                repeat_metric_meter.add_inertia(
+                    kmeans.inertia(clusters, centroids))
+                repeat_metric_meter.add_time(experiment_time)
+
+            average_ari, average_ami, average_inertia, average_time = repeat_metric_meter.get_average()
 
             name = f'{experiment_name}, T:{t:.1f}, P:{p}'
             frame = get_average_experiment_metrics(
-                repeats_ari, repeats_ami, name=name, time=repeats_time)
-            metrics.add_frame(frame)
+                average_ari, average_ami, average_inertia, name=name, time=average_time)
+            table.add_frame(frame)
 
-        if makes_plot:
-            figure_name = f'factor_{t:.1f}'.replace('.', '_')
-            fig = get_tsne_clusters(clusters, labels, centroids)
-            fig.savefig(output_path / f'{figure_name}.png')
-    print(metrics.get_table())
+            graphic_metrics.add_ari(average_ari)
+            graphic_metrics.add_ami(average_ami)
+            graphic_metrics.add_inertia(average_inertia)
+            graphic_metrics.add_time(average_time)
+
+        for metric_graph in ['ARI', 'AMI', 'Inertia', 'Time']:
+            figure_name = f'factor_{t:.1f}_{metric_graph}'.replace('.', '_')
+            fig = graphic_metrics.get_graph(metric_graph)
+            fig.savefig(str(output_path / f'{figure_name}.png'))
+        # if makes_plot:
+        #     figure_name = f'factor_{t:.1f}'.replace('.', '_')
+        #     fig = get_tsne_clusters(clusters, labels, centroids)
+        #     fig.savefig(output_path / f'{figure_name}.png')
+
+    print(table.get_table())
 
     table_name = 'experiment 1'
-    table = metrics.get_latex_table(caption='Experiment 1')
+    table = table.get_latex_table(caption='Experiment 1')
     table = insert_hline(table)
 
     latex_logs = output_path / f'{table_name.replace(" ", "_")}.tex'
