@@ -12,7 +12,7 @@ def main():
     n_clusters = 2
     T_parameter = [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     minkowski_parameter = [0.2, 0.5, 1, 2]
-    repeats = 1000
+    repeats = 20
     n_points = [100, 500, 1000]
 
     sigma_list = [1, 1]
@@ -20,9 +20,6 @@ def main():
     mu_list = [np.array([x + [0] * (dimension-2)])
                for x in [[-4, 0], [4, 0]]]
 
-    repeats = 20
-    n_points = [100]
-    T_parameter = [0, 0.2, 0.4, 0.6, 0.8]
     minkowski_parameter = [0.2, 0.5, 0.7, 0.9, 1, 2]
 
     for points in n_points:
