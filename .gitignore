@@ -4,6 +4,7 @@ notebooks/.ipynb_checkpoints
 images
 cache
 .env
+*.log
 
 *.png
 *__pycache__
