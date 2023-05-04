@@ -11,6 +11,7 @@ from lib.metric_meter import (GraphicMeter, MetricMeter, MetricTable,
                               insert_hline)
 from lib.points_generator import generate_mix_distribution
 from lib.types import p_type
+from matplotlib import pyplot as plt
 
 
 def get_covariance_matrix(sigma: float, dimension: int) -> np.ndarray:
@@ -112,24 +113,26 @@ def run_experiment(
                 time=average_time
             )
 
-            
 
         for metric_graph in ['ARI', 'AMI', 'Inertia', 'Time']:
             figure_name = f'factor_{t:.1f}_{metric_graph}'.replace('.', '_')
             fig = graphic_p_metrics.get_graph(metric_graph)
-            fig.savefig(str(output_path / f'{figure_name}.png'))
+            fig.savefig(str(output_path / f'{figure_name}.png'), dpi=300, bbox_inches='tight')
+            plt.close(fig)
         if makes_plot:
             figure_name = f'factor_{t:.1f}'.replace('.', '_')
             fig = get_tsne_clusters(clusters, labels, centroids)
-            fig.savefig(output_path / f'{figure_name}.png')
+            fig.savefig(output_path / f'{figure_name}.png', dpi=300, bbox_inches='tight')
+            plt.close(fig)
 
     print(table.get_table())
 
     for p, graph_t_meter in graphic_t_metrics_dict.items():
         for metric in ['ARI', 'AMI', 'Inertia', 'Time']:
-            figure_name = f'{metric}_by_t'.replace('.', '_')
+            figure_name = f'{metric}_by_t_with_p_{p}'.replace('.', '_')
             fig = graph_t_meter.get_graph(metric)
-            fig.savefig(str(output_path / f'{figure_name}.png'))
+            fig.savefig(str(output_path / f'{figure_name}.png'), dpi=300, bbox_inches='tight')
+            plt.close(fig)
     
 
     table_name = 'experiment 1'

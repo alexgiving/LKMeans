@@ -73,7 +73,7 @@ class MetricMeter:
         self.time.append(value)
 
     def add_combination(self, ari: float, ami: float, inertia: float, time: float) -> None:
-        self.add_ami(ari)
+        self.add_ari(ari)
         self.add_ami(ami)
         self.add_inertia(inertia)
         self.add_time(time)
@@ -93,10 +93,16 @@ class GraphicMeter(MetricMeter):
         values = {'ARI': self.ari, 'AMI': self.ami,
                   'Inertia': self.inertia, 'Time': self.time}
 
-        fig, ax = plt.subplots()
-        ax.set_xlabel(self.base_name)
+        fig, ax = plt.subplots(figsize=(7, 5))
+        param = values[key]
+        ax.plot(self.base, param, '-o')
+        ax.grid(True, color='gray', linestyle='--', linewidth=0.5)
 
-        ax.plot(self.base, values[key], '-o')
+        ax.set_xlabel(self.base_name)
+        ax.set_xticks(self.base)
+
+        # ax.set_yticks(param)
+        ax.set_yticks(np.linspace(np.min(param), np.max(param), num=len(param) + 2))
         ax.set_ylabel(key)
         ax.set_title(f'{key} vs. {self.base_name}')
         return fig
