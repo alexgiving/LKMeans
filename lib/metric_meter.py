@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,7 +11,8 @@ class MetricTable:
 
     def add_frame(self, frame: pd.DataFrame) -> None:
         self.frames.append(frame)
-    
+
+    # pylint: disable=too-many-arguments
     def add_to_frame(self,
                      ari: float,
                      ami: float,
@@ -20,7 +21,7 @@ class MetricTable:
                      name: Optional[str] = 'Experiment'
                      ) -> None:
         data = {'ARI': f'{ari:.2f}', 'AMI': f'{ami:.2f}',
-            'Inertia': f'{inertia:.2f}', 'Time': f'{time:.2f}'}
+                'Inertia': f'{inertia:.2f}', 'Time': f'{time:.2f}'}
         frame = pd.DataFrame(data, [name])
         self.frames.append(frame)
 
@@ -101,8 +102,10 @@ class GraphicMeter(MetricMeter):
         ax.set_xlabel(self.base_name)
         # ax.set_xticks(self.base)
         # ax.set_yticks(param)
-        ax.set_xticks(np.linspace(np.min(self.base), np.max(self.base), num=int(len(self.base) * 1.5)))
-        ax.set_yticks(np.linspace(np.min(param), np.max(param), num=len(param) + 2))
+        ax.set_xticks(np.linspace(np.min(self.base), np.max(
+            self.base), num=int(len(self.base) * 1.5)))
+        ax.set_yticks(np.linspace(
+            np.min(param), np.max(param), num=len(param) + 2))
         ax.set_ylabel(key)
         ax.set_title(f'{key} vs. {self.base_name}')
         return fig
