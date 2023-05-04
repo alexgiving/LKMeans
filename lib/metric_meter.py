@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,6 +10,18 @@ class MetricTable:
         self.frames = []
 
     def add_frame(self, frame: pd.DataFrame) -> None:
+        self.frames.append(frame)
+    
+    def add_to_frame(self,
+                     ari: float,
+                     ami: float,
+                     inertia: float,
+                     time: float,
+                     name: Optional[str] = 'Experiment'
+                     ) -> None:
+        data = {'ARI': f'{ari:.2f}', 'AMI': f'{ami:.2f}',
+            'Inertia': f'{inertia:.2f}', 'Time': f'{time:.2f}'}
+        frame = pd.DataFrame(data, [name])
         self.frames.append(frame)
 
     def add_empty_frame(self, time: bool) -> None:
@@ -60,24 +72,31 @@ class MetricMeter:
     def add_time(self, value: float) -> None:
         self.time.append(value)
 
+    def add_combination(self, ari: float, ami: float, inertia: float, time: float) -> None:
+        self.add_ami(ari)
+        self.add_ami(ami)
+        self.add_inertia(inertia)
+        self.add_time(time)
+
     def get_average(self) -> Tuple[float, float, float, float]:
         return float(np.mean(self.ari)), float(np.mean(self.ami)), \
             float(np.mean(self.inertia)), float(np.mean(self.time))
 
 
 class GraphicMeter(MetricMeter):
-    def __init__(self, p: List) -> None:
+    def __init__(self, base: List, base_name: str) -> None:
         super().__init__()
-        self.p = p
+        self.base = base
+        self.base_name = base_name
 
     def get_graph(self, key: str):
         values = {'ARI': self.ari, 'AMI': self.ami,
                   'Inertia': self.inertia, 'Time': self.time}
 
         fig, ax = plt.subplots()
-        ax.set_xlabel('p')
+        ax.set_xlabel(self.base_name)
 
-        ax.plot(self.p, values[key], '-o')
+        ax.plot(self.base, values[key], '-o')
         ax.set_ylabel(key)
-        ax.set_title(f'{key} vs. p')
+        ax.set_title(f'{key} vs. {self.base_name}')
         return fig

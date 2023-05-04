@@ -6,7 +6,6 @@ import numpy as np
 from sklearn.metrics import adjusted_mutual_info_score, adjusted_rand_score
 
 from lib.decomposition import get_tsne_clusters
-from lib.experiment_metrics import get_average_experiment_metrics
 from lib.kmeans import KMeans
 from lib.metric_meter import (GraphicMeter, MetricMeter, MetricTable,
                               insert_hline)
@@ -16,6 +15,42 @@ from lib.types import p_type
 
 def get_covariance_matrix(sigma: float, dimension: int) -> np.ndarray:
     return np.eye(dimension) * sigma
+
+
+def repeat_iteration(
+        repeats: int,
+        n_clusters: int,
+        n_points: int,
+        prob: float,
+        cov_matrix_list: List,
+        t:float,
+        mu_list: List[np.ndarray],
+        p: p_type
+        ):
+    repeat_metric_meter = MetricMeter()
+    for _ in range(repeats):
+
+        clusters, labels, centroids = generate_mix_distribution(
+            probability=prob,
+            mu_list=mu_list,
+            cov_matrix_list=cov_matrix_list,
+            n_samples=n_points,
+            t=t
+        )
+
+        experiment_time = time.perf_counter()
+        kmeans = KMeans(n_clusters=n_clusters, p=p)
+        centroids, generated_labels = kmeans.fit(clusters)
+        experiment_time = time.perf_counter() - experiment_time
+
+        repeat_metric_meter.add_combination(
+            ari=adjusted_rand_score(labels, generated_labels),
+            ami=float(adjusted_mutual_info_score(labels, generated_labels)),
+            inertia=kmeans.inertia(clusters, centroids),
+            time=experiment_time
+        )
+    average_ari, average_ami, average_inertia, average_time = repeat_metric_meter.get_average()
+    return average_ari, average_ami, average_inertia, average_time
 
 
 # pylint: disable= too-many-arguments, too-many-locals
@@ -40,50 +75,35 @@ def run_experiment(
         sigma, dimension) for sigma in sigma_list]
 
     table = MetricTable()
+
     for t in distance_parameters:
 
-        graphic_metrics = GraphicMeter(minkowski_parameters)
+        graphic_p_metrics = GraphicMeter(minkowski_parameters, 'p')
         for p in minkowski_parameters:
 
-            repeat_metric_meter = MetricMeter()
-            for _ in range(repeats):
+            average_ari, average_ami, average_inertia, average_time = repeat_iteration(
+                repeats, n_clusters, n_points, prob,
+                cov_matrix_list, t, mu_list, p
+            )
 
-                clusters, labels, centroids = generate_mix_distribution(
-                    probability=prob,
-                    mu_list=mu_list,
-                    cov_matrix_list=cov_matrix_list,
-                    n_samples=n_points,
-                    t=t
-                )
+            table.add_to_frame(
+                ari=average_ari,
+                ami=average_ami,
+                inertia=average_inertia,
+                time=average_time,
+                name=f'{experiment_name}, T:{t:.1f}, P:{p}'
+            )
 
-                experiment_time = time.perf_counter()
-                kmeans = KMeans(n_clusters=n_clusters, p=p)
-                centroids, generated_labels = kmeans.fit(clusters)
-                experiment_time = time.perf_counter() - experiment_time
-
-                repeat_metric_meter.add_ami(float(adjusted_mutual_info_score(
-                    labels, generated_labels)))
-                repeat_metric_meter.add_ari(adjusted_rand_score(
-                    labels, generated_labels))
-                repeat_metric_meter.add_inertia(
-                    kmeans.inertia(clusters, centroids))
-                repeat_metric_meter.add_time(experiment_time)
-
-            average_ari, average_ami, average_inertia, average_time = repeat_metric_meter.get_average()
-
-            name = f'{experiment_name}, T:{t:.1f}, P:{p}'
-            frame = get_average_experiment_metrics(
-                average_ari, average_ami, average_inertia, name=name, time=average_time)
-            table.add_frame(frame)
-
-            graphic_metrics.add_ari(average_ari)
-            graphic_metrics.add_ami(average_ami)
-            graphic_metrics.add_inertia(average_inertia)
-            graphic_metrics.add_time(average_time)
+            graphic_p_metrics.add_combination(
+                ari=average_ari,
+                ami=average_ami,
+                inertia=average_inertia,
+                time=average_time
+            )
 
         for metric_graph in ['ARI', 'AMI', 'Inertia', 'Time']:
             figure_name = f'factor_{t:.1f}_{metric_graph}'.replace('.', '_')
-            fig = graphic_metrics.get_graph(metric_graph)
+            fig = graphic_p_metrics.get_graph(metric_graph)
             fig.savefig(str(output_path / f'{figure_name}.png'))
         if makes_plot:
             figure_name = f'factor_{t:.1f}'.replace('.', '_')

@@ -13,14 +13,14 @@ def main():
     T_parameter = [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     minkowski_parameter = [0.2, 0.5, 1, 2]
     repeats = 20
-    n_points = [100, 500, 1000]
+    n_points = [100, 500]
 
     sigma_list = [1, 1]
     prob = 0.5
     mu_list = [np.array([x + [0] * (dimension-2)])
                for x in [[-4, 0], [4, 0]]]
 
-    minkowski_parameter = [0.2, 0.5, 0.7, 0.9, 1, 2]
+    minkowski_parameter = [0.2, 0.5, 0.7, 0.9, 1, 2, 5, 10]
 
     for points in n_points:
         experiment_name = f'Experiment 1, N_points:{points}'

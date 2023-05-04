@@ -56,11 +56,9 @@ class KMeans:
             elif p == 1:
                 value = median_optimizer(dimension_slice)
             elif 0 < p < 1:
-                value = segment_SLSQP_optimizer(
-                    dimension_slice, p)
+                value = segment_SLSQP_optimizer(dimension_slice, p)
             else:
-                raise ValueError(
-                    f'Unsupported value of p: {p}')
+                value = segment_SLSQP_optimizer(dimension_slice, p)
             new_centroid = np.append(new_centroid, value)
         return new_centroid
 
