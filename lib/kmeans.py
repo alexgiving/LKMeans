@@ -6,7 +6,16 @@ from lib.minkowski import pairwise_minkowski_distance
 from lib.optimizers import (mean_optimizer, median_optimizer,
                             segment_SLSQP_optimizer)
 from lib.types import p_type
+import numpy as np
+from multiprocessing import Pool, cpu_count
+from lib.minkowski import minkowski_distance
+import warnings
 
+import numpy as np
+from scipy.optimize import minimize
+
+from lib.minkowski import minkowski_distance
+from lib.types import p_type
 
 def assign_to_cluster(X: np.ndarray, centroids: np.ndarray, n_clusters: int, p: p_type):
     clusters = [[] for _ in range(n_clusters)]
@@ -48,6 +57,15 @@ class KMeans:
         data_dimension = cluster.shape[1]
 
         new_centroid = np.array([])
+
+        if p not in (1, 2):
+            from functools import partial
+            optimize_slice = partial(segment_SLSQP_optimizer, p=p)
+            dimension_slices = [cluster[:, coordinate_id] for coordinate_id in range(data_dimension)]
+            with Pool(cpu_count()) as pool:
+                new_centroid = pool.map(optimize_slice, dimension_slices)
+            return new_centroid
+        
         for coordinate_id in range(data_dimension):
             dimension_slice = cluster[:, coordinate_id]
 
