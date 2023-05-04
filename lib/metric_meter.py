@@ -99,9 +99,9 @@ class GraphicMeter(MetricMeter):
         ax.grid(True, color='gray', linestyle='--', linewidth=0.5)
 
         ax.set_xlabel(self.base_name)
-        ax.set_xticks(self.base)
-
+        # ax.set_xticks(self.base)
         # ax.set_yticks(param)
+        ax.set_xticks(np.linspace(np.min(self.base), np.max(self.base), num=int(len(self.base) * 1.5)))
         ax.set_yticks(np.linspace(np.min(param), np.max(param), num=len(param) + 2))
         ax.set_ylabel(key)
         ax.set_title(f'{key} vs. {self.base_name}')
