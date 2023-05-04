@@ -103,7 +103,7 @@ class GraphicMeter(MetricMeter):
         # ax.set_xticks(self.base)
         # ax.set_yticks(param)
         ax.set_xticks(np.linspace(np.min(self.base), np.max(
-            self.base), num=int(len(self.base) * 1.5)))
+            self.base), num=len(self.base)))
         ax.set_yticks(np.linspace(
             np.min(param), np.max(param), num=len(param) + 2))
         ax.set_ylabel(key)
