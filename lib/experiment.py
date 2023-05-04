@@ -76,6 +76,10 @@ def run_experiment(
 
     table = MetricTable()
 
+
+    generator = [GraphicMeter(distance_parameters, 't') for _ in minkowski_parameters]
+    graphic_t_metrics_dict = dict(zip(minkowski_parameters, generator))
+
     for t in distance_parameters:
 
         graphic_p_metrics = GraphicMeter(minkowski_parameters, 'p')
@@ -101,6 +105,15 @@ def run_experiment(
                 time=average_time
             )
 
+            graphic_t_metrics_dict[p].add_combination(
+                ari=average_ari,
+                ami=average_ami,
+                inertia=average_inertia,
+                time=average_time
+            )
+
+            
+
         for metric_graph in ['ARI', 'AMI', 'Inertia', 'Time']:
             figure_name = f'factor_{t:.1f}_{metric_graph}'.replace('.', '_')
             fig = graphic_p_metrics.get_graph(metric_graph)
@@ -111,6 +124,13 @@ def run_experiment(
             fig.savefig(output_path / f'{figure_name}.png')
 
     print(table.get_table())
+
+    for p, graph_t_meter in graphic_t_metrics_dict.items():
+        for metric in ['ARI', 'AMI', 'Inertia', 'Time']:
+            figure_name = f'{metric}_by_t'.replace('.', '_')
+            fig = graph_t_meter.get_graph(metric)
+            fig.savefig(str(output_path / f'{figure_name}.png'))
+    
 
     table_name = 'experiment 1'
     table = table.get_latex_table(caption='Experiment 1')

@@ -12,7 +12,7 @@ def main():
     n_clusters = 3
     T_parameter = [0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     minkowski_parameter = [0.2, 0.5, 1, 2]
-    repeats = 20
+    repeats = 10
     n_points = [100, 500]
 
     sigma_list = [1, 1, 1]
