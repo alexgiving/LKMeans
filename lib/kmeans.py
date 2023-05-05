@@ -1,4 +1,6 @@
 from copy import deepcopy
+from functools import partial
+from multiprocessing import Pool, cpu_count
 
 import numpy as np
 
@@ -48,18 +50,25 @@ class KMeans:
         data_dimension = cluster.shape[1]
 
         new_centroid = np.array([])
-        for coordinate_id in range(data_dimension):
-            dimension_slice = cluster[:, coordinate_id]
 
-            if p == 2:
-                value = mean_optimizer(dimension_slice)
-            elif p == 1:
-                value = median_optimizer(dimension_slice)
-            elif 0 < p < 1:
-                value = segment_SLSQP_optimizer(dimension_slice, p)
-            else:
-                value = segment_SLSQP_optimizer(dimension_slice, p)
-            new_centroid = np.append(new_centroid, value)
+        if p not in (1, 2):
+            optimize_slice = partial(segment_SLSQP_optimizer, p=p)
+            dimension_slices = [cluster[:, coordinate_id] for coordinate_id in range(data_dimension)]
+            with Pool(cpu_count()) as pool:
+                new_centroid = pool.map(optimize_slice, dimension_slices)
+        else:
+            for coordinate_id in range(data_dimension):
+                dimension_slice = cluster[:, coordinate_id]
+
+                if p == 2:
+                    value = mean_optimizer(dimension_slice)
+                elif p == 1:
+                    value = median_optimizer(dimension_slice)
+                # elif 0 < p < 1:
+                #     value = segment_SLSQP_optimizer(dimension_slice, p)
+                # else:
+                #     value = segment_SLSQP_optimizer(dimension_slice, p)
+                new_centroid = np.append(new_centroid, value)
         return new_centroid
 
     @staticmethod
