@@ -1,11 +1,10 @@
-import warnings
 from copy import deepcopy
+from functools import partial
 from multiprocessing import Pool, cpu_count
 
 import numpy as np
-from scipy.optimize import minimize
 
-from lib.minkowski import minkowski_distance, pairwise_minkowski_distance
+from lib.minkowski import pairwise_minkowski_distance
 from lib.optimizers import (mean_optimizer, median_optimizer,
                             segment_SLSQP_optimizer)
 from lib.types import p_type
@@ -53,7 +52,6 @@ class KMeans:
         new_centroid = np.array([])
 
         if p not in (1, 2):
-            from functools import partial
             optimize_slice = partial(segment_SLSQP_optimizer, p=p)
             dimension_slices = [cluster[:, coordinate_id] for coordinate_id in range(data_dimension)]
             with Pool(cpu_count()) as pool:
