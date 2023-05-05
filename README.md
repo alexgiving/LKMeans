@@ -1,6 +1,7 @@
 [![CI](https://github.com/alexgiving/LKMeans/actions/workflows/test.yml/badge.svg)](https://github.com/alexgiving/LKMeans/actions/workflows/test.yml)
 
-To activate library
+The library which support Minkowski metric in KMeans algorithm.
+
 ```
-export PYTHONPATH=${PYTHONPATH}:.
+export PYTHONPATH=${PYTHONPATH}:$(pwd)
 ```

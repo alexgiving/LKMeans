@@ -1,12 +1,28 @@
+from typing import List, Optional, Tuple
+
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 
 class MetricTable:
-
     def __init__(self) -> None:
         self.frames = []
 
     def add_frame(self, frame: pd.DataFrame) -> None:
+        self.frames.append(frame)
+
+    # pylint: disable=too-many-arguments
+    def add_to_frame(self,
+                     ari: float,
+                     ami: float,
+                     inertia: float,
+                     time: float,
+                     name: Optional[str] = 'Experiment'
+                     ) -> None:
+        data = {'ARI': f'{ari:.2f}', 'AMI': f'{ami:.2f}',
+                'Inertia': f'{inertia:.2f}', 'Time': f'{time:.2f}'}
+        frame = pd.DataFrame(data, [name])
         self.frames.append(frame)
 
     def add_empty_frame(self, time: bool) -> None:
@@ -36,3 +52,60 @@ def insert_hline(latex_str: str) -> str:
             result.append(line)
     result = '\n'.join(result)
     return result
+
+
+class MetricMeter:
+    def __init__(self) -> None:
+        self.ari = []
+        self.ami = []
+        self.inertia = []
+        self.time = []
+
+    def add_ari(self, value: float) -> None:
+        self.ari.append(value)
+
+    def add_ami(self, value: float) -> None:
+        self.ami.append(value)
+
+    def add_inertia(self, value: float) -> None:
+        self.inertia.append(value)
+
+    def add_time(self, value: float) -> None:
+        self.time.append(value)
+
+    def add_combination(self, ari: float, ami: float, inertia: float, time: float) -> None:
+        self.add_ari(ari)
+        self.add_ami(ami)
+        self.add_inertia(inertia)
+        self.add_time(time)
+
+    def get_average(self) -> Tuple[float, float, float, float]:
+        return float(np.mean(self.ari)), float(np.mean(self.ami)), \
+            float(np.mean(self.inertia)), float(np.mean(self.time))
+
+
+class GraphicMeter(MetricMeter):
+    def __init__(self, base: List, base_name: str) -> None:
+        super().__init__()
+        self.base = base
+        self.base_name = base_name
+
+    def get_graph(self, key: str):
+        values = {'ARI': self.ari, 'AMI': self.ami,
+                  'Inertia': self.inertia, 'Time': self.time}
+
+        fig, ax = plt.subplots(figsize=(7, 5))
+        param = values[key]
+        ax.plot(self.base, param, '-o')
+        ax.grid(True, color='gray', linestyle='--', linewidth=0.5)
+
+        ax.set_xlabel(self.base_name)
+        # ax.set_xticks(self.base)
+        # ax.set_yticks(param)
+        ax.set_xticks(np.linspace(np.min(self.base), np.max(
+            self.base), num=len(self.base)))
+        ax.set_yticks(np.linspace(
+            np.min(param), np.max(param), num=len(param) + 2))
+        ax.set_ylabel(key)
+        ax.set_title(f'{key} vs. {self.base_name}')
+        return fig
