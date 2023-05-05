@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List
 
 import numpy as np
+from matplotlib import pyplot as plt
 from sklearn.metrics import adjusted_mutual_info_score, adjusted_rand_score
 
 from lib.decomposition import get_tsne_clusters
@@ -11,7 +12,6 @@ from lib.metric_meter import (GraphicMeter, MetricMeter, MetricTable,
                               insert_hline)
 from lib.points_generator import generate_mix_distribution
 from lib.types import p_type
-from matplotlib import pyplot as plt
 
 
 def get_covariance_matrix(sigma: float, dimension: int) -> np.ndarray:
