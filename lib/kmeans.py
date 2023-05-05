@@ -1,21 +1,15 @@
-from copy import deepcopy
-
-import numpy as np
-
-from lib.minkowski import pairwise_minkowski_distance
-from lib.optimizers import (mean_optimizer, median_optimizer,
-                            segment_SLSQP_optimizer)
-from lib.types import p_type
-import numpy as np
-from multiprocessing import Pool, cpu_count
-from lib.minkowski import minkowski_distance
 import warnings
+from copy import deepcopy
+from multiprocessing import Pool, cpu_count
 
 import numpy as np
 from scipy.optimize import minimize
 
-from lib.minkowski import minkowski_distance
+from lib.minkowski import minkowski_distance, pairwise_minkowski_distance
+from lib.optimizers import (mean_optimizer, median_optimizer,
+                            segment_SLSQP_optimizer)
 from lib.types import p_type
+
 
 def assign_to_cluster(X: np.ndarray, centroids: np.ndarray, n_clusters: int, p: p_type):
     clusters = [[] for _ in range(n_clusters)]
@@ -64,20 +58,19 @@ class KMeans:
             dimension_slices = [cluster[:, coordinate_id] for coordinate_id in range(data_dimension)]
             with Pool(cpu_count()) as pool:
                 new_centroid = pool.map(optimize_slice, dimension_slices)
-            return new_centroid
-        
-        for coordinate_id in range(data_dimension):
-            dimension_slice = cluster[:, coordinate_id]
+        else:
+            for coordinate_id in range(data_dimension):
+                dimension_slice = cluster[:, coordinate_id]
 
-            if p == 2:
-                value = mean_optimizer(dimension_slice)
-            elif p == 1:
-                value = median_optimizer(dimension_slice)
-            elif 0 < p < 1:
-                value = segment_SLSQP_optimizer(dimension_slice, p)
-            else:
-                value = segment_SLSQP_optimizer(dimension_slice, p)
-            new_centroid = np.append(new_centroid, value)
+                if p == 2:
+                    value = mean_optimizer(dimension_slice)
+                elif p == 1:
+                    value = median_optimizer(dimension_slice)
+                elif 0 < p < 1:
+                    value = segment_SLSQP_optimizer(dimension_slice, p)
+                else:
+                    value = segment_SLSQP_optimizer(dimension_slice, p)
+                new_centroid = np.append(new_centroid, value)
         return new_centroid
 
     @staticmethod
