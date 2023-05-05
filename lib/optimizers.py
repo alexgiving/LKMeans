@@ -15,7 +15,7 @@ def mean_optimizer(dimension_slice: np.ndarray):
     return np.mean(dimension_slice)
 
 
-def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type, tol: float = 1e-1_000_000_000):
+def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type, tol: float = 1e-1_000):
     dimension_slice = np.unique(dimension_slice)
 
     median = np.median(dimension_slice)
