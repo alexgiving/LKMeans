@@ -74,8 +74,8 @@ class MetricMeter:
         self.time.append(value)
 
     def add_combination(self, ari: float, ami: float, inertia: float, time: float) -> None:
-        self.add_ari(ari)
-        self.add_ami(ami)
+        self.add_ari(abs(ari))
+        self.add_ami(abs(ami))
         self.add_inertia(inertia)
         self.add_time(time)
 
@@ -99,11 +99,14 @@ class GraphicMeter(MetricMeter):
         ax.plot(self.base, param, '-o')
         ax.grid(True, color='gray', linestyle='--', linewidth=0.5)
 
+
+        if self.base_name == 'p':
+            ax.set_xticks(self.base)
+        else:
+            ax.set_xticks(np.linspace(0, 1, 11))
         ax.set_xlabel(self.base_name)
-        # ax.set_yticks(param)
-        # tiks = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
-        ax.set_xticks(np.arange(np.min(self.base), np.max(self.base)+0.1, 0.1))
-        # ax.set_xticks(self.base)
+  
+
         if key in ('ARI', 'AMI'):
             ax.set_yticks(np.arange(0, 1.1, 0.1))
         else:
