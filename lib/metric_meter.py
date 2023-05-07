@@ -94,18 +94,20 @@ class GraphicMeter(MetricMeter):
         values = {'ARI': self.ari, 'AMI': self.ami,
                   'Inertia': self.inertia, 'Time': self.time}
 
-        fig, ax = plt.subplots(figsize=(7, 5))
+        fig, ax = plt.subplots(figsize=(5, 4))
         param = values[key]
         ax.plot(self.base, param, '-o')
         ax.grid(True, color='gray', linestyle='--', linewidth=0.5)
 
         ax.set_xlabel(self.base_name)
-        # ax.set_xticks(self.base)
         # ax.set_yticks(param)
-        ax.set_xticks(np.linspace(np.min(self.base), np.max(
-            self.base), num=len(self.base)))
-        ax.set_yticks(np.linspace(
-            np.min(param), np.max(param), num=len(param) + 2))
+        # tiks = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+        ax.set_xticks(np.arange(np.min(self.base), np.max(self.base)+0.1, 0.1))
+        # ax.set_xticks(self.base)
+        if key in ('ARI', 'AMI'):
+            ax.set_yticks(np.arange(0, 1.1, 0.1))
+        else:
+            ax.set_yticks(np.linspace(np.min(param), np.max(param), 10))
         ax.set_ylabel(key)
-        ax.set_title(f'{key} vs. {self.base_name}')
+        # ax.set_title(f'{key} vs. {self.base_name}')
         return fig
