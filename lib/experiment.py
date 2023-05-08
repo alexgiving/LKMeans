@@ -22,7 +22,7 @@ def repeat_iteration(
         n_clusters: int,
         n_points: int,
         prob: float,
-        cov_matrix_list: list,
+        cov_matrices: list[np.ndarray],
         t: float,
         mu_list: list[np.ndarray],
         p: float | int,
@@ -36,7 +36,7 @@ def repeat_iteration(
         clusters, labels, centroids = generate_mix_distribution(
             probability=prob,
             mu_list=mu_list,
-            cov_matrix_list=cov_matrix_list,
+            cov_matrices=cov_matrices,
             n_samples=n_points,
             t=t
         )
@@ -70,7 +70,7 @@ def run_experiment(
         minkowski_parameters: list[float | int],
         repeats: int,
         n_points: int,
-        sigma_list: list[float | int],
+        cov_matrices: list[np.ndarray],
         prob: float,
         mu_list: list[np.ndarray],
         experiment_name: str,
@@ -79,9 +79,6 @@ def run_experiment(
     '''Function for evaluation experiment'''
 
     output_path.mkdir(exist_ok=True, parents=True)
-
-    cov_matrix_list = [get_covariance_matrix(
-        sigma, dimension) for sigma in sigma_list]
 
     table = MetricTable()
 
@@ -96,7 +93,7 @@ def run_experiment(
 
             average_ari, average_ami, average_inertia, average_time = repeat_iteration(
                 repeats, n_clusters, n_points, prob,
-                cov_matrix_list, t, mu_list, p, makes_plot, output_path
+                cov_matrices, t, mu_list, p, makes_plot, output_path
             )
 
             table.add_to_frame(
