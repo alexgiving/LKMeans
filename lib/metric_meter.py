@@ -99,13 +99,11 @@ class GraphicMeter(MetricMeter):
         ax.plot(self.base, param, '-o')
         ax.grid(True, color='gray', linestyle='--', linewidth=0.5)
 
-
         if self.base_name == 'p':
             ax.set_xticks(self.base)
         else:
             ax.set_xticks(np.linspace(0, 1, 11))
         ax.set_xlabel(self.base_name)
-  
 
         if key in ('ARI', 'AMI'):
             ax.set_yticks(np.arange(0, 1.1, 0.1))

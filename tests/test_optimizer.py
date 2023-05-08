@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from lib.optimizers import (mean_optimizer, median_optimizer,
+from lib.optimizers import (bound_optimizer, mean_optimizer, median_optimizer,
                             segment_SLSQP_optimizer)
 
 
@@ -67,3 +67,12 @@ def test_segment_SLSQP_calculation(median, p) -> None:
 @pytest.mark.parametrize("test_input, expected_output", params)
 def test_segment_SLSQP_optimizer_inputs(test_input, expected_output):
     np.testing.assert_almost_equal(mean_optimizer(test_input), expected_output)
+
+
+@pytest.mark.optimizers
+@pytest.mark.parametrize("median", testing_params)
+@pytest.mark.parametrize("p", p_values)
+def test_bound_calculation(median, p) -> None:
+    n_samples = 50
+    samples = get_test_data(n_samples, median)
+    np.testing.assert_almost_equal(median, bound_optimizer(samples, p), decimal=0)

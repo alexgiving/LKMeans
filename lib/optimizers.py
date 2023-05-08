@@ -7,15 +7,34 @@ from lib.minkowski import minkowski_distance
 from lib.types import p_type
 
 
-def median_optimizer(dimension_slice: np.ndarray):
-    return np.median(dimension_slice)
+def median_optimizer(dimension_slice: np.ndarray) -> float:
+    '''
+    Standard KMeans optimizer.
+    '''
+    return float(np.median(dimension_slice))
 
 
-def mean_optimizer(dimension_slice: np.ndarray):
-    return np.mean(dimension_slice)
+def mean_optimizer(dimension_slice: np.ndarray) -> float:
+    return float(np.mean(dimension_slice))
 
 
-def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type, tol: float = 1e-1_000):
+def bound_optimizer(dimension_slice: np.ndarray, p: p_type) -> float:
+    '''
+    Based on idea that for 0 < p < 1 the minkowski function is a concave function.
+    '''
+    points = np.unique(dimension_slice)
+
+    result = points[0]
+    f_result = minkowski_distance(result, dimension_slice, p)
+    for pretendent in points:
+        f_pretendent = minkowski_distance(pretendent, dimension_slice, p)
+        if f_pretendent < f_result:
+            result = pretendent
+            f_result = f_pretendent
+    return float(result)
+
+
+def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type, tol: float = 1e-1_000) -> float:
     dimension_slice = np.unique(dimension_slice)
 
     median = np.median(dimension_slice)
@@ -47,7 +66,7 @@ def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type, tol: float =
             if minimal_point_value < minimized_fun_median:
                 minimized_fun_median = minimal_point_value
                 median = minima_point
-    return median
+    return float(median)
 
 
 # def sgd_optimizer(
