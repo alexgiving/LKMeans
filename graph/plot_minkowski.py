@@ -6,8 +6,8 @@ import numpy as np
 from tap import Tap
 
 from lib.data import get_experiment_data
-from lib.kmeans import KMeans, assign_to_cluster
-from lib.minkowski import minkowski_distance
+from lib.kmeans import assign_to_cluster
+from lib.minkowski import minkowski_distance, pairwise_minkowski_distance
 from lib.points_generator import generate_mix_distribution
 
 
@@ -29,13 +29,14 @@ class ArgumentParser(Tap):
         self.add_argument('-p', type=self.to_number)
 
 
+# pylint: disable=too-many-locals
 def main():
     args = ArgumentParser().parse_args()
     args.path.mkdir(exist_ok=True)
     p = args.p
 
     dimension = 20
-    n_points = 100
+    n_points = 10
 
     n_clusters, prob, mu_list, cov_matrices = get_experiment_data(experiment_id=1, dimension=dimension)
 
@@ -48,21 +49,18 @@ def main():
         t=0.1
     )
 
-    # kmeans = KMeans(n_clusters=n_clusters, p=p)
-    # centroids, _ = kmeans.fit(samples)
     dim = 0
 
     clusters, _ = assign_to_cluster(samples, centroids, n_clusters, p)
     cluster = np.array(clusters[0])
     dimension_data = cluster[:,dim]
 
-    minkowski_values = []
-
     points = np.linspace(min(dimension_data), max(dimension_data), 100)
-    for point in points:
-        minkowski_values.append(
-            minkowski_distance(point, dimension_data, p)
-        )
+    minkowski_values = pairwise_minkowski_distance(
+        point_a = dimension_data,
+        points=points,
+        p=p
+    )
 
     fig, ax = plt.subplots(figsize=(5, 3))
     ax.scatter(points, minkowski_values)
