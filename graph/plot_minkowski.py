@@ -50,10 +50,11 @@ def main():
 
     # kmeans = KMeans(n_clusters=n_clusters, p=p)
     # centroids, _ = kmeans.fit(samples)
+    dim = 0
 
     clusters, _ = assign_to_cluster(samples, centroids, n_clusters, p)
     cluster = np.array(clusters[0])
-    dimension_data = cluster[:,0]
+    dimension_data = cluster[:,dim]
 
     minkowski_values = []
 
@@ -65,6 +66,7 @@ def main():
 
     fig, ax = plt.subplots(figsize=(5, 3))
     ax.scatter(points, minkowski_values)
+    ax.scatter(centroids[0][dim], minkowski_distance(centroids[0][dim], dimension_data, p))
     fig.savefig(str(filename), dpi=300, bbox_inches='tight')
     plt.close(fig)
 
