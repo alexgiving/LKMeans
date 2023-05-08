@@ -1,10 +1,9 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
 from tap import Tap
 
-from lib.experiment import get_covariance_matrix
+from lib.data import get_experiment_data
 from lib.points_generator import generate_mix_distribution
 
 
@@ -14,22 +13,15 @@ class ArgumentParser(Tap):
 
 def main():
     args = ArgumentParser().parse_args()
-    path = args.path
+    args.path.mkdir(exist_ok=True)
 
     dimension = 20
     n_points = 100
 
-    sigma_list = [1, 1]
-    prob = 0.5
-    mu_list = [np.array([x + [0] * (dimension-2)])
-               for x in [[-4, 0], [4, 0]]]
+    n_clusters, prob, mu_list, cov_matrices = get_experiment_data(experiment_id=1, dimension=dimension)
 
-
-    cov_matrices = [get_covariance_matrix(
-        sigma, dimension) for sigma in sigma_list]
-
-    for t in [0, 0.3, 0.7, 0.9]:
-        filename = path / f'2cluster_hist_t_{t}.png'
+    for t in [0.2, 0.4, 0.9]:
+        filename = args.path / f'{n_clusters}_cluster_hist_t_{t}.png'
         clusters, _, _ = generate_mix_distribution(
             probability=prob,
             mu_list=mu_list,
