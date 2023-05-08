@@ -25,7 +25,7 @@ def main():
                for x in [[-4, 0], [4, 0]]]
 
 
-    cov_matrix_list = [get_covariance_matrix(
+    cov_matrices = [get_covariance_matrix(
         sigma, dimension) for sigma in sigma_list]
 
     for t in [0, 0.3, 0.7, 0.9]:
@@ -33,7 +33,7 @@ def main():
         clusters, _, _ = generate_mix_distribution(
             probability=prob,
             mu_list=mu_list,
-            cov_matrix_list=cov_matrix_list,
+            cov_matrices=cov_matrices,
             n_samples=n_points,
             t=t
         )

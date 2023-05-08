@@ -64,7 +64,6 @@ def repeat_iteration(
 
 # pylint: disable= too-many-arguments, too-many-locals
 def run_experiment(
-        dimension: int,
         n_clusters: int,
         distance_parameters: list[float],
         minkowski_parameters: list[float | int],
