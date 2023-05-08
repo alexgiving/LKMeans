@@ -40,15 +40,16 @@ def main():
     n_clusters, prob, mu_list, cov_matrices = get_experiment_data(experiment_id=1, dimension=dimension)
 
     filename = args.path / f'plot_minkowski_function_with_p_{p}.png'
-    samples, _, _ = generate_mix_distribution(
+    samples, _, centroids = generate_mix_distribution(
         probability=prob,
         mu_list=mu_list,
         cov_matrices=cov_matrices,
         n_samples=n_points,
-        t=0.2
+        t=0.1
     )
-    kmeans = KMeans(n_clusters=n_clusters, p=p)
-    centroids, _ = kmeans.fit(samples)
+
+    # kmeans = KMeans(n_clusters=n_clusters, p=p)
+    # centroids, _ = kmeans.fit(samples)
 
     clusters, _ = assign_to_cluster(samples, centroids, n_clusters, p)
     cluster = np.array(clusters[0])
