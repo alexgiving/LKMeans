@@ -4,7 +4,6 @@ import numpy as np
 from scipy.optimize import minimize
 
 from lib.minkowski import minkowski_distance
-from lib.types import p_type
 
 
 def median_optimizer(dimension_slice: np.ndarray) -> float:
@@ -18,7 +17,7 @@ def mean_optimizer(dimension_slice: np.ndarray) -> float:
     return float(np.mean(dimension_slice))
 
 
-def bound_optimizer(dimension_slice: np.ndarray, p: p_type) -> float:
+def bound_optimizer(dimension_slice: np.ndarray, p: float | int) -> float:
     '''
     Based on idea that for 0 < p < 1 the minkowski function is a concave function.
     '''
@@ -34,7 +33,7 @@ def bound_optimizer(dimension_slice: np.ndarray, p: p_type) -> float:
     return float(result)
 
 
-def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: p_type, tol: float = 1e-1_000) -> float:
+def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: float | int, tol: float = 1e-1_000) -> float:
     dimension_slice = np.unique(dimension_slice)
 
     median = np.median(dimension_slice)

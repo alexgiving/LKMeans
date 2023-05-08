@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -79,13 +79,13 @@ class MetricMeter:
         self.add_inertia(inertia)
         self.add_time(time)
 
-    def get_average(self) -> Tuple[float, float, float, float]:
+    def get_average(self) -> tuple[float, float, float, float]:
         return float(np.mean(self.ari)), float(np.mean(self.ami)), \
             float(np.mean(self.inertia)), float(np.mean(self.time))
 
 
 class GraphicMeter(MetricMeter):
-    def __init__(self, base: List, base_name: str) -> None:
+    def __init__(self, base: list, base_name: str) -> None:
         super().__init__()
         self.base = base
         self.base_name = base_name
