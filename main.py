@@ -62,7 +62,6 @@ def main():
     n_clusters, prob, mu_list, cov_matrices = _get_experiment_data(
         experiment_id=args.experiment_id, dimension=dimension)
 
-
     for points in n_points:
         experiment_name = f'Clusters:{n_clusters}, points:{points}'
         output_path = experiments_path / f'exp_1_{points}'
