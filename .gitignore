@@ -6,6 +6,7 @@ cache
 .env
 *.log
 
+experiments/
 *.png
 *__pycache__
 .DS_Store

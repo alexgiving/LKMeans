@@ -42,7 +42,7 @@ def _get_experiment_data(experiment_id: int, dimension: int) -> tuple[int, float
 
     else:
         KeyError(f'Not supported experiment type: {experiment_id}')
-    
+
     mu_list = [np.array([x + [0] * (dimension - len(x))]) for x in mu_prefix]
     cov_matrix = [get_covariance_matrix(sigma, dimension) for sigma in sigma_list]
     return n_clusters, prob, mu_list, cov_matrix
@@ -62,13 +62,11 @@ def main():
     n_clusters, prob, mu_list, cov_matrices = _get_experiment_data(
         experiment_id=args.experiment_id, dimension=dimension)
 
-
     for points in n_points:
         experiment_name = f'Clusters:{n_clusters}, points:{points}'
         output_path = experiments_path / f'exp_1_{points}'
 
         run_experiment(
-            dimension=dimension,
             n_clusters=n_clusters,
             distance_parameters=T_parameter,
             minkowski_parameters=minkowski_parameter,
