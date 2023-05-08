@@ -16,8 +16,7 @@ def pairwise_minkowski_distance(point_a: np.ndarray, points: Union[np.ndarray, L
     Pairwise Minkowski distance function.
     '''
 
-    result = np.array([])
-    for point in points:
-        dist = minkowski_distance(point_a, point, p)
-        result = np.append(result, dist)
+    result = np.array(
+        [minkowski_distance(point_a, point, p) for point in points]
+    )
     return result

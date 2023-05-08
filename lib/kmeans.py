@@ -5,7 +5,7 @@ from multiprocessing import Pool, cpu_count
 import numpy as np
 
 from lib.minkowski import pairwise_minkowski_distance
-from lib.optimizers import (mean_optimizer, median_optimizer,
+from lib.optimizers import (bound_optimizer, mean_optimizer,
                             segment_SLSQP_optimizer)
 from lib.types import p_type
 
@@ -51,7 +51,7 @@ class KMeans:
 
         new_centroid = np.array([])
 
-        if p not in (1, 2):
+        if p > 2:
             optimize_slice = partial(segment_SLSQP_optimizer, p=p)
             dimension_slices = [cluster[:, coordinate_id] for coordinate_id in range(data_dimension)]
             with Pool(cpu_count()) as pool:
@@ -60,15 +60,15 @@ class KMeans:
             for coordinate_id in range(data_dimension):
                 dimension_slice = cluster[:, coordinate_id]
 
+                value = 0
                 if p == 2:
                     value = mean_optimizer(dimension_slice)
-                elif p == 1:
-                    value = median_optimizer(dimension_slice)
-                # elif 0 < p < 1:
-                #     value = segment_SLSQP_optimizer(dimension_slice, p)
-                # else:
-                #     value = segment_SLSQP_optimizer(dimension_slice, p)
+                # elif p == 1:
+                #     value = median_optimizer(dimension_slice)
+                elif 0 < p <= 1:
+                    value = bound_optimizer(dimension_slice, p)
                 new_centroid = np.append(new_centroid, value)
+        new_centroid = np.array(new_centroid)
         return new_centroid
 
     @staticmethod
