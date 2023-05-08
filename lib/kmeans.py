@@ -7,17 +7,21 @@ import numpy as np
 from lib.minkowski import pairwise_minkowski_distance
 from lib.optimizers import (bound_optimizer, mean_optimizer,
                             segment_SLSQP_optimizer)
-from lib.types import p_type
 
 
-def assign_to_cluster(X: np.ndarray, centroids: np.ndarray, n_clusters: int, p: p_type):
+def assign_to_cluster(
+        X: np.ndarray,
+        centroids: np.ndarray,
+        n_clusters: int,
+        p: float | int
+    ) -> tuple[list[list[float]], list[int]]:
     clusters = [[] for _ in range(n_clusters)]
     labels = []
 
     for point in X:
         distances_to_each_cebtroid = pairwise_minkowski_distance(
             point, centroids, p)
-        closest_centroid = np.argmin(distances_to_each_cebtroid)
+        closest_centroid = int(np.argmin(distances_to_each_cebtroid))
         clusters[closest_centroid].append(point)
         labels.append(closest_centroid)
     return clusters, labels
@@ -27,7 +31,7 @@ def assign_to_cluster(X: np.ndarray, centroids: np.ndarray, n_clusters: int, p: 
 class KMeans:
     def __init__(self,
                  n_clusters: int,
-                 p: p_type = 2,
+                 p: float | int = 2,
                  n_init: int = 5,
                  max_iter: int = 100,
                  max_iter_with_no_progress: int = 15) -> None:
@@ -39,14 +43,14 @@ class KMeans:
         self.centroids = np.array([])
 
     @staticmethod
-    def _init_centroids(data, n_clusters) -> np.ndarray:
+    def _init_centroids(data: np.ndarray, n_clusters: int) -> np.ndarray:
         indices = np.random.choice(
             data.shape[0], n_clusters, replace=False)
         centroids = data[indices]
         return centroids
 
     @staticmethod
-    def _optimize_centroid(cluster: np.ndarray, p: p_type) -> np.ndarray:
+    def _optimize_centroid(cluster: np.ndarray, p: float | int) -> np.ndarray:
         data_dimension = cluster.shape[1]
 
         new_centroid = np.array([])

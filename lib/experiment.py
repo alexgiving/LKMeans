@@ -1,6 +1,5 @@
 import time
 from pathlib import Path
-from typing import List
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -11,7 +10,6 @@ from lib.kmeans import KMeans
 from lib.metric_meter import (GraphicMeter, MetricMeter, MetricTable,
                               insert_hline)
 from lib.points_generator import generate_mix_distribution
-from lib.types import p_type
 
 
 def get_covariance_matrix(sigma: float, dimension: int) -> np.ndarray:
@@ -24,10 +22,10 @@ def repeat_iteration(
         n_clusters: int,
         n_points: int,
         prob: float,
-        cov_matrix_list: List,
+        cov_matrix_list: list,
         t: float,
-        mu_list: List[np.ndarray],
-        p: p_type,
+        mu_list: list[np.ndarray],
+        p: float | int,
         makes_plot: bool,
         output_path: Path
 
@@ -68,13 +66,13 @@ def repeat_iteration(
 def run_experiment(
         dimension: int,
         n_clusters: int,
-        distance_parameters: List[float],
-        minkowski_parameters: List[p_type],
+        distance_parameters: list[float],
+        minkowski_parameters: list[float | int],
         repeats: int,
         n_points: int,
-        sigma_list: List[p_type],
+        sigma_list: list[float | int],
         prob: float,
-        mu_list: List[np.ndarray],
+        mu_list: list[np.ndarray],
         experiment_name: str,
         output_path: Path,
         makes_plot: bool = False) -> None:

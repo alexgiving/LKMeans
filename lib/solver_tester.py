@@ -1,12 +1,10 @@
-from typing import Tuple
-
 import numpy as np
 
 from lib.optimizers import (mean_optimizer, median_optimizer,
                             segment_SLSQP_optimizer)
 
 
-def get_test_data(size: int) -> Tuple[np.ndarray, float]:
+def get_test_data(size: int) -> tuple[np.ndarray, float]:
     centre = +89.9573
 
     data = np.random.random(size)
