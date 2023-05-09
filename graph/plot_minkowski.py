@@ -37,6 +37,7 @@ def main():
 
     dimension = 20
     n_points = 10
+    n_observation = 10000
 
     n_clusters, prob, mu_list, cov_matrices = get_experiment_data(experiment_id=1, dimension=dimension)
 
@@ -55,7 +56,7 @@ def main():
     cluster = np.array(clusters[0])
     dimension_data = cluster[:,dim]
 
-    points = np.linspace(min(dimension_data), max(dimension_data), 100)
+    points = np.linspace(min(dimension_data), max(dimension_data), n_observation)
     minkowski_values = pairwise_minkowski_distance(
         point_a = dimension_data,
         points=points,
