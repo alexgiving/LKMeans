@@ -1,4 +1,6 @@
 import warnings
+from functools import partial
+from multiprocessing import Pool, cpu_count
 
 import numpy as np
 from scipy.optimize import minimize
@@ -31,6 +33,14 @@ def bound_optimizer(dimension_slice: np.ndarray, p: float | int) -> float:
             result = pretendent
             f_result = f_pretendent
     return float(result)
+
+
+def parallel_segment_SLSQP_optimizer(cluster: np.ndarray, dim: int, p: float | int):
+    optimize_slice = partial(segment_SLSQP_optimizer, p=p)
+    dimension_slices = [cluster[:, coordinate_id] for coordinate_id in range(dim)]
+    with Pool(cpu_count()) as pool:
+        new_centroid = pool.map(optimize_slice, dimension_slices)
+    return new_centroid
 
 
 def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: float | int, tol: float = 1e-1_000) -> float:

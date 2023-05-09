@@ -6,6 +6,7 @@ import numpy as np
 
 from lib.minkowski import pairwise_minkowski_distance
 from lib.optimizers import (bound_optimizer, mean_optimizer,
+                            parallel_segment_SLSQP_optimizer,
                             segment_SLSQP_optimizer)
 
 
@@ -56,10 +57,7 @@ class KMeans:
         new_centroid = np.array([])
 
         if p > 2:
-            optimize_slice = partial(segment_SLSQP_optimizer, p=p)
-            dimension_slices = [cluster[:, coordinate_id] for coordinate_id in range(data_dimension)]
-            with Pool(cpu_count()) as pool:
-                new_centroid = pool.map(optimize_slice, dimension_slices)
+            new_centroid = parallel_segment_SLSQP_optimizer(cluster, data_dimension, p)
         else:
             for coordinate_id in range(data_dimension):
                 dimension_slice = cluster[:, coordinate_id]
@@ -67,8 +65,6 @@ class KMeans:
                 value = 0
                 if p == 2:
                     value = mean_optimizer(dimension_slice)
-                # elif p == 1:
-                #     value = median_optimizer(dimension_slice)
                 elif 0 < p <= 1:
                     value = bound_optimizer(dimension_slice, p)
                 new_centroid = np.append(new_centroid, value)
