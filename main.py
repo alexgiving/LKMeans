@@ -23,13 +23,12 @@ def main():
     args = ArgumentParser().parse_args()
     experiments_path = args.path
 
-    minkowski_parameter = [0.6, 2]
+    minkowski_parameter = [0.2, 0.6, 1, 1.5, 2, 3, 5]
     T_parameter = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     repeats = 10
-    n_points = [100, 500]
+    n_points = [10, 100]
 
     dimension = 20
-    T_parameter = [0.4, 1]
     n_clusters, prob, mu_list, cov_matrices = get_experiment_data(
         experiment_id=args.experiment_id, dimension=dimension)
 
