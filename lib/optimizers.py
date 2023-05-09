@@ -35,15 +35,15 @@ def bound_optimizer(dimension_slice: np.ndarray, p: float | int) -> float:
     return float(result)
 
 
-def parallel_segment_SLSQP_optimizer(cluster: np.ndarray, dim: int, p: float | int):
-    optimize_slice = partial(segment_SLSQP_optimizer, p=p)
+def parallel_segment_slsqp_optimizer(cluster: np.ndarray, dim: int, p: float | int):
+    optimize_slice = partial(segment_slsqp_optimizer, p=p)
     dimension_slices = [cluster[:, coordinate_id] for coordinate_id in range(dim)]
     with Pool(cpu_count()) as pool:
         new_centroid = pool.map(optimize_slice, dimension_slices)
     return new_centroid
 
 
-def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: float | int, tol: float = 1e-1_000) -> float:
+def segment_slsqp_optimizer(dimension_slice: np.ndarray, p: float | int, tol: float = 1e-1_000) -> float:
     dimension_slice = np.unique(dimension_slice)
 
     median = np.median(dimension_slice)
@@ -78,56 +78,18 @@ def segment_SLSQP_optimizer(dimension_slice: np.ndarray, p: float | int, tol: fl
     return float(median)
 
 
-# def sgd_optimizer(
-#         cluster: np.ndarray,
-#         p: p_type,
-#         learning_rate: float = 0.01,
-#         grad_descent: float = 0.1,
-#         n_iters: int = 50) -> np.ndarray:
-#     '''
-#     SGD optimizer
-#     Amorim, Renato. (2012). Feature Weighting for Clustering:
-#     Using K-Means and the Minkowski Metric.
-#     '''
+def slsqp_optimizer(dimension_slice: np.ndarray, p: float | int, tol: float = 1e-1_000):
+    x0 = np.mean(dimension_slice)
+    bounds = [(min(dimension_slice), max(dimension_slice))]
 
-#     def minkowski_loss(cluster: np.ndarray, centroid: np.ndarray, p: p_type) -> np.ndarray:
-#         '''
-#         SGD Minkowski Loss function.
-#         Return the coordinate sum of the Minkowski differences
-#         Formula: [∑_j (xji - ci)^p]
-#         '''
-#         loss = []
-#         for point in cluster:
-#             absolute_difference = np.abs(point - centroid)
-#             power_in_sum = np.power(absolute_difference, p)
-#             loss.append(power_in_sum)
-#         loss = np.array(loss)
-#         dim_loss = np.sum(loss, axis=0)
-#         return dim_loss
-
-#     learning_rate = 0.01
-#     grad_descent = 0.1
-#     n_iters = 50
-#     centroid = np.mean(cluster, axis=0)
-
-#     for sgd_iteration in range(n_iters):
-#         if sgd_iteration == n_iters / 2:
-#             learning_rate *= grad_descent
-#         elif sgd_iteration == n_iters / 4:
-#             learning_rate *= grad_descent
-#         loss = minkowski_loss(cluster, centroid, p)
-#         grad = np.gradient(loss, axis=0)
-#         centroid -= learning_rate * grad
-#     return centroid
-
-
-# def extremum_optimizer(cluster: np.ndarray, p: p_type) -> np.ndarray:
-#     '''
-#     Find extremum of minkowski function by root of 1 derivative.
-#     '''
-#     def minkowski_1_derivative(parameter_to_solve: np.ndarray, cluster: np.ndarray, p: float):
-#         return np.sum([np.abs(point-parameter_to_solve)**(p-1) for point in cluster], axis=0)
-
-#     sol = root(minkowski_1_derivative, np.mean(
-#         cluster, axis=0), args=(cluster, p), method='hybr')
-#     return sol.x
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        res = minimize(
+            fun=lambda centre: minkowski_distance(
+                centre, dimension_slice, p),
+            x0=x0,
+            method='SLSQP',
+            bounds=bounds,
+            tol=tol
+        ).x[0]
+    return float(res)

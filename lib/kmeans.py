@@ -1,13 +1,9 @@
 from copy import deepcopy
-from functools import partial
-from multiprocessing import Pool, cpu_count
 
 import numpy as np
 
 from lib.minkowski import pairwise_minkowski_distance
-from lib.optimizers import (bound_optimizer, mean_optimizer,
-                            parallel_segment_SLSQP_optimizer,
-                            segment_SLSQP_optimizer)
+from lib.optimizers import bound_optimizer, mean_optimizer, slsqp_optimizer
 
 
 def assign_to_cluster(
@@ -53,21 +49,20 @@ class KMeans:
     @staticmethod
     def _optimize_centroid(cluster: np.ndarray, p: float | int) -> np.ndarray:
         data_dimension = cluster.shape[1]
-
         new_centroid = np.array([])
 
-        if p > 2:
-            new_centroid = parallel_segment_SLSQP_optimizer(cluster, data_dimension, p)
-        else:
-            for coordinate_id in range(data_dimension):
-                dimension_slice = cluster[:, coordinate_id]
-
-                value = 0
-                if p == 2:
-                    value = mean_optimizer(dimension_slice)
-                elif 0 < p <= 1:
-                    value = bound_optimizer(dimension_slice, p)
-                new_centroid = np.append(new_centroid, value)
+        for coordinate_id in range(data_dimension):
+            dimension_slice = cluster[:, coordinate_id]
+            value = 0
+            if p == 2:
+                value = mean_optimizer(dimension_slice)
+            elif 0 < p <= 1:
+                value = bound_optimizer(dimension_slice, p)
+            elif p > 1:
+                value = slsqp_optimizer(dimension_slice, p)
+            else:
+                raise ValueError('Parameter p must be greater than 0!')
+            new_centroid = np.append(new_centroid, value)
         new_centroid = np.array(new_centroid)
         return new_centroid
 
@@ -94,8 +89,9 @@ class KMeans:
             # update centroids using the specified optimizer
             for cluster_id, cluster in enumerate(clusters):
                 cluster = np.array(cluster, copy=True)
-                self.centroids[cluster_id] = deepcopy(self._optimize_centroid(
-                    cluster, self.p))
+                self.centroids[cluster_id] = deepcopy(
+                    self._optimize_centroid(cluster, self.p)
+                )
 
             if np.array_equal(bias_centroids, self.centroids):
                 iter_with_no_progress += 1
