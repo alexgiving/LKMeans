@@ -1,18 +1,23 @@
+from argparse import ArgumentParser
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from tap import Tap
 
 from lib.data import get_experiment_data
 from lib.points_generator import generate_mix_distribution
 
+parser = ArgumentParser()
 
-class ArgumentParser(Tap):
-    path: Path = Path('images/')
+parser.add_argument(
+    '--path', 
+    type=Path,
+    default=Path('images'),
+    help='Path to save results'
+)
 
 
 def main():
-    args = ArgumentParser().parse_args()
+    args = parser.parse_args()
     args.path.mkdir(exist_ok=True)
 
     dimension = 20

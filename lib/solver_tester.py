@@ -1,7 +1,7 @@
 import numpy as np
 
 from lib.optimizers import (mean_optimizer, median_optimizer,
-                            segment_SLSQP_optimizer)
+                            segment_slsqp_optimizer)
 
 
 def get_test_data(size: int) -> tuple[np.ndarray, float]:
@@ -24,7 +24,7 @@ def main() -> None:
 
     for p in [0.2, 0.5]:
         print(
-            f'Optimizer SLSQP (p={p}): {segment_SLSQP_optimizer(samples, p)}')
+            f'Optimizer SLSQP (p={p}): {segment_slsqp_optimizer(samples, p)}')
 
 
 if __name__ == '__main__':
