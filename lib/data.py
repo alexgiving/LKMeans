@@ -25,7 +25,7 @@ def get_experiment_data(experiment_id: int, dimension: int) -> tuple[int, float,
         mu_prefix = [[4, 0, 0], [0, 4, 0], [0, 0, 4]]
 
     else:
-        KeyError(f'Not supported experiment type: {experiment_id}')
+        raise KeyError(f'Not supported experiment type: {experiment_id}')
 
     mu_list = [np.array([x + [0] * (dimension - len(x))]) for x in mu_prefix]
     cov_matrix = [get_covariance_matrix(sigma, dimension) for sigma in sigma_list]

@@ -19,14 +19,14 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--p', 
+    '--p',
     type=float,
     default=2,
     help='Minkowski parameter'
 )
 
 parser.add_argument(
-    '--t', 
+    '--t',
     type=float,
     default=0.,
     help='Minkowski parameter'
