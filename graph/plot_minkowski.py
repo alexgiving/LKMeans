@@ -1,37 +1,41 @@
+from argparse import ArgumentParser
 from pathlib import Path
-from typing import Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-from tap import Tap
 
 from lib.data import get_experiment_data
 from lib.kmeans import assign_to_cluster
 from lib.minkowski import minkowski_distance, pairwise_minkowski_distance
 from lib.points_generator import generate_mix_distribution
 
+parser = ArgumentParser()
 
-class ArgumentParser(Tap):
-    path: Path = Path('images/')
-    '''Path to save image'''
+parser.add_argument(
+    '--path', 
+    type=Path,
+    default=Path('images'),
+    help='Path to save results'
+)
 
-    p: float | int = 2
-    '''Minkowski parameter'''
+parser.add_argument(
+    '--p', 
+    type=float,
+    default=2,
+    help='Minkowski parameter'
+)
 
-    t: float = 0.
-    '''Parameter of data distribution'''
-
-    @staticmethod
-    def to_number(string: str) -> Union[float, int]:
-        return float(string) if '.' in string else int(string)
-
-    def configure(self):
-        self.add_argument('-p', type=self.to_number)
+parser.add_argument(
+    '--t', 
+    type=float,
+    default=0.,
+    help='Minkowski parameter'
+)
 
 
 # pylint: disable=too-many-locals
 def main():
-    args = ArgumentParser().parse_args()
+    args = parser.parse_args()
     args.path.mkdir(exist_ok=True)
     p = args.p
 
