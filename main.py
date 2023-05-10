@@ -7,14 +7,14 @@ from lib.experiment import run_experiment
 parser = ArgumentParser()
 
 parser.add_argument(
-    '--path', 
+    '--path',
     type=Path,
     default=Path('experiments'),
     help='Path to save results'
 )
 
 parser.add_argument(
-    '--exp', 
+    '--exp',
     type=int,
     default=1,
     help='Experiment id (1: 2 clusters, 2: 3 clusters)'

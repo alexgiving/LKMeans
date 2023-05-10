@@ -9,7 +9,7 @@ from lib.points_generator import generate_mix_distribution
 parser = ArgumentParser()
 
 parser.add_argument(
-    '--path', 
+    '--path',
     type=Path,
     default=Path('images'),
     help='Path to save results'
