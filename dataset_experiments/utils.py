@@ -5,6 +5,17 @@ from sklearn.cluster import KMeans
 from lib.kmeans import KMeans as LKMeans
 
 
+def rgb2gray(rgb):
+    return np.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
+
+
+def preprocess_cifar(data: np.ndarray) -> np.ndarray:
+    data = rgb2gray(data)
+    data = data.astype('float32') 
+    data = data.reshape(len(data),-1)
+    return data
+
+
 def preprocess_mnist(data: np.ndarray) -> np.ndarray:
     data = data.astype('float32') 
     data = data/255.0
@@ -20,10 +31,10 @@ def get_metrics(true_labels, predicted_labels, inertia: float):
 
 def make_experiment(data, labels):
     (n_samples, n_features), n_digits = data.shape, np.unique(labels).size
-    print(f"# digits: {n_digits}; # samples: {n_samples}; # features {n_features}")
+    print(f"# classes: {n_digits}; # samples: {n_samples}; # features {n_features}")
 
 
-    kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init=1, random_state=0)
+    kmeans = KMeans(init='random', n_clusters=n_digits, n_init=1, random_state=0)
     result_labels = kmeans.fit_predict(data)
     print('k-Means (sklearn)', get_metrics(labels, result_labels, kmeans.inertia_))
 
