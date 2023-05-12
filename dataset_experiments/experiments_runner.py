@@ -50,7 +50,7 @@ def main() -> None:
 
     # CIFAR100
     print('='*50, '\nCIFAR100 dataset results')
-    (data, label), (_, _) = keras.datasets.cifar100.load_data()
+    (data, labels), (_, _) = keras.datasets.cifar100.load_data()
     data = preprocess_cifar(data)
     labels = labels.squeeze()
     make_experiment(data, labels)

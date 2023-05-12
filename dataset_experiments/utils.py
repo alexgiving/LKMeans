@@ -11,13 +11,13 @@ def rgb2gray(rgb):
 
 def preprocess_cifar(data: np.ndarray) -> np.ndarray:
     data = rgb2gray(data)
-    data = data.astype('float32') 
+    data = data.astype('float32')
     data = data.reshape(len(data),-1)
     return data
 
 
 def preprocess_mnist(data: np.ndarray) -> np.ndarray:
-    data = data.astype('float32') 
+    data = data.astype('float32')
     data = data/255.0
     data = data.reshape(len(data),-1)
     return data
