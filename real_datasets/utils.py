@@ -2,7 +2,7 @@ import numpy as np
 from sklearn import metrics
 from sklearn.cluster import KMeans
 
-from lib.kmeans import KMeans as LKMeans
+from lib.lkmeans import LKMeans
 
 
 def rgb2gray(rgb):
@@ -41,5 +41,5 @@ def make_experiment(data, labels):
 
     for p in [2, 5, 1, 0.5]:
         lkmeans = LKMeans(n_clusters=n_digits, p=p)
-        centers, result_labels = lkmeans.fit(data)
-        print(f'LKMeans (p={p})', get_metrics(labels, result_labels, lkmeans.inertia(data, centers)))
+        result_labels = lkmeans.fit_predict(data)
+        print(f'LKMeans (p={p})', get_metrics(labels, result_labels, lkmeans.inertia_))

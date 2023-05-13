@@ -3,7 +3,8 @@ from copy import deepcopy
 import numpy as np
 
 from lib.minkowski import pairwise_minkowski_distance
-from lib.optimizers import bound_optimizer, mean_optimizer, slsqp_optimizer
+from lib.optimizers import (bound_optimizer, mean_optimizer, median_optimizer,
+                            slsqp_optimizer)
 
 
 def assign_to_cluster(
@@ -25,7 +26,7 @@ def assign_to_cluster(
 
 
 # pylint: disable= too-few-public-methods, too-many-arguments
-class KMeans:
+class LKMeans:
     def __init__(self,
                  n_clusters: int,
                  p: float | int = 2,
@@ -38,6 +39,9 @@ class KMeans:
         self.n_init = n_init
         self.max_iter_with_no_progress = max_iter_with_no_progress
         self.centroids = np.array([])
+
+        self.inertia_ = 0
+        self.cluster_centers_ = np.array([])
 
     @staticmethod
     def _init_centroids(data: np.ndarray, n_clusters: int) -> np.ndarray:
@@ -56,7 +60,9 @@ class KMeans:
             value = 0
             if p == 2:
                 value = mean_optimizer(dimension_slice)
-            elif 0 < p <= 1:
+            if p == 1:
+                value = median_optimizer(dimension_slice)
+            elif 0 < p < 1:
                 value = bound_optimizer(dimension_slice, p)
             elif p > 1:
                 value = slsqp_optimizer(dimension_slice, p)
@@ -67,14 +73,14 @@ class KMeans:
         return new_centroid
 
     @staticmethod
-    def inertia(X: np.ndarray, centroids: np.ndarray) -> float:
+    def _inertia(X: np.ndarray, centroids: np.ndarray) -> float:
         n_clusters = centroids.shape[0]
         distances = np.empty((X.shape[0], n_clusters))
         for i in range(n_clusters):
             distances[:, i] = np.sum((X - centroids[i, :])**2, axis=1)
         return np.sum(np.min(distances, axis=1))
 
-    def fit(self, X: np.ndarray):
+    def fit(self, X: np.ndarray) -> None:
         self.centroids = self._init_centroids(X, self.n_clusters)
 
         iter_with_no_progress = 0
@@ -97,7 +103,17 @@ class KMeans:
                 iter_with_no_progress += 1
             else:
                 iter_with_no_progress = 0
+        
+        self.inertia_ = self._inertia(X, self.centroids)
+        self.cluster_centers_ = deepcopy(self.centroids)
+        return None
 
+    def predict(self, X: np.ndarray) -> list[int]:
         _, labels = assign_to_cluster(
             X, self.centroids, self.n_clusters, self.p)
-        return self.centroids, labels
+        return labels
+    
+    def fit_predict(self, X: np.ndarray) -> list[int]:
+            self.fit(X)
+            labels = self.predict(X)
+            return labels

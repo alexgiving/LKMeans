@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from sklearn.metrics import adjusted_mutual_info_score, adjusted_rand_score
 
 from lib.decomposition import get_tsne_clusters
-from lib.kmeans import KMeans
+from lib.lkmeans import LKMeans
 from lib.metric_meter import (GraphicMeter, MetricMeter, MetricTable,
                               insert_hline)
 from lib.points_generator import generate_mix_distribution
@@ -42,14 +42,14 @@ def repeat_iteration(
         )
 
         experiment_time = time.perf_counter()
-        kmeans = KMeans(n_clusters=n_clusters, p=p)
-        centroids, generated_labels = kmeans.fit(clusters)
+        lkmeans = LKMeans(n_clusters=n_clusters, p=p)
+        generated_labels = lkmeans.fit_predict(clusters)
         experiment_time = time.perf_counter() - experiment_time
 
         repeat_metric_meter.add_combination(
             ari=adjusted_rand_score(labels, generated_labels),
             ami=float(adjusted_mutual_info_score(labels, generated_labels)),
-            inertia=kmeans.inertia(clusters, centroids),
+            inertia=lkmeans.inertia_,
             time=experiment_time
         )
         if makes_plot:

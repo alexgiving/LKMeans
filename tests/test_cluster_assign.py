@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from lib.kmeans import assign_to_cluster
+from lib.lkmeans import assign_to_cluster
 
 
 def _get_test_params():
