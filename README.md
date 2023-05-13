@@ -21,16 +21,19 @@ Using LKMeans is straightforward. Here's a simple example that demonstrates how 
 ```python
 import numpy as np
 
-from lib.kmeans import KMeans
+from lib.lkmeans import LKMeans
 
 # Generate some random data
 X = np.random.rand(100, 2)
 
 # Create an instance of LKMeans with the desired number of clusters and Minkowski parameter
-kmeans = KMeans(n_clusters=3, p=0.8)
+lkmeans = LKMeans(n_clusters=3, p=0.8)
 
 # Fit the model to the data
-centers, labels = kmeans.fit(X)
+labels = lkmeans.fit_predict(X)
+centers = lkmeans.cluster_centers_
+inertia = lkmeans.inertia_
+
 ```
 In this example, we first import the LKMeans class from the LKMeans library. We create an instance of LKMeans with the desired number of clusters (n_clusters) and the desired Minkowski distance parameter (p), and fit the model to the data using the fit method.
 
