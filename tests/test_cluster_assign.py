@@ -29,7 +29,7 @@ def _get_test_p() -> list[float | int]:
     return p
 
 
-@pytest.mark.kmeans
+@pytest.mark.lkmeans
 @pytest.mark.parametrize("test_input, centroids, expected_output", _get_test_params())
 @pytest.mark.parametrize("p", _get_test_p())
 def test_assign_to_cluster(test_input: np.ndarray,

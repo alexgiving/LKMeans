@@ -28,7 +28,11 @@ jobs:
       run: |
         export PYTHONPATH=${PYTHONPATH}:$(pwd)
         pytest tests -v -m optimizers
-    - name: Test KMeans
+    - name: Test LKMeans
       run: |
         export PYTHONPATH=${PYTHONPATH}:$(pwd)
-        pytest tests -v -m kmeans
+        pytest tests -v -m lkmeans
+    - name: Test API
+      run: |
+        export PYTHONPATH=${PYTHONPATH}:$(pwd)
+        pytest tests -v -m api -s
