@@ -38,7 +38,6 @@ class LKMeans:
         self.p = p
         self.n_init = n_init
         self.max_iter_with_no_progress = max_iter_with_no_progress
-        self.centroids = np.array([])
 
         self.inertia_ = 0
         self.cluster_centers_ = np.array([])
@@ -81,39 +80,38 @@ class LKMeans:
         return np.sum(np.min(distances, axis=1))
 
     def fit(self, X: np.ndarray) -> None:
-        self.centroids = self._init_centroids(X, self.n_clusters)
+        centroids = self._init_centroids(X, self.n_clusters)
 
         iter_with_no_progress = 0
         for _ in range(self.max_iter):
             if iter_with_no_progress >= self.max_iter_with_no_progress:
                 break
 
-            bias_centroids = deepcopy(self.centroids)
+            bias_centroids = deepcopy(centroids)
             clusters, _ = assign_to_cluster(
-                X, self.centroids, self.n_clusters, self.p)
+                X, centroids, self.n_clusters, self.p)
 
             # update centroids using the specified optimizer
             for cluster_id, cluster in enumerate(clusters):
                 cluster = np.array(cluster, copy=True)
-                self.centroids[cluster_id] = deepcopy(
+                centroids[cluster_id] = deepcopy(
                     self._optimize_centroid(cluster, self.p)
                 )
 
-            if np.array_equal(bias_centroids, self.centroids):
+            if np.array_equal(bias_centroids, centroids):
                 iter_with_no_progress += 1
             else:
                 iter_with_no_progress = 0
-        
-        self.inertia_ = self._inertia(X, self.centroids)
-        self.cluster_centers_ = deepcopy(self.centroids)
-        return None
+
+        self.inertia_ = self._inertia(X, centroids)
+        self.cluster_centers_ = deepcopy(centroids)
 
     def predict(self, X: np.ndarray) -> list[int]:
         _, labels = assign_to_cluster(
-            X, self.centroids, self.n_clusters, self.p)
+            X, self.cluster_centers_, self.n_clusters, self.p)
         return labels
-    
+
     def fit_predict(self, X: np.ndarray) -> list[int]:
-            self.fit(X)
-            labels = self.predict(X)
-            return labels
+        self.fit(X)
+        labels = self.predict(X)
+        return labels
