@@ -3,15 +3,14 @@
 import keras.datasets
 import sklearn.datasets
 
-from dataset_experiments.utils import (make_experiment, preprocess_cifar,
-                                       preprocess_mnist)
+from real_datasets.utils import make_experiment, preprocess_mnist
 
 
 def main() -> None:
-    # Digits
-    print('='*50, '\nDigits dataset results')
-    data, labels = sklearn.datasets.load_digits(return_X_y=True)
-    make_experiment(data, labels)
+    # # Digits
+    # print('='*50, '\nDigits dataset results')
+    # data, labels = sklearn.datasets.load_digits(return_X_y=True)
+    # make_experiment(data, labels)
 
 
     # Wine
@@ -40,20 +39,20 @@ def main() -> None:
     make_experiment(data, labels)
 
 
-    # CIFAR10
-    print('='*50, '\nCIFAR10 dataset results')
-    (data, labels), (_, _) = keras.datasets.cifar10.load_data()
-    data = preprocess_cifar(data)
-    labels = labels.squeeze()
-    make_experiment(data, labels)
+    # # CIFAR10
+    # print('='*50, '\nCIFAR10 dataset results')
+    # (data, labels), (_, _) = keras.datasets.cifar10.load_data()
+    # data = preprocess_cifar(data)
+    # labels = labels.squeeze()
+    # make_experiment(data, labels)
 
 
-    # CIFAR100
-    print('='*50, '\nCIFAR100 dataset results')
-    (data, labels), (_, _) = keras.datasets.cifar100.load_data()
-    data = preprocess_cifar(data)
-    labels = labels.squeeze()
-    make_experiment(data, labels)
+    # # CIFAR100
+    # print('='*50, '\nCIFAR100 dataset results')
+    # (data, labels), (_, _) = keras.datasets.cifar100.load_data()
+    # data = preprocess_cifar(data)
+    # labels = labels.squeeze()
+    # make_experiment(data, labels)
 
 
 

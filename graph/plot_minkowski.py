@@ -6,7 +6,7 @@ import numpy as np
 
 from lib.data import get_experiment_data
 from lib.kmeans import assign_to_cluster
-from lib.minkowski import minkowski_distance, pairwise_minkowski_distance
+from lib.minkowski import pairwise_minkowski_distance
 from lib.points_generator import generate_mix_distribution
 
 parser = ArgumentParser()
@@ -29,7 +29,7 @@ parser.add_argument(
     '--t',
     type=float,
     default=0.,
-    help='Minkowski parameter'
+    help='T parameter of distribution'
 )
 
 
@@ -37,7 +37,7 @@ parser.add_argument(
 def main():
     args = parser.parse_args()
     args.path.mkdir(exist_ok=True)
-    p = args.p
+    p = int(args.p) if (args.p).is_integer() else args.p
 
     dimension = 20
     n_points = 10
@@ -69,7 +69,7 @@ def main():
 
     fig, ax = plt.subplots(figsize=(5, 3))
     ax.scatter(points, minkowski_values)
-    ax.scatter(centroids[0][dim], minkowski_distance(centroids[0][dim], dimension_data, p))
+    # ax.scatter(centroids[0][dim], minkowski_distance(centroids[0][dim], dimension_data, p))
     fig.savefig(str(filename), dpi=300, bbox_inches='tight')
     plt.close(fig)
 

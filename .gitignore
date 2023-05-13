@@ -1,13 +1,16 @@
 venv
 notebooks/.ipynb_checkpoints
 .pytest_cache
-images
 cache
+
 .env
 *.log
+*.png
+!report/*.log
+!report/images/*.png
 
 experiments/
-*.png
+
 *__pycache__
 .DS_Store
 .vscode
