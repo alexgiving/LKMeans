@@ -30,13 +30,11 @@ class LKMeans:
     def __init__(self,
                  n_clusters: int,
                  p: float | int = 2,
-                 n_init: int = 5,
                  max_iter: int = 100,
                  max_iter_with_no_progress: int = 15) -> None:
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.p = p
-        self.n_init = n_init
         self.max_iter_with_no_progress = max_iter_with_no_progress
 
         self.inertia_ = 0
