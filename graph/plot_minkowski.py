@@ -6,7 +6,7 @@ import numpy as np
 
 from lib.data import get_experiment_data
 from lib.kmeans import assign_to_cluster
-from lib.minkowski import minkowski_distance, pairwise_minkowski_distance
+from lib.minkowski import pairwise_minkowski_distance
 from lib.points_generator import generate_mix_distribution
 
 parser = ArgumentParser()
