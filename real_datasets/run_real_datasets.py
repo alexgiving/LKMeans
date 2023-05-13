@@ -3,8 +3,7 @@
 import keras.datasets
 import sklearn.datasets
 
-from real_datasets.utils import (make_experiment, preprocess_cifar,
-                                 preprocess_mnist)
+from real_datasets.utils import make_experiment, preprocess_mnist
 
 
 def main() -> None:
