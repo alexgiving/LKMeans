@@ -71,6 +71,7 @@ def main():
     ax.scatter(points, minkowski_values)
     # from lib.minkowski import minkowski_distance
     # ax.scatter(centroids[0][dim], minkowski_distance(centroids[0][dim], dimension_data, p))
+    ax.axis('off')
     fig.savefig(str(filename), dpi=300, bbox_inches='tight')
     plt.close(fig)
 

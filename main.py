@@ -16,8 +16,8 @@ parser.add_argument(
 parser.add_argument(
     '--exp',
     type=int,
-    default=1,
-    help='Experiment id (1: 2 clusters, 2: 3 clusters)'
+    default=2,
+    help='Experiment id (2: 2 clusters, 3: 3 clusters)'
 )
 
 
@@ -27,8 +27,8 @@ def main():
 
     minkowski_parameter = [0.2, 0.6, 1, 1.5, 2, 3, 5]
     T_parameter = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    repeats = 10
-    n_points = [500, 1000]
+    repeats = 100
+    n_points = [100, 500, 1000]
 
     dimension = 20
     n_clusters, prob, mu_list, cov_matrices = get_experiment_data(
@@ -36,7 +36,7 @@ def main():
 
     for points in n_points:
         experiment_name = f'Clusters:{n_clusters}, points:{points}'
-        output_path = experiments_path / f'exp_1_{points}'
+        output_path = experiments_path / f'exp_{args.exp}_points_{points}'
 
         run_experiment(
             n_clusters=n_clusters,
