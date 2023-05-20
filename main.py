@@ -16,8 +16,8 @@ parser.add_argument(
 parser.add_argument(
     '--exp',
     type=int,
-    default=1,
-    help='Experiment id (1: 2 clusters, 2: 3 clusters)'
+    default=2,
+    help='Experiment id (2: 2 clusters, 3: 3 clusters)'
 )
 
 
