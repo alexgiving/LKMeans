@@ -44,6 +44,16 @@ Contributions to LKMeans are welcome! If you find any issues or have suggestions
 ## License
 LKMeans is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more information.
 
+## Cite
+```bibtex
+@misc{LKMeans2023,
+  author = {Aleksei Trutnev},
+  title  = {Clustering high-dimensional data with Minkowski distance},
+  year   = {2023},
+  url    = {https://github.com/alexgiving/LKMeans}
+}
+```
+
 ## Contact
 For any questions or inquiries, please contact alexgiving@mail.ru.
 
