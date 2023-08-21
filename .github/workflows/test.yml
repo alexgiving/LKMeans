@@ -30,14 +30,14 @@ jobs:
     - name: Test optimizers
       run: |
         source config/bootstrap.sh
-        pytest tests -v -m optimizers
+        pytest lkmeans/tests -v -m optimizers
 
     - name: Test LKMeans
       run: |
         source config/bootstrap.sh
-        pytest tests -v -m lkmeans
+        pytest lkmeans/tests -v -m lkmeans
 
     - name: Test API
       run: |
         source config/bootstrap.sh
-        pytest tests -v -m api -s
+        pytest lkmeans/tests -v -m api -s
