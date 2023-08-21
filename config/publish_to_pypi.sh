@@ -1,1 +1,1 @@
-twine upload dist/*   --config-file config/.pypirc
+twine upload dist/* --config-file config/.pypirc
