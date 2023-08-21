@@ -7,6 +7,7 @@ dist
 .env
 *.log
 *.png
+*pypirc
 
 experiments/
 

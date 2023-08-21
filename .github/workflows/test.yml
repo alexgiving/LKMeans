@@ -46,6 +46,7 @@ jobs:
       run: |
         source config/bootstrap.sh
         bash config/release_build.sh
+        twine check dist/*
     
     - name: Publish artifacts
       uses: actions/upload-artifact@v2
