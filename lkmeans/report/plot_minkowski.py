@@ -4,10 +4,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from lib.data import get_experiment_data
-from lib.lkmeans import assign_to_cluster
-from lib.minkowski import pairwise_minkowski_distance
-from lib.points_generator import generate_mix_distribution
+from lkmeans.clustering import assign_to_cluster
+from lkmeans.data_generation import (generate_mix_distribution,
+                                     get_experiment_data)
+from lkmeans.distance import pairwise_minkowski_distance
 
 parser = ArgumentParser()
 
@@ -69,8 +69,6 @@ def main():
 
     fig, ax = plt.subplots(figsize=(5, 3))
     ax.scatter(points, minkowski_values)
-    # from lib.minkowski import minkowski_distance
-    # ax.scatter(centroids[0][dim], minkowski_distance(centroids[0][dim], dimension_data, p))
     ax.axis('off')
     fig.savefig(str(filename), dpi=300, bbox_inches='tight')
     plt.close(fig)

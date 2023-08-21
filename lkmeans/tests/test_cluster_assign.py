@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 
-from lib.lkmeans import assign_to_cluster
+from lkmeans.clustering import assign_to_cluster
 
 
 def _get_test_params():
@@ -32,9 +33,9 @@ def _get_test_p() -> list[float | int]:
 @pytest.mark.lkmeans
 @pytest.mark.parametrize("test_input, centroids, expected_output", _get_test_params())
 @pytest.mark.parametrize("p", _get_test_p())
-def test_assign_to_cluster(test_input: np.ndarray,
-                           centroids: np.ndarray,
-                           expected_output: np.ndarray,
+def test_assign_to_cluster(test_input: NDArray,
+                           centroids: NDArray,
+                           expected_output: NDArray,
                            p: float | int) -> None:
     _, label = assign_to_cluster(test_input, centroids, len(centroids), p)
     np.testing.assert_array_equal(expected_output, label)

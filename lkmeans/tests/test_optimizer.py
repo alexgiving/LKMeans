@@ -1,11 +1,12 @@
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 
-from lib.optimizers import (bound_optimizer, mean_optimizer, median_optimizer,
-                            segment_slsqp_optimizer)
+from lkmeans.optimizers import (bound_optimizer, mean_optimizer,
+                                median_optimizer, segment_slsqp_optimizer)
 
 
-def get_test_data(size: int, center: float) -> np.ndarray:
+def get_test_data(size: int, center: float) -> NDArray:
     data = np.random.random(size)
     reverted_data = data * -1
     samples = np.concatenate([data, reverted_data])

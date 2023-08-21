@@ -1,15 +1,16 @@
 from copy import deepcopy
 
 import numpy as np
+from numpy.typing import NDArray
 
-from lib.minkowski import pairwise_minkowski_distance
-from lib.optimizers import (bound_optimizer, mean_optimizer, median_optimizer,
-                            slsqp_optimizer)
+from lkmeans.distance import pairwise_minkowski_distance
+from lkmeans.optimizers import (bound_optimizer, mean_optimizer,
+                                median_optimizer, slsqp_optimizer)
 
 
 def assign_to_cluster(
-        X: np.ndarray,
-        centroids: np.ndarray,
+        X: NDArray,
+        centroids: NDArray,
         n_clusters: int,
         p: float | int
     ) -> tuple[list[list[float]], list[int]]:
@@ -17,9 +18,9 @@ def assign_to_cluster(
     labels = []
 
     for point in X:
-        distances_to_each_cebtroid = pairwise_minkowski_distance(
+        distances_to_each_centroid = pairwise_minkowski_distance(
             point, centroids, p)
-        closest_centroid = int(np.argmin(distances_to_each_cebtroid))
+        closest_centroid = int(np.argmin(distances_to_each_centroid))
         clusters[closest_centroid].append(point)
         labels.append(closest_centroid)
     return clusters, labels
@@ -37,18 +38,18 @@ class LKMeans:
         self.p = p
         self.max_iter_with_no_progress = max_iter_with_no_progress
 
-        self.inertia_ = 0
+        self.inertia_ = 0.
         self.cluster_centers_ = np.array([])
 
     @staticmethod
-    def _init_centroids(data: np.ndarray, n_clusters: int) -> np.ndarray:
+    def _init_centroids(data: NDArray, n_clusters: int) -> NDArray:
         indices = np.random.choice(
             data.shape[0], n_clusters, replace=False)
         centroids = data[indices]
         return centroids
 
     @staticmethod
-    def _optimize_centroid(cluster: np.ndarray, p: float | int) -> np.ndarray:
+    def _optimize_centroid(cluster: NDArray, p: float | int) -> NDArray:
         data_dimension = cluster.shape[1]
         new_centroid = np.array([])
 
@@ -70,14 +71,14 @@ class LKMeans:
         return new_centroid
 
     @staticmethod
-    def _inertia(X: np.ndarray, centroids: np.ndarray) -> float:
+    def _inertia(X: NDArray, centroids: NDArray) -> float:
         n_clusters = centroids.shape[0]
         distances = np.empty((X.shape[0], n_clusters))
         for i in range(n_clusters):
             distances[:, i] = np.sum((X - centroids[i, :])**2, axis=1)
         return np.sum(np.min(distances, axis=1))
 
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: NDArray) -> None:
         centroids = self._init_centroids(X, self.n_clusters)
 
         iter_with_no_progress = 0
@@ -104,12 +105,12 @@ class LKMeans:
         self.inertia_ = self._inertia(X, centroids)
         self.cluster_centers_ = deepcopy(centroids)
 
-    def predict(self, X: np.ndarray) -> list[int]:
+    def predict(self, X: NDArray) -> list[int]:
         _, labels = assign_to_cluster(
             X, self.cluster_centers_, self.n_clusters, self.p)
         return labels
 
-    def fit_predict(self, X: np.ndarray) -> list[int]:
+    def fit_predict(self, X: NDArray) -> list[int]:
         self.fit(X)
         labels = self.predict(X)
         return labels

@@ -3,8 +3,8 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-from lib.data import get_experiment_data
-from lib.points_generator import generate_mix_distribution
+from lkmeans.data_generation.points_generator import generate_mix_distribution
+from lkmeans.examples.experiment_data import get_experiment_data
 
 parser = ArgumentParser()
 
