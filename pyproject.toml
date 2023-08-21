@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "lkmeans"
-version = "0.0.1"
+version = "0.0.2"
 description = "Clustering high-dimensional data with Minkowski distance"
 authors = ["Trutnev Aleksei <alexgiving@mail.ru>"]
 license = "LICENSE"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.9"
+python = ">=3.10"
 
 numpy = "1.24.3"
 pandas = "1.5.2"
