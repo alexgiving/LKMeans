@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from lib.lkmeans import LKMeans
+from lkmeans import LKMeans
 
 p_values = [0.5, 1, 2, 5]
 

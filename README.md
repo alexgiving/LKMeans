@@ -13,7 +13,7 @@ LKMeans is a Python library that extends the functionality of the KMeans algorit
 
 You can install LKMeans:
 ```bash
-export PYTHONPATH=${PYTHONPATH}:$(pwd)
+export PYTHONPATH=${PYTHONPATH}:$(pwd)/lkmeans
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ Using LKMeans is straightforward. Here's a simple example that demonstrates how 
 ```python
 import numpy as np
 
-from lib.lkmeans import LKMeans
+from lkmeans import LKMeans
 
 # Generate some random data
 X = np.random.rand(100, 2)
@@ -33,6 +33,8 @@ lkmeans = LKMeans(n_clusters=3, p=0.8)
 labels = lkmeans.fit_predict(X)
 centers = lkmeans.cluster_centers_
 inertia = lkmeans.inertia_
+
+print(labels, centers, inertia)
 
 ```
 In this example, we first import the LKMeans class from the LKMeans library. We create an instance of LKMeans with the desired number of clusters (n_clusters) and the desired Minkowski distance parameter (p), and fit the model to the data using the fit method.

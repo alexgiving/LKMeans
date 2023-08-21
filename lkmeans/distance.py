@@ -1,17 +1,18 @@
 import numpy as np
+from numpy.typing import NDArray
 
 
-def minkowski_distance(point_a: np.ndarray, point_b: np.ndarray, p: float) -> np.ndarray:
+def minkowski_distance(point_a: NDArray, point_b: NDArray, p: float) -> NDArray:
     '''
     Minkowski distance function.
     '''
     return np.power(np.sum(np.power(np.abs(point_a - point_b), p)), 1/p)
 
 
-def pairwise_minkowski_distance(point_a: np.ndarray,
-                                points: np.ndarray | list,
+def pairwise_minkowski_distance(point_a: NDArray,
+                                points: NDArray | list,
                                 p: float
-                                ) -> np.ndarray:
+                                ) -> NDArray:
     '''
     Pairwise Minkowski distance function.
     '''

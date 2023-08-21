@@ -6,8 +6,6 @@ cache
 .env
 *.log
 *.png
-!report/*.log
-!report/images/*.png
 
 experiments/
 

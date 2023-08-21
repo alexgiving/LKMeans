@@ -2,12 +2,13 @@ from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy.typing import NDArray
 from sklearn.manifold import TSNE
 
 
-def get_tsne_clusters(clusters: np.ndarray,
-                      labels: np.ndarray,
-                      centroids: Optional[np.ndarray] = None):
+def get_tsne_clusters(clusters: NDArray,
+                      labels: NDArray,
+                      centroids: Optional[NDArray] = None):
 
     fig = plt.figure()
     axe = fig.add_subplot(1, 1, 1)
@@ -17,8 +18,8 @@ def get_tsne_clusters(clusters: np.ndarray,
     tsne = TSNE(n_components=2, random_state=42)
 
     if not isinstance(centroids, type(None)):
-        concuted = np.concatenate((clusters, np.array(centroids)), axis=0)
-        clusters_tsne = tsne.fit_transform(concuted)
+        concatenated = np.concatenate((clusters, np.array(centroids)), axis=0)
+        clusters_tsne = tsne.fit_transform(concatenated)
 
         axe.scatter(clusters_tsne[:-len(centroids), 0],
                     clusters_tsne[:-len(centroids), 1], c=colors)

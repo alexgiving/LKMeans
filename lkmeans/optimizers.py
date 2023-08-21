@@ -3,39 +3,47 @@ from functools import partial
 from multiprocessing import Pool, cpu_count
 
 import numpy as np
+from numpy.typing import NDArray
 from scipy.optimize import minimize
 
-from lib.minkowski import minkowski_distance
+from lkmeans.distance import minkowski_distance
 
 
-def median_optimizer(dimension_slice: np.ndarray) -> float:
+def median_optimizer(dimension_slice: NDArray) -> float:
     '''
-    Standard KMeans optimizer.
+    Standard K-Medoids optimizer.
+    Returns the optimal `median` point of input array
     '''
     return float(np.median(dimension_slice))
 
 
-def mean_optimizer(dimension_slice: np.ndarray) -> float:
+def mean_optimizer(dimension_slice: NDArray) -> float:
+    '''
+    Standard K-Means optimizer.
+    Returns the optimal `mean` point of input array
+    '''
     return float(np.mean(dimension_slice))
 
 
-def bound_optimizer(dimension_slice: np.ndarray, p: float | int) -> float:
+def bound_optimizer(dimension_slice: NDArray, p: float | int) -> float:
     '''
+    Special LKMeans optimizer.
     Based on idea that for 0 < p < 1 the minkowski function is a concave function.
+    Returns the optimal point of input array with Minkowski metric parameter `p`
     '''
     points = np.unique(dimension_slice)
 
-    result = points[0]
-    f_result = minkowski_distance(result, dimension_slice, p)
-    for pretendent in points:
-        f_pretendent = minkowski_distance(pretendent, dimension_slice, p)
-        if f_pretendent < f_result:
-            result = pretendent
-            f_result = f_pretendent
-    return float(result)
+    optimal_point = points[0]
+    smallest_distant = minkowski_distance(optimal_point, dimension_slice, p)
+    for applicant in points:
+        distance_of_applicant = minkowski_distance(applicant, dimension_slice, p)
+        if distance_of_applicant < smallest_distant:
+            optimal_point = applicant
+            smallest_distant = distance_of_applicant
+    return float(optimal_point)
 
 
-def parallel_segment_slsqp_optimizer(cluster: np.ndarray, dim: int, p: float | int):
+def parallel_segment_slsqp_optimizer(cluster: NDArray, dim: int, p: float | int):
     optimize_slice = partial(segment_slsqp_optimizer, p=p)
     dimension_slices = [cluster[:, coordinate_id] for coordinate_id in range(dim)]
     with Pool(cpu_count()) as pool:
@@ -43,7 +51,7 @@ def parallel_segment_slsqp_optimizer(cluster: np.ndarray, dim: int, p: float | i
     return new_centroid
 
 
-def segment_slsqp_optimizer(dimension_slice: np.ndarray, p: float | int, tol: float = 1e-1_000) -> float:
+def segment_slsqp_optimizer(dimension_slice: NDArray, p: float | int, tol: float = 1e-1_000) -> float:
     dimension_slice = np.unique(dimension_slice)
 
     median = np.median(dimension_slice)
@@ -78,7 +86,7 @@ def segment_slsqp_optimizer(dimension_slice: np.ndarray, p: float | int, tol: fl
     return float(median)
 
 
-def slsqp_optimizer(dimension_slice: np.ndarray, p: float | int, tol: float = 1e-1_000):
+def slsqp_optimizer(dimension_slice: NDArray, p: float | int, tol: float = 1e-1_000):
     x0 = np.mean(dimension_slice)
     bounds = [(min(dimension_slice), max(dimension_slice))]
 

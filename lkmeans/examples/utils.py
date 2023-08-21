@@ -2,7 +2,7 @@ import numpy as np
 from sklearn import metrics
 from sklearn.cluster import KMeans
 
-from lib.lkmeans import LKMeans
+from lkmeans import LKMeans
 
 
 def rgb2gray(rgb):

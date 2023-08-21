@@ -3,7 +3,7 @@
 import keras.datasets
 import sklearn.datasets
 
-from real_datasets.utils import make_experiment, preprocess_mnist
+from lkmeans.examples.utils import make_experiment, preprocess_mnist
 
 
 def main() -> None:

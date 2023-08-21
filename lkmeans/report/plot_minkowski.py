@@ -4,15 +4,15 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from lib.data import get_experiment_data
-from lib.lkmeans import assign_to_cluster
-from lib.minkowski import pairwise_minkowski_distance
-from lib.points_generator import generate_mix_distribution
+from lkmeans.clustering import assign_to_cluster
+from lkmeans.data_generation.points_generator import generate_mix_distribution
+from lkmeans.distance import pairwise_minkowski_distance
+from lkmeans.examples.experiment_data import get_experiment_data
 
 parser = ArgumentParser()
 
 parser.add_argument(
-    '--path', 
+    '--path',
     type=Path,
     default=Path('images'),
     help='Path to save results'
@@ -43,7 +43,7 @@ def main():
     n_points = 10
     n_observation = 10000
 
-    n_clusters, prob, mu_list, cov_matrices = get_experiment_data(experiment_id=1, dimension=dimension)
+    n_clusters, prob, mu_list, cov_matrices = get_experiment_data(num_clusters=2, dimension=dimension)
 
     filename = args.path / f'plot_minkowski_function_with_p_{p}.png'
     samples, _, centroids = generate_mix_distribution(
@@ -69,8 +69,6 @@ def main():
 
     fig, ax = plt.subplots(figsize=(5, 3))
     ax.scatter(points, minkowski_values)
-    # from lib.minkowski import minkowski_distance
-    # ax.scatter(centroids[0][dim], minkowski_distance(centroids[0][dim], dimension_data, p))
     ax.axis('off')
     fig.savefig(str(filename), dpi=300, bbox_inches='tight')
     plt.close(fig)
