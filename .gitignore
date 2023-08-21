@@ -2,6 +2,7 @@ venv
 notebooks/.ipynb_checkpoints
 .pytest_cache
 cache
+dist
 
 .env
 *.log
