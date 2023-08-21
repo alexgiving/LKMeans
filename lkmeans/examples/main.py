@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+from lkmeans.examples.experiment import run_experiment
 from lkmeans.examples.experiment_data import get_experiment_data
-from lib.experiment import run_experiment
 
 parser = ArgumentParser()
 
@@ -14,10 +14,9 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--exp',
+    '--num-clusters',
     type=int,
-    default=2,
-    help='Experiment id (2: 2 clusters, 3: 3 clusters)'
+    default=2
 )
 
 
@@ -32,11 +31,11 @@ def main():
 
     dimension = 20
     n_clusters, prob, mu_list, cov_matrices = get_experiment_data(
-        experiment_id=args.exp, dimension=dimension)
+        num_clusters=args.num_clusters, dimension=dimension)
 
     for points in n_points:
         experiment_name = f'Clusters:{n_clusters}, points:{points}'
-        output_path = experiments_path / f'exp_{args.exp}_points_{points}'
+        output_path = experiments_path / f'exp_{args.num_clusters}_points_{points}'
 
         run_experiment(
             n_clusters=n_clusters,

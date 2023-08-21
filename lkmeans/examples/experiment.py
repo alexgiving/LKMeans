@@ -3,16 +3,17 @@ from pathlib import Path
 
 import numpy as np
 from matplotlib import pyplot as plt
+from numpy.typing import NDArray
 from sklearn.metrics import adjusted_mutual_info_score, adjusted_rand_score
 
-from lib.decomposition import get_tsne_clusters
-from lib.lkmeans import LKMeans
-from lib.metric_meter import (GraphicMeter, MetricMeter, MetricTable,
-                              insert_hline)
-from lib.points_generator import generate_mix_distribution
+from lkmeans import LKMeans
+from lkmeans.data_generation.points_generator import generate_mix_distribution
+from lkmeans.report.decomposition import get_tsne_clusters
+from lkmeans.report.metric_meter import (GraphicMeter, MetricMeter,
+                                         MetricTable, insert_hline)
 
 
-def get_covariance_matrix(sigma: float, dimension: int) -> np.ndarray:
+def get_covariance_matrix(sigma: float, dimension: int) -> NDArray:
     return np.eye(dimension) * sigma
 
 
@@ -22,9 +23,9 @@ def repeat_iteration(
         n_clusters: int,
         n_points: int,
         prob: float,
-        cov_matrices: list[np.ndarray],
+        cov_matrices: list[NDArray],
         t: float,
-        mu_list: list[np.ndarray],
+        mu_list: list[NDArray],
         p: float | int,
         makes_plot: bool,
         output_path: Path
@@ -69,9 +70,9 @@ def run_experiment(
         minkowski_parameters: list[float | int],
         repeats: int,
         n_points: int,
-        cov_matrices: list[np.ndarray],
+        cov_matrices: list[NDArray],
         prob: float,
-        mu_list: list[np.ndarray],
+        mu_list: list[NDArray],
         experiment_name: str,
         output_path: Path,
         makes_plot: bool = False) -> None:

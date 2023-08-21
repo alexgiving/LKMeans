@@ -25,7 +25,7 @@ jobs:
     - name: Analyzing the code with pylint
       run: |
         source config/bootstrap.sh
-        pylint $(git ls-files '*.py') --rcfile config/.pylintrc
+        pylint lkmeans/ --rcfile config/.pylintrc
 
     - name: Test optimizers
       run: |

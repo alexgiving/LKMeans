@@ -23,7 +23,7 @@ def main():
     dimension = 20
     n_points = 100
 
-    n_clusters, prob, mu_list, cov_matrices = get_experiment_data(experiment_id=1, dimension=dimension)
+    n_clusters, prob, mu_list, cov_matrices = get_experiment_data(num_clusters=2, dimension=dimension)
 
     for t in [0.2, 0.4, 0.9]:
         filename = args.path / f'{n_clusters}_cluster_hist_t_{t}.png'

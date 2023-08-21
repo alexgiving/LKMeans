@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from lkmeans.clustering import assign_to_cluster
-from lkmeans.data_generation import (generate_mix_distribution,
-                                     get_experiment_data)
+from lkmeans.data_generation.points_generator import generate_mix_distribution
 from lkmeans.distance import pairwise_minkowski_distance
+from lkmeans.examples.experiment_data import get_experiment_data
 
 parser = ArgumentParser()
 
 parser.add_argument(
-    '--path', 
+    '--path',
     type=Path,
     default=Path('images'),
     help='Path to save results'
@@ -43,7 +43,7 @@ def main():
     n_points = 10
     n_observation = 10000
 
-    n_clusters, prob, mu_list, cov_matrices = get_experiment_data(experiment_id=1, dimension=dimension)
+    n_clusters, prob, mu_list, cov_matrices = get_experiment_data(num_clusters=2, dimension=dimension)
 
     filename = args.path / f'plot_minkowski_function_with_p_{p}.png'
     samples, _, centroids = generate_mix_distribution(
