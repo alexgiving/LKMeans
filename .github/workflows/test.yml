@@ -41,3 +41,17 @@ jobs:
       run: |
         source config/bootstrap.sh
         pytest lkmeans/tests -v -m api -s
+
+    - name: Test Poetry Build
+      run: |
+        source config/bootstrap.sh
+        bash config/release_build.sh
+        twine check dist/*
+    
+    - name: Publish artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: package
+        path: dist/
+        if-no-files-found: error
+        retention-days: 1
