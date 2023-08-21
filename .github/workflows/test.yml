@@ -14,25 +14,30 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pylint
         pip install -r requirements.txt
-        pip install -r requirements_qa.txt
-    - name: Analysing the code with pylint
+        pip install -r config/requirements_qa.txt
+
+    - name: Analyzing the code with pylint
       run: |
-        export PYTHONPATH=${PYTHONPATH}:$(pwd)
-        pylint $(git ls-files '*.py') --rcfile .github/.pylintrc
+        source config/bootstrap.sh
+        pylint $(git ls-files '*.py') --rcfile config/.pylintrc
+
     - name: Test optimizers
       run: |
-        export PYTHONPATH=${PYTHONPATH}:$(pwd)
+        source config/bootstrap.sh
         pytest tests -v -m optimizers
+
     - name: Test LKMeans
       run: |
-        export PYTHONPATH=${PYTHONPATH}:$(pwd)
+        source config/bootstrap.sh
         pytest tests -v -m lkmeans
+
     - name: Test API
       run: |
-        export PYTHONPATH=${PYTHONPATH}:$(pwd)
+        source config/bootstrap.sh
         pytest tests -v -m api -s
