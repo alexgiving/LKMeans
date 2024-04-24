@@ -10,7 +10,7 @@ from lkmeans.optimizers import bound_optimizer, mean_optimizer, median_optimizer
 
 def set_type(data: Any) -> NDArray:
     if not isinstance(data, np.ndarray):
-        return np.ndarray(data)
+        return np.array(data)
     return data
 
 
