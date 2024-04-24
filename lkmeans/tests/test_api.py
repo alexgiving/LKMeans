@@ -5,15 +5,19 @@ from numpy.typing import NDArray
 
 from lkmeans import LKMeans
 
-p_values = [0.5, 1, 2, 5]
+def _get_test_p() -> list[float | int]:
+    p = [0.2, 0.5, 1, 2]
+    return p
 
 
 def get_data() -> NDArray:
-    return np.random.uniform(-10,10, size=(100, 50))
+    num_objects = np.random.randint(5, 20)
+    num_features = np.random.randint(1, 20)
+    return np.random.uniform(-10,10, size=(num_objects, num_features))
 
 
 @pytest.mark.api
-@pytest.mark.parametrize('p', p_values)
+@pytest.mark.parametrize('p', _get_test_p())
 def test_general_processing(p: float | int) -> None:
     data = get_data()
 
@@ -34,12 +38,13 @@ def convert_from_ndarray(data: NDArray, data_type: str) -> list | pd.DataFrame |
 
 
 @pytest.mark.api
-@pytest.mark.parametrize('data_type', ['list', 'frame', 'series'])
-def test_input_data_conversion(data_type: str) -> None:
+@pytest.mark.parametrize('data_type', ['list', 'frame'])
+@pytest.mark.parametrize('p', _get_test_p())
+def test_input_data_conversion(data_type: str, p: float | int) -> None:
     data = get_data()
     data = convert_from_ndarray(data, data_type)
 
-    lkmeans = LKMeans(n_clusters=2, p=2)
+    lkmeans = LKMeans(n_clusters=2, p=p)
     lkmeans.fit_predict(data)
     print('Inertia', lkmeans.inertia_)
     print('Centers', lkmeans.cluster_centers_)

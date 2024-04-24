@@ -77,6 +77,11 @@ class LKMeans:
         return new_centroid
 
     @staticmethod
+    def _validate_data(data: NDArray, n_clusters: int) -> None:
+        if data.shape[0] < n_clusters:
+            raise ValueError(f'You data has too small samples %i for clustering with %i centers', data.shape[0], n_clusters)
+
+    @staticmethod
     def _inertia(X: NDArray, centroids: NDArray) -> float:
         n_clusters = centroids.shape[0]
         distances = np.empty((X.shape[0], n_clusters))
@@ -86,6 +91,8 @@ class LKMeans:
 
     def fit(self, X: NDArray) -> None:
         X = set_type(X)
+        self._validate_data(X, self.n_clusters)
+
         centroids = self._init_centroids(X, self.n_clusters)
 
         iter_with_no_progress = 0
