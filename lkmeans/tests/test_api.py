@@ -23,20 +23,21 @@ def test_general_processing(p: float | int) -> None:
     print('Centers', lkmeans.cluster_centers_)
 
 
-def convert_from_ndarray(data: NDArray, type: str) -> list | pd.DataFrame | pd.Series:
-    if type == 'list':
+def convert_from_ndarray(data: NDArray, data_type: str) -> list | pd.DataFrame | pd.Series:
+    if data_type == 'list':
         return data.tolist()
-    if type == 'frame':
+    if data_type == 'frame':
         return pd.DataFrame(data.tolist())
-    if type == 'series':
+    if data_type == 'series':
         return pd.Series(data.tolist())
+    raise ValueError('Unsupported conversion type')
 
 
 @pytest.mark.api
-@pytest.mark.parametrize('type', ['list', 'frame', 'series'])
-def test_input_data_conversion(type: str) -> None:
+@pytest.mark.parametrize('data_type', ['list', 'frame', 'series'])
+def test_input_data_conversion(data_type: str) -> None:
     data = get_data()
-    data = convert_from_ndarray(data, type)
+    data = convert_from_ndarray(data, data_type)
 
     lkmeans = LKMeans(n_clusters=2, p=2)
     lkmeans.fit_predict(data)
