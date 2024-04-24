@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from numpy.typing import NDArray
+from sklearn import datasets
 
 from lkmeans import LKMeans
 
@@ -45,6 +46,28 @@ def test_input_data_conversion(data_type: str, p: float | int) -> None:
     data = convert_from_ndarray(data, data_type)
 
     lkmeans = LKMeans(n_clusters=2, p=p)
+    lkmeans.fit_predict(data)
+    print('Inertia', lkmeans.inertia_)
+    print('Centers', lkmeans.cluster_centers_)
+
+
+pandas_dataset_loader_map = {
+    'wine': datasets.load_wine,
+    'diabetes': datasets.load_diabetes,
+    'iris': datasets.load_iris
+}
+
+@pytest.mark.api
+@pytest.mark.parametrize('dataset_name', ['wine', 'diabetes', 'iris'])
+def test_input_data_frame(dataset_name: str) -> None:
+    data, targets = pandas_dataset_loader_map[dataset_name](as_frame=True, return_X_y=True)
+    num_classes = len(set(targets))
+
+    # Remove data to accelerate test
+    num_test_samples = max(num_classes, 10)
+    data = data[:num_test_samples]
+
+    lkmeans = LKMeans(n_clusters=num_classes, p=2)
     lkmeans.fit_predict(data)
     print('Inertia', lkmeans.inertia_)
     print('Centers', lkmeans.cluster_centers_)
