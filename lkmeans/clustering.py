@@ -79,7 +79,7 @@ class LKMeans:
     @staticmethod
     def _validate_data(data: NDArray, n_clusters: int) -> None:
         if data.shape[0] < n_clusters:
-            raise ValueError(f'You data has too small samples %i for clustering with %i centers', data.shape[0], n_clusters)
+            raise ValueError(f'Clustering of {data.shape[0]} samples with {n_clusters} centers is not possible')
 
     @staticmethod
     def _inertia(X: NDArray, centroids: NDArray) -> float:
