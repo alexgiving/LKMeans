@@ -1,11 +1,17 @@
 from copy import deepcopy
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 
 from lkmeans.distance import pairwise_minkowski_distance
-from lkmeans.optimizers import (bound_optimizer, mean_optimizer,
-                                median_optimizer, slsqp_optimizer)
+from lkmeans.optimizers import bound_optimizer, mean_optimizer, median_optimizer, slsqp_optimizer
+
+
+def set_type(data: Any) -> NDArray:
+    if not isinstance(data, np.ndarray):
+        return np.array(data)
+    return data
 
 
 def assign_to_cluster(
@@ -71,6 +77,11 @@ class LKMeans:
         return new_centroid
 
     @staticmethod
+    def _validate_data(data: NDArray, n_clusters: int) -> None:
+        if data.shape[0] < n_clusters:
+            raise ValueError(f'Clustering of {data.shape[0]} samples with {n_clusters} centers is not possible')
+
+    @staticmethod
     def _inertia(X: NDArray, centroids: NDArray) -> float:
         n_clusters = centroids.shape[0]
         distances = np.empty((X.shape[0], n_clusters))
@@ -79,6 +90,9 @@ class LKMeans:
         return np.sum(np.min(distances, axis=1))
 
     def fit(self, X: NDArray) -> None:
+        X = set_type(X)
+        self._validate_data(X, self.n_clusters)
+
         centroids = self._init_centroids(X, self.n_clusters)
 
         iter_with_no_progress = 0
@@ -106,11 +120,13 @@ class LKMeans:
         self.cluster_centers_ = deepcopy(centroids)
 
     def predict(self, X: NDArray) -> list[int]:
+        X = set_type(X)
         _, labels = assign_to_cluster(
             X, self.cluster_centers_, self.n_clusters, self.p)
         return labels
 
     def fit_predict(self, X: NDArray) -> list[int]:
+        X = set_type(X)
         self.fit(X)
         labels = self.predict(X)
         return labels

@@ -27,6 +27,11 @@ jobs:
         source config/bootstrap.sh
         pylint lkmeans/ --rcfile config/.pylintrc
 
+    - name: Analyzing the code with isort
+      run: |
+        source config/bootstrap.sh
+        isort lkmeans/ -c
+
     - name: Test optimizers
       run: |
         source config/bootstrap.sh
@@ -40,14 +45,14 @@ jobs:
     - name: Test API
       run: |
         source config/bootstrap.sh
-        pytest lkmeans/tests -v -m api -s
+        pytest lkmeans/tests -v -m api
 
     - name: Test Poetry Build
       run: |
         source config/bootstrap.sh
         bash config/release_build.sh
         twine check dist/*
-    
+
     - name: Publish artifacts
       uses: actions/upload-artifact@v2
       with:

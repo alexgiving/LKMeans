@@ -14,7 +14,7 @@ LKMeans is a Python library that extends the functionality of the KMeans algorit
 You can install LKMeans:
 1. From source
   ```bash
-  export PYTHONPATH=${PYTHONPATH}:$(pwd)/lkmeans
+  export PYTHONPATH=${PYTHONPATH}:$(pwd)
   ```
 2. From PyPI
   ```bash
