@@ -27,6 +27,11 @@ jobs:
         source config/bootstrap.sh
         pylint lkmeans/ --rcfile config/.pylintrc
 
+    - name: Analyzing the code with isort
+      run: |
+        source config/bootstrap.sh
+        isort lkmeans/ -c
+
     - name: Test optimizers
       run: |
         source config/bootstrap.sh

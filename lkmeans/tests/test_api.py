@@ -6,6 +6,7 @@ from sklearn import datasets
 
 from lkmeans import LKMeans
 
+
 def _get_test_p() -> list[float | int]:
     p = [0.2, 0.5, 1, 2]
     return p

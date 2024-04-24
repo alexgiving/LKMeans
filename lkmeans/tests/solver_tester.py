@@ -1,8 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.optimizers import (mean_optimizer, median_optimizer,
-                                segment_slsqp_optimizer)
+from lkmeans.optimizers import mean_optimizer, median_optimizer, segment_slsqp_optimizer
 
 
 def get_test_data(size: int) -> tuple[NDArray, float]:
