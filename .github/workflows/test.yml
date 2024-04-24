@@ -40,14 +40,14 @@ jobs:
     - name: Test API
       run: |
         source config/bootstrap.sh
-        pytest lkmeans/tests -v -m api -s
+        pytest lkmeans/tests -v -m api
 
     - name: Test Poetry Build
       run: |
         source config/bootstrap.sh
         bash config/release_build.sh
         twine check dist/*
-    
+
     - name: Publish artifacts
       uses: actions/upload-artifact@v2
       with:
