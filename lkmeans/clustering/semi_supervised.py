@@ -9,18 +9,32 @@ from lkmeans.clustering.unsupervised import assign_to_cluster, init_centroids
 from lkmeans.clustering.utils import calculate_inertia, set_type
 from lkmeans.distance import DistanceCalculator
 
+from copy import deepcopy
+
+import numpy as np
+from numpy.typing import NDArray
+
+
+def select_supervisor_targets(targets: NDArray, selection_ratio: float) -> NDArray:
+    num_not_selected_targets = len(targets) - int(len(targets) * selection_ratio)
+    not_selected_indices = np.random.choice(len(targets), num_not_selected_targets, replace=False)
+    output_targets = deepcopy(targets)
+    output_targets[not_selected_indices] = None
+    return output_targets
+
+
 
 class SupervisedClustering(Clustering):
 
-    @staticmethod
-    @abstractmethod
-    def _assign_to_cluster(
-            X: NDArray,
-            centroids: NDArray,
-            n_clusters: int,
-            distance_calculator: DistanceCalculator,
-            ) -> tuple[list[list[float]], list[int]]:
-        ...
+    # @staticmethod
+    # @abstractmethod
+    # def _assign_to_cluster(
+    #         X: NDArray,
+    #         centroids: NDArray,
+    #         n_clusters: int,
+    #         distance_calculator: DistanceCalculator,
+    #         ) -> tuple[list[list[float]], list[int]]:
+    #     ...
 
     @abstractmethod
     def _init_centroids(data: NDArray, n_clusters: int, targets: NDArray) -> NDArray:
@@ -56,16 +70,21 @@ class SoftSSLKMeans(SupervisedClustering):
         return new_centroid
 
     def _init_centroids(self, data: NDArray, n_clusters: int, targets: NDArray) -> NDArray:
-        if n_clusters != len(set(targets)):
-            raise ValueError('Standard is used')
-            return init_centroids(data, n_clusters)
+        unique_targets = set(targets[~np.isnan(targets)])
 
-        centroids = np.array([])
-        for target_id in range(n_clusters):
+        centroids = []
+        for target_id in unique_targets:
             supervised_data = data[targets == target_id]
             centroid = self._optimize_centroid(supervised_data)
-            centroids = np.append(centroids, centroid)
-        return centroids
+            centroids.append(np.expand_dims(centroid, axis=0))
+        output_centroids = np.concatenate(centroids, axis=0)
+
+        if len(unique_targets) < n_clusters:
+            no_target_data = data[np.isnan(targets)]
+            remain_centroids = n_clusters - len(unique_targets)
+            padding_centroids = init_centroids(no_target_data, remain_centroids)
+            output_centroids = np.concatenate([output_centroids, padding_centroids], axis=0)
+        return output_centroids
 
     def _fit(self, X: NDArray, targets: NDArray) -> None:
         self._validate_data(X, self._n_clusters)
