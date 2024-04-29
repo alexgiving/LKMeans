@@ -3,6 +3,7 @@ import pytest
 from numpy.typing import NDArray
 
 from lkmeans.clustering import assign_to_cluster
+from lkmeans.distance import DistanceCalculator
 
 
 def _get_test_params():
@@ -31,11 +32,12 @@ def _get_test_p() -> list[float | int]:
 
 
 @pytest.mark.lkmeans
-@pytest.mark.parametrize("test_input, centroids, expected_output", _get_test_params())
-@pytest.mark.parametrize("p", _get_test_p())
+@pytest.mark.parametrize('test_input, centroids, expected_output', _get_test_params())
+@pytest.mark.parametrize('p', _get_test_p())
 def test_assign_to_cluster(test_input: NDArray,
                            centroids: NDArray,
                            expected_output: NDArray,
                            p: float | int) -> None:
-    _, label = assign_to_cluster(test_input, centroids, len(centroids), p)
+    distance_calculator = DistanceCalculator(p)
+    _, label = assign_to_cluster(test_input, centroids, len(centroids), distance_calculator)
     np.testing.assert_array_equal(expected_output, label)

@@ -6,7 +6,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.optimize import minimize
 
-from lkmeans.distance import minkowski_distance
+from lkmeans.distance import DistanceCalculator
 
 
 def median_optimizer(dimension_slice: NDArray) -> float:
@@ -32,11 +32,12 @@ def bound_optimizer(dimension_slice: NDArray, p: float | int) -> float:
     Returns the optimal point of input array with Minkowski metric parameter `p`
     '''
     points = np.unique(dimension_slice)
+    distance_calculator = DistanceCalculator(p)
 
     optimal_point = points[0]
-    smallest_distant = minkowski_distance(optimal_point, dimension_slice, p)
+    smallest_distant = distance_calculator.get_distance(optimal_point, dimension_slice)
     for applicant in points:
-        distance_of_applicant = minkowski_distance(applicant, dimension_slice, p)
+        distance_of_applicant = distance_calculator.get_distance(applicant, dimension_slice)
         if distance_of_applicant < smallest_distant:
             optimal_point = applicant
             smallest_distant = distance_of_applicant
@@ -53,10 +54,11 @@ def parallel_segment_slsqp_optimizer(cluster: NDArray, dim: int, p: float | int)
 
 def segment_slsqp_optimizer(dimension_slice: NDArray, p: float | int, tol: float = 1e-1_000) -> float:
     dimension_slice = np.unique(dimension_slice)
+    distance_calculator = DistanceCalculator(p)
 
     median = np.median(dimension_slice)
-    fun_median = minkowski_distance(
-        np.array(median), dimension_slice, p)
+    fun_median = distance_calculator.get_distance(
+        np.array(median), dimension_slice)
 
     minimized_fun_median = fun_median
     for bound_id in range(len(dimension_slice) - 1):
@@ -69,8 +71,8 @@ def segment_slsqp_optimizer(dimension_slice: NDArray, p: float | int, tol: float
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             res = minimize(
-                fun=lambda centre: minkowski_distance(
-                    centre, dimension_slice, p),
+                fun=lambda centre: distance_calculator.get_distance(
+                    centre, dimension_slice),
                 x0=x0,
                 method='SLSQP',
                 bounds=bounds,
@@ -87,14 +89,16 @@ def segment_slsqp_optimizer(dimension_slice: NDArray, p: float | int, tol: float
 
 
 def slsqp_optimizer(dimension_slice: NDArray, p: float | int, tol: float = 1e-1_000):
+    distance_calculator = DistanceCalculator(p)
+
     x0 = np.mean(dimension_slice)
     bounds = [(min(dimension_slice), max(dimension_slice))]
 
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
         res = minimize(
-            fun=lambda centre: minkowski_distance(
-                centre, dimension_slice, p),
+            fun=lambda centre: distance_calculator.get_distance(
+                centre, dimension_slice),
             x0=x0,
             method='SLSQP',
             bounds=bounds,
