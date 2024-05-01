@@ -7,7 +7,6 @@ from numpy.typing import NDArray
 
 from lkmeans.clustering.utils import set_type
 from lkmeans.distance import DistanceCalculator
-
 from lkmeans.optimizers import bound_optimizer, mean_optimizer, median_optimizer, slsqp_optimizer
 
 

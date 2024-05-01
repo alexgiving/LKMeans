@@ -9,11 +9,6 @@ from lkmeans.clustering.unsupervised import assign_to_cluster, init_centroids
 from lkmeans.clustering.utils import calculate_inertia, set_type
 from lkmeans.distance import DistanceCalculator
 
-from copy import deepcopy
-
-import numpy as np
-from numpy.typing import NDArray
-
 
 def select_supervisor_targets(targets: NDArray, selection_ratio: float) -> NDArray:
     num_not_selected_targets = len(targets) - int(len(targets) * selection_ratio)
