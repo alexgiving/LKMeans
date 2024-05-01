@@ -39,3 +39,9 @@ class Clustering(ABC):
         X = set_type(X)
         _, labels = assign_to_cluster(X, self._cluster_centers, self._n_clusters, self._distance_calculator)
         return labels
+
+    def _get_repr_params(self) -> str:
+        return f'n_clusters={self._n_clusters}, p={self._p}'
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__} ({self._get_repr_params()})'
