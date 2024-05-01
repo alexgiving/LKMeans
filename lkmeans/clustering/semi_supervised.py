@@ -23,22 +23,56 @@ def select_supervisor_targets(targets: NDArray, selection_ratio: float) -> NDArr
     return output_targets
 
 
+def assign_to_cluster_with_supervision(
+        X: NDArray,
+        centroids: NDArray,
+        n_clusters: int,
+        distance_calculator: DistanceCalculator,
+        targets: NDArray,
+        ) -> tuple[list[list[float]], list[int]]:
+    clusters = [[] for _ in range(n_clusters)]
+    labels = []
+
+    for point, real_target in zip(X, targets):
+        if not np.isnan(real_target):
+            centroid = int(real_target)
+        else:
+            distances_to_each_centroid = distance_calculator.get_pairwise_distance(point, centroids)
+            centroid = int(np.argmin(distances_to_each_centroid))
+        clusters[centroid].append(point)
+        labels.append(centroid)
+    return clusters, labels
+
 
 class SupervisedClustering(Clustering):
 
-    # @staticmethod
-    # @abstractmethod
-    # def _assign_to_cluster(
-    #         X: NDArray,
-    #         centroids: NDArray,
-    #         n_clusters: int,
-    #         distance_calculator: DistanceCalculator,
-    #         ) -> tuple[list[list[float]], list[int]]:
-    #     ...
+    def _optimize_centroid(self, cluster: NDArray) -> NDArray:
+        data_dimension = cluster.shape[1]
+        new_centroid = np.array([])
 
-    @abstractmethod
-    def _init_centroids(data: NDArray, n_clusters: int, targets: NDArray) -> NDArray:
-        ...
+        for coordinate_id in range(data_dimension):
+            dimension_slice = cluster[:, coordinate_id]
+            value = self._optimizer(dimension_slice)
+            new_centroid = np.append(new_centroid, value)
+        new_centroid = np.array(new_centroid)
+        return new_centroid
+
+    def _init_supervised_centroids(self, data: NDArray, n_clusters: int, targets: NDArray) -> NDArray:
+        unique_targets = set(targets[~np.isnan(targets)])
+
+        centroids = []
+        for target_id in unique_targets:
+            supervised_data = data[targets == target_id]
+            centroid = self._optimize_centroid(supervised_data)
+            centroids.append(np.expand_dims(centroid, axis=0))
+        output_centroids = np.concatenate(centroids, axis=0)
+
+        if len(unique_targets) < n_clusters:
+            no_target_data = data[np.isnan(targets)]
+            remain_centroids = n_clusters - len(unique_targets)
+            padding_centroids = init_centroids(no_target_data, remain_centroids)
+            output_centroids = np.concatenate([output_centroids, padding_centroids], axis=0)
+        return output_centroids
 
     @abstractmethod
     def _fit(self, X: NDArray, targets: NDArray) -> None:
@@ -58,38 +92,10 @@ class SupervisedClustering(Clustering):
 # pylint: disable= too-few-public-methods, too-many-arguments
 class SoftSSLKMeans(SupervisedClustering):
 
-    def _optimize_centroid(self, cluster: NDArray) -> NDArray:
-        data_dimension = cluster.shape[1]
-        new_centroid = np.array([])
-
-        for coordinate_id in range(data_dimension):
-            dimension_slice = cluster[:, coordinate_id]
-            value = self._optimizer(dimension_slice)
-            new_centroid = np.append(new_centroid, value)
-        new_centroid = np.array(new_centroid)
-        return new_centroid
-
-    def _init_centroids(self, data: NDArray, n_clusters: int, targets: NDArray) -> NDArray:
-        unique_targets = set(targets[~np.isnan(targets)])
-
-        centroids = []
-        for target_id in unique_targets:
-            supervised_data = data[targets == target_id]
-            centroid = self._optimize_centroid(supervised_data)
-            centroids.append(np.expand_dims(centroid, axis=0))
-        output_centroids = np.concatenate(centroids, axis=0)
-
-        if len(unique_targets) < n_clusters:
-            no_target_data = data[np.isnan(targets)]
-            remain_centroids = n_clusters - len(unique_targets)
-            padding_centroids = init_centroids(no_target_data, remain_centroids)
-            output_centroids = np.concatenate([output_centroids, padding_centroids], axis=0)
-        return output_centroids
-
     def _fit(self, X: NDArray, targets: NDArray) -> None:
         self._validate_data(X, self._n_clusters)
 
-        centroids = self._init_centroids(X, self._n_clusters, targets)
+        centroids = self._init_supervised_centroids(X, self._n_clusters, targets)
 
         iter_with_no_progress = 0
         for _ in range(self._max_iter):
@@ -98,6 +104,37 @@ class SoftSSLKMeans(SupervisedClustering):
 
             bias_centroids = deepcopy(centroids)
             clusters, _ = assign_to_cluster(X, centroids, self._n_clusters, self._distance_calculator)
+
+            # update centroids using the specified optimizer
+            for cluster_id, cluster in enumerate(clusters):
+                cluster = np.array(cluster, copy=True)
+                centroids[cluster_id] = deepcopy(self._optimize_centroid(cluster))
+
+            if np.array_equal(bias_centroids, centroids):
+                iter_with_no_progress += 1
+            else:
+                iter_with_no_progress = 0
+
+        self._inertia = calculate_inertia(X, centroids)
+        self._cluster_centers = deepcopy(centroids)
+
+
+# pylint: disable= too-few-public-methods, too-many-arguments
+class HardSSLKMeans(SupervisedClustering):
+
+    def _fit(self, X: NDArray, targets: NDArray) -> None:
+        self._validate_data(X, self._n_clusters)
+
+        centroids = self._init_supervised_centroids(X, self._n_clusters, targets)
+
+        iter_with_no_progress = 0
+        for _ in range(self._max_iter):
+            if iter_with_no_progress >= self._max_iter_with_no_progress:
+                break
+
+            bias_centroids = deepcopy(centroids)
+            clusters, _ = assign_to_cluster_with_supervision(X, centroids, self._n_clusters,
+                                                             self._distance_calculator, targets)
 
             # update centroids using the specified optimizer
             for cluster_id, cluster in enumerate(clusters):
