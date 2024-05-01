@@ -38,7 +38,7 @@ class MetricTable:
 
     def get_latex_table(self, caption: str = '') -> str:
         table = self.get_table()
-        return table.to_latex(index=True, escape=True, caption=caption)
+        return table.style.to_latex(caption=caption)
 
 
 def insert_hline(latex_str: str) -> str:
