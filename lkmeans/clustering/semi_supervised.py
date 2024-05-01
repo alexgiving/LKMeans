@@ -11,10 +11,11 @@ from lkmeans.distance import DistanceCalculator
 
 
 def select_supervisor_targets(targets: NDArray, selection_ratio: float) -> NDArray:
+    targets = targets.astype(np.float16)
     num_not_selected_targets = len(targets) - int(len(targets) * selection_ratio)
     not_selected_indices = np.random.choice(len(targets), num_not_selected_targets, replace=False)
     output_targets = deepcopy(targets)
-    output_targets[not_selected_indices] = None
+    output_targets[not_selected_indices] = np.nan
     return output_targets
 
 
