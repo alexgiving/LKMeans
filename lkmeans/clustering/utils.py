@@ -44,8 +44,8 @@ def select_optimizer(p: float) -> Callable:
         return mean_optimizer
     if p == 1:
         return median_optimizer
-    elif 0 < p < 1:
+    if 0 < p < 1:
         return partial(bound_optimizer, p=p)
-    elif p > 1:
+    if p > 1:
         return partial(slsqp_optimizer, p=p)
     raise ValueError('Parameter p must be greater than 0!')

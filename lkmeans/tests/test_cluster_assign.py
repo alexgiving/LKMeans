@@ -61,5 +61,6 @@ def test_assign_to_cluster_with_supervision(test_input: NDArray,
                                             supervision_ratio: float) -> None:
     distance_calculator = DistanceCalculator(p)
     supervision_targets = select_supervisor_targets(expected_output, supervision_ratio)
-    _, label = assign_to_cluster_with_supervision(test_input, centroids, len(np.unique(centroids)), distance_calculator, supervision_targets)
+    _, label = assign_to_cluster_with_supervision(test_input, centroids, len(np.unique(centroids)),
+                                                  distance_calculator, supervision_targets)
     np.testing.assert_array_equal(expected_output, label)

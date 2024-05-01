@@ -85,7 +85,6 @@ class SupervisedClustering(Clustering):
         return labels
 
 
-# pylint: disable= too-few-public-methods, too-many-arguments
 class SoftSSLKMeans(SupervisedClustering):
 
     def _fit(self, X: NDArray, targets: NDArray) -> None:
@@ -115,7 +114,6 @@ class SoftSSLKMeans(SupervisedClustering):
         self._cluster_centers = deepcopy(centroids)
 
 
-# pylint: disable= too-few-public-methods, too-many-arguments
 class HardSSLKMeans(SupervisedClustering):
 
     def _fit(self, X: NDArray, targets: NDArray) -> None:

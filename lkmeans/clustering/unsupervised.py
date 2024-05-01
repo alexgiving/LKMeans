@@ -31,7 +31,6 @@ class UnsupervisedClustering(Clustering):
         return labels
 
 
-# pylint: disable= too-few-public-methods, too-many-arguments
 class LKMeans(UnsupervisedClustering):
 
     def _optimize_centroid(self, cluster: NDArray) -> NDArray:
@@ -58,7 +57,6 @@ class LKMeans(UnsupervisedClustering):
             bias_centroids = deepcopy(centroids)
             clusters, _ = assign_to_cluster(X, centroids, self._n_clusters, self._distance_calculator)
 
-            # update centroids using the specified optimizer
             for cluster_id, cluster in enumerate(clusters):
                 cluster = np.array(cluster, copy=True)
                 centroids[cluster_id] = deepcopy(self._optimize_centroid(cluster))

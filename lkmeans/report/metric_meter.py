@@ -12,7 +12,6 @@ class MetricTable:
     def add_frame(self, frame: pd.DataFrame) -> None:
         self.frames.append(frame)
 
-    # pylint: disable=too-many-arguments
     def add_to_frame(self,
                      ari: float,
                      ami: float,
