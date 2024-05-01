@@ -1,42 +1,11 @@
 from abc import ABC
-from functools import partial
-from typing import Callable, Union
+from typing import Union
 
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.utils import set_type
+from lkmeans.clustering.utils import assign_to_cluster, select_optimizer, set_type
 from lkmeans.distance import DistanceCalculator
-from lkmeans.optimizers import bound_optimizer, mean_optimizer, median_optimizer, slsqp_optimizer
-
-
-def assign_to_cluster(
-        X: NDArray,
-        centroids: NDArray,
-        n_clusters: int,
-        distance_calculator: DistanceCalculator,
-        ) -> tuple[list[list[float]], list[int]]:
-    clusters = [[] for _ in range(n_clusters)]
-    labels = []
-
-    for point in X:
-        distances_to_each_centroid = distance_calculator.get_pairwise_distance(point, centroids)
-        closest_centroid = int(np.argmin(distances_to_each_centroid))
-        clusters[closest_centroid].append(point)
-        labels.append(closest_centroid)
-    return clusters, labels
-
-
-def _select_optimizer(p: float) -> Callable:
-    if p == 2:
-        return mean_optimizer
-    if p == 1:
-        return median_optimizer
-    elif 0 < p < 1:
-        return partial(bound_optimizer, p=p)
-    elif p > 1:
-        return partial(slsqp_optimizer, p=p)
-    raise ValueError('Parameter p must be greater than 0!')
 
 
 class Clustering(ABC):
@@ -48,7 +17,7 @@ class Clustering(ABC):
         self._max_iter_with_no_progress = max_iter_with_no_progress
 
         self._distance_calculator = DistanceCalculator(self._p)
-        self._optimizer = _select_optimizer(self._p)
+        self._optimizer = select_optimizer(self._p)
 
         self._inertia = 0.
         self._cluster_centers = np.array([])

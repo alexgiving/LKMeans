@@ -4,8 +4,8 @@ from copy import deepcopy
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.base import Clustering, assign_to_cluster
-from lkmeans.clustering.utils import calculate_inertia, set_type
+from lkmeans.clustering.base import Clustering
+from lkmeans.clustering.utils import assign_to_cluster, calculate_inertia, set_type
 
 
 def init_centroids(data: NDArray, n_clusters: int) -> NDArray:

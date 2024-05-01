@@ -5,8 +5,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lkmeans.clustering.base import Clustering
-from lkmeans.clustering.unsupervised import assign_to_cluster, init_centroids
-from lkmeans.clustering.utils import calculate_inertia, set_type
+from lkmeans.clustering.unsupervised import init_centroids
+from lkmeans.clustering.utils import assign_to_cluster, calculate_inertia, set_type
 from lkmeans.distance import DistanceCalculator
 
 
