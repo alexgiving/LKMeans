@@ -9,6 +9,7 @@ from lkmeans.distance import DistanceCalculator
 from lkmeans.optimizers.optimizer import Optimizer
 
 
+# pylint: disable=too-few-public-methods
 class SLSQPOptimizer(Optimizer):
 
     def __init__(self, p: Union[float, int], tol: float = 1e-1000) -> None:

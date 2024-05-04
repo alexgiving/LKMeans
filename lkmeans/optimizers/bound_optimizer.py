@@ -7,6 +7,7 @@ from lkmeans.distance import DistanceCalculator
 from lkmeans.optimizers.optimizer import Optimizer
 
 
+# pylint: disable=too-few-public-methods
 class BoundOptimizer(Optimizer):
     '''
     Special LKMeans optimizer.

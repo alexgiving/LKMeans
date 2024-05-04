@@ -4,6 +4,7 @@ from numpy.typing import NDArray
 from lkmeans.optimizers.optimizer import Optimizer
 
 
+# pylint: disable=too-few-public-methods
 class MeanOptimizer(Optimizer):
     '''
     Standard K-Mean optimizer.
