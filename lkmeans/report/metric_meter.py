@@ -12,7 +12,6 @@ class MetricTable:
     def add_frame(self, frame: pd.DataFrame) -> None:
         self.frames.append(frame)
 
-    # pylint: disable=too-many-arguments
     def add_to_frame(self,
                      ari: float,
                      ami: float,
@@ -38,7 +37,7 @@ class MetricTable:
 
     def get_latex_table(self, caption: str = '') -> str:
         table = self.get_table()
-        return table.to_latex(index=True, escape=True, caption=caption)
+        return table.style.to_latex(caption=caption)
 
 
 def insert_hline(latex_str: str) -> str:
