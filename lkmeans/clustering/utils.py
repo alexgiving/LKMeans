@@ -22,6 +22,24 @@ def calculate_inertia(X: NDArray, centroids: NDArray) -> float:
     return np.sum(np.min(distances, axis=1))
 
 
+def select_optimizer(p: float) -> Callable:
+    if p == 2:
+        return mean_optimizer
+    if p == 1:
+        return median_optimizer
+    if 0 < p < 1:
+        return partial(bound_optimizer, p=p)
+    if p > 1:
+        return partial(slsqp_optimizer, p=p)
+    raise ValueError('Parameter p must be greater than 0!')
+
+
+def init_centroids(data: NDArray, n_clusters: int) -> NDArray:
+    indices = np.random.choice(data.shape[0], n_clusters, replace=False)
+    centroids = data[indices]
+    return centroids
+
+
 def assign_to_cluster(
         X: NDArray,
         centroids: NDArray,
@@ -37,15 +55,3 @@ def assign_to_cluster(
         clusters[closest_centroid].append(point)
         labels.append(closest_centroid)
     return clusters, labels
-
-
-def select_optimizer(p: float) -> Callable:
-    if p == 2:
-        return mean_optimizer
-    if p == 1:
-        return median_optimizer
-    if 0 < p < 1:
-        return partial(bound_optimizer, p=p)
-    if p > 1:
-        return partial(slsqp_optimizer, p=p)
-    raise ValueError('Parameter p must be greater than 0!')

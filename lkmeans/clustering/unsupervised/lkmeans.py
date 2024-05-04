@@ -1,34 +1,10 @@
-from abc import abstractmethod
 from copy import deepcopy
 
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.base import Clustering
-from lkmeans.clustering.utils import assign_to_cluster, calculate_inertia, set_type
-
-
-def init_centroids(data: NDArray, n_clusters: int) -> NDArray:
-    indices = np.random.choice(data.shape[0], n_clusters, replace=False)
-    centroids = data[indices]
-    return centroids
-
-
-class UnsupervisedClustering(Clustering):
-
-    @abstractmethod
-    def _fit(self, X: NDArray) -> None:
-        ...
-
-    def fit(self, X: NDArray) -> None:
-        X = set_type(X)
-        self._fit(X)
-
-    def fit_predict(self, X: NDArray) -> list[int]:
-        X = set_type(X)
-        self._fit(X)
-        labels = self.predict(X)
-        return labels
+from lkmeans.clustering.unsupervised.unsupervised_clustering import UnsupervisedClustering
+from lkmeans.clustering.utils import assign_to_cluster, calculate_inertia, init_centroids
 
 
 class LKMeans(UnsupervisedClustering):

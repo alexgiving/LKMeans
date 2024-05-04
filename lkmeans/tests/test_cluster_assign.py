@@ -3,7 +3,7 @@ import pytest
 from numpy.typing import NDArray
 
 from lkmeans.clustering.base import assign_to_cluster
-from lkmeans.clustering.semi_supervised import assign_to_cluster_with_supervision, select_supervisor_targets
+from lkmeans.clustering.supervised.utils import assign_to_cluster_with_supervision, select_supervisor_targets
 from lkmeans.distance import DistanceCalculator
 
 
@@ -47,7 +47,6 @@ def test_assign_to_cluster(test_input: NDArray,
     distance_calculator = DistanceCalculator(p)
     _, label = assign_to_cluster(test_input, centroids, len(np.unique(centroids)), distance_calculator)
     np.testing.assert_array_equal(expected_output, label)
-
 
 
 @pytest.mark.lkmeans
