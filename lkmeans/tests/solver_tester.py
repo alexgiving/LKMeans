@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.optimizers import BoundOptimizer, MeanOptimizer, MedianOptimizer, SLSQPOptimizer
+from lkmeans.optimizers import BoundOptimizer, MeanOptimizer, MedianOptimizer, SegmentSLSQPOptimizer, SLSQPOptimizer
 
 
 def get_test_data(size: int) -> tuple[NDArray, float]:
@@ -24,6 +24,7 @@ def main() -> None:
 
     for p in [0.2, 0.5]:
         print(f'Optimizer SLSQP (p={p}): {SLSQPOptimizer(p)(samples)}')
+        print(f'Optimizer Segment SLSQP (p={p}): {SegmentSLSQPOptimizer(p)(samples)}')
 
     for p in [3, 5]:
         print(f'Optimizer Bound (p={p}): {BoundOptimizer(p)(samples)}')

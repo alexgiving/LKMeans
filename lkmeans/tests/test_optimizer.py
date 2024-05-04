@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from lkmeans.optimizers import BoundOptimizer, MeanOptimizer, MedianOptimizer, SLSQPOptimizer
+from lkmeans.optimizers import BoundOptimizer, MeanOptimizer, MedianOptimizer, SegmentSLSQPOptimizer, SLSQPOptimizer
 
 
 def get_test_data(size: int, center: float) -> NDArray:
@@ -66,6 +66,16 @@ def test_slsqp_calculation(median, p) -> None:
     samples = get_test_data(n_samples, median)
     optimizer = SLSQPOptimizer(p)
     np.testing.assert_almost_equal(median, optimizer(samples), decimal=0)
+
+
+@pytest.mark.optimizers
+@pytest.mark.parametrize("median", testing_params)
+@pytest.mark.parametrize("p", p_values)
+def test_segment_slsqp_calculation(median, p) -> None:
+    n_samples = 50
+    samples = get_test_data(n_samples, median)
+    optimizer = SegmentSLSQPOptimizer(p)
+    np.testing.assert_almost_equal(median, optimizer(samples))
 
 
 @pytest.mark.optimizers
