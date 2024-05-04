@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.optimizers import MeanOptimizer, MedianOptimizer, SLSQPOptimizer, BoundOptimizer
+from lkmeans.optimizers import BoundOptimizer, MeanOptimizer, MedianOptimizer, SLSQPOptimizer
 
 
 def get_test_data(size: int) -> tuple[NDArray, float]:
