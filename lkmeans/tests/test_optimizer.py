@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from lkmeans.optimizers import bound_optimizer, mean_optimizer, median_optimizer, segment_slsqp_optimizer
+from lkmeans.optimizers import BoundOptimizer, MeanOptimizer, MedianOptimizer, SLSQPOptimizer
 
 
 def get_test_data(size: int, center: float) -> NDArray:
@@ -31,13 +31,15 @@ p_values = [0.01, 0.2, 0.5]
 def test_median_calculation(median) -> None:
     n_samples = 50
     samples = get_test_data(n_samples, median)
-    np.testing.assert_almost_equal(median, median_optimizer(samples))
+    optimizer = MedianOptimizer()
+    np.testing.assert_almost_equal(median, optimizer(samples))
 
 
 @pytest.mark.optimizers
 @pytest.mark.parametrize("test_input, expected_output", params)
 def test_median_optimizer_inputs(test_input, expected_output):
-    np.testing.assert_almost_equal(mean_optimizer(test_input), expected_output)
+    optimizer = MedianOptimizer()
+    np.testing.assert_almost_equal(optimizer(test_input), expected_output)
 
 
 @pytest.mark.optimizers
@@ -45,28 +47,25 @@ def test_median_optimizer_inputs(test_input, expected_output):
 def test_mean_optimizer(median) -> None:
     n_samples = 50
     samples = get_test_data(n_samples, median)
-    np.testing.assert_almost_equal(median, mean_optimizer(samples))
+    optimizer = MeanOptimizer()
+    np.testing.assert_almost_equal(median, optimizer(samples))
 
 
 @pytest.mark.optimizers
 @pytest.mark.parametrize("test_input, expected_output", params)
 def test_mean_optimizer_inputs(test_input, expected_output):
-    np.testing.assert_almost_equal(mean_optimizer(test_input), expected_output)
+    optimizer = MeanOptimizer()
+    np.testing.assert_almost_equal(optimizer(test_input), expected_output)
 
 
 @pytest.mark.optimizers
 @pytest.mark.parametrize("median", testing_params)
 @pytest.mark.parametrize("p", p_values)
-def test_segment_slsqp_calculation(median, p) -> None:
+def test_slsqp_calculation(median, p) -> None:
     n_samples = 50
     samples = get_test_data(n_samples, median)
-    np.testing.assert_almost_equal(median, segment_slsqp_optimizer(samples, p))
-
-
-@pytest.mark.optimizers
-@pytest.mark.parametrize("test_input, expected_output", params)
-def test_segment_slsqp_optimizer_inputs(test_input, expected_output):
-    np.testing.assert_almost_equal(mean_optimizer(test_input), expected_output)
+    optimizer = SLSQPOptimizer(p)
+    np.testing.assert_almost_equal(median, optimizer(samples), decimal=0)
 
 
 @pytest.mark.optimizers
@@ -75,4 +74,5 @@ def test_segment_slsqp_optimizer_inputs(test_input, expected_output):
 def test_bound_calculation(median, p) -> None:
     n_samples = 50
     samples = get_test_data(n_samples, median)
-    np.testing.assert_almost_equal(median, bound_optimizer(samples, p), decimal=0)
+    optimizer = BoundOptimizer(p)
+    np.testing.assert_almost_equal(median, optimizer(samples), decimal=0)

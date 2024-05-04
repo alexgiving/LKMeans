@@ -4,7 +4,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from lkmeans.clustering import assign_to_cluster
+from lkmeans.clustering.utils import assign_to_cluster
 from lkmeans.data_generation.points_generator import generate_mix_distribution
 from lkmeans.distance import DistanceCalculator
 from lkmeans.examples.experiment_data import get_experiment_data

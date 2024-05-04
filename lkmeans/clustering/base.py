@@ -4,8 +4,9 @@ from typing import Union
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.utils import assign_to_cluster, select_optimizer, set_type
+from lkmeans.clustering.utils import assign_to_cluster, set_type
 from lkmeans.distance import DistanceCalculator
+from lkmeans.optimizers import get_optimizer
 
 
 class Clustering(ABC):
@@ -17,7 +18,7 @@ class Clustering(ABC):
         self._max_iter_with_no_progress = max_iter_with_no_progress
 
         self._distance_calculator = DistanceCalculator(self._p)
-        self._optimizer = select_optimizer(self._p)
+        self._optimizer = get_optimizer(self._p)
 
         self._inertia = 0.
         self._cluster_centers = np.array([])
