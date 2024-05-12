@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+from lkmeans.examples.data.experiment_data import get_experiment_data
 from lkmeans.examples.experiment import run_experiment
-from lkmeans.examples.experiment_data import get_experiment_data
 
 parser = ArgumentParser()
 
