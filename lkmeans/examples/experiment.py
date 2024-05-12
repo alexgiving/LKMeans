@@ -1,7 +1,6 @@
 import time
 from pathlib import Path
 
-import numpy as np
 from matplotlib import pyplot as plt
 from numpy.typing import NDArray
 from sklearn.metrics import adjusted_mutual_info_score, adjusted_rand_score
@@ -10,10 +9,6 @@ from lkmeans import LKMeans
 from lkmeans.examples.data.points_generator import generate_mix_distribution
 from lkmeans.examples.decomposition import get_tsne_clusters
 from lkmeans.examples.metric_meter import GraphicMeter, MetricMeter, MetricTable, insert_hline
-
-
-def get_covariance_matrix(sigma: float, dimension: int) -> NDArray:
-    return np.eye(dimension) * sigma
 
 
 # pylint: disable=too-many-arguments, too-many-locals

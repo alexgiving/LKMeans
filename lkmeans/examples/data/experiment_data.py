@@ -1,7 +1,9 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.examples.experiment import get_covariance_matrix
+
+def get_covariance_matrix(sigma: float, dimension: int) -> NDArray:
+    return np.eye(dimension) * sigma
 
 
 def get_experiment_data(num_clusters: int, dimension: int) -> tuple[int, float, list[NDArray], list[NDArray]]:
