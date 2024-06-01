@@ -10,16 +10,6 @@ from report.tables.styler import TableStyler
 from report.tables.table_argument_parser import TableArgumentParser
 
 
-def get_data_from_config(json_data: Dict) -> pd.DataFrame:
-    data = []
-    parser = LogParser()
-    for log_name, log_path in json_data['logs'].items():
-        log_data_dict = parser.parse(log_path)
-        log_data_dict = {'log_name': log_name, **log_data_dict}
-        data.append(log_data_dict)
-    return data
-
-
 def main() -> None:
     args = TableArgumentParser(underscores_to_dashes=True).parse_args()
     with args.config.open() as file:
@@ -28,7 +18,13 @@ def main() -> None:
     args.save_path.mkdir(parents=True, exist_ok=True)
     saver = LatexSaver(args.save_path / json_data['name'])
 
-    data = get_data_from_config(json_data)
+    parser = LogParser()
+    data = []
+    for logs_block in json_data['logs'].values():
+        for log_name, log_path in logs_block.items():
+            log_data_dict = parser.parse(log_path)
+            log_data_dict = {'log_name': log_name, **log_data_dict}
+            data.append(log_data_dict)
     data_frame = pd.DataFrame(data)
 
     rules = get_highlight_rules()
