@@ -1,10 +1,12 @@
-from collections import defaultdict
 import json
+from collections import defaultdict
 from typing import Dict, List
+
+from matplotlib import pyplot as plt
 
 from report.charts.chart_argument_parser import ChartArgumentParser
 from report.log_parser import LogParser
-from matplotlib import pyplot as plt
+from report.metric_name_processor import process_metric_name
 
 
 def select_metric(all_data: Dict[str, List[Dict[str, float]]], metric: str) -> Dict[str, List[float]]:
@@ -39,6 +41,7 @@ def main() -> None:
         for line_name, values in prepared_data.items():
             axes.plot(values, label=line_name)
         axes.legend()
+        axes.set_title(process_metric_name(metric))
         figure.tight_layout()
         figure.savefig(chart_name)
         plt.close(figure)
