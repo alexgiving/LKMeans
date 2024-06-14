@@ -30,8 +30,7 @@ class TableStyler:
         columns_for_rounding = [name for name, highlight_rule in self._rules.items() \
                                  if highlight_rule is not HighlightRule.NONE]
         columns = list(set(self._columns).intersection(set(columns_for_rounding)))
-        func = lambda value: f'{value:.2f}'
-        return styler.format(func, na_rep='N/A', subset=columns)
+        return styler.format(lambda value: f'{value:.2f}', na_rep='N/A', subset=columns)
 
     def _hide_index(self, styler: Styler) -> Styler:
         return styler.hide()

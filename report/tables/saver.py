@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from pathlib import Path
 
 from pandas.io.formats.style import Styler
@@ -9,7 +9,12 @@ class Saver(ABC):
         self._file_name = file_name
         self._convert_path()
 
-    def save(styler: Styler) -> None:
+    @abstractmethod
+    def _convert_path(self) -> None:
+        ...
+
+    @abstractmethod
+    def save(self, styler: Styler) -> None:
         ...
 
 
