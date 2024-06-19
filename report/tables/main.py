@@ -21,7 +21,10 @@ def main() -> None:
     data = []
     for logs_block in json_data['logs'].values():
         for log_name, log_path in logs_block.items():
-            log_data_dict = parser.parse(log_path)
+            if len(log_path.split(' ')) > 1:
+                log_data_dict = json.loads(log_path.replace('\'', '"'))
+            else:
+                log_data_dict = parser.parse(log_path)
             log_data_dict = {'log_name': log_name, **log_data_dict}
             data.append(log_data_dict)
     data_frame = pd.DataFrame(data)

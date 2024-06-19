@@ -1,6 +1,7 @@
 import json
 from collections import defaultdict
 from typing import Dict, List
+import numpy as np
 
 from matplotlib import pyplot as plt
 
@@ -29,7 +30,10 @@ def main() -> None:
         if block_name == 'LKMeans':
             continue
         for log_path in logs_block.values():
-            log_data_dict = parser.parse(log_path)
+            if len(log_path.split(' ')) > 1:
+                log_data_dict = json.loads(log_path.replace('\'', '"'))
+            else:
+                log_data_dict = parser.parse(log_path)
             data[block_name].append(log_data_dict)
 
     for metric in json_data['plot_metrics']:
@@ -41,6 +45,8 @@ def main() -> None:
         for line_name, values in prepared_data.items():
             axes.plot(values, label=line_name)
         axes.legend()
+        axes.set_xticks(ticks=np.linspace(0, 3, 4))
+        axes.set_xticklabels(['0', '0.1', '0.15', '0.2'])
         axes.set_title(process_metric_name(metric))
         figure.tight_layout()
         figure.savefig(chart_name)
