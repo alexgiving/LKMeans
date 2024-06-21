@@ -1,8 +1,8 @@
 import json
 from collections import defaultdict
 from typing import Dict, List
-import numpy as np
 
+import numpy as np
 from matplotlib import pyplot as plt
 
 from report.charts.chart_argument_parser import ChartArgumentParser
