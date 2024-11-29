@@ -35,7 +35,7 @@ class ExperimentArguments(Tap):
 
 
 def get_clustering_algorithm(clustering_type: ClusteringAlgorithmType) -> Clustering:
-    clustering_map: Dict[clustering_type, Clustering] = {
+    clustering_map: Dict[ClusteringAlgorithmType, Clustering] = {
         ClusteringAlgorithmType.LKMEANS: LKMeans,
         ClusteringAlgorithmType.SOFT_SS_LKMEANS: SoftSSLKMeans,
         ClusteringAlgorithmType.HARD_SS_LKMEANS: HardSSLKMeans
