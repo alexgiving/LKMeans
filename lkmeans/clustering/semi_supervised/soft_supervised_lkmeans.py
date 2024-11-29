@@ -3,7 +3,7 @@ from copy import deepcopy
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.supervised.supervised_clustering import SupervisedClustering
+from lkmeans.clustering.semi_supervised.supervised_clustering import SupervisedClustering
 from lkmeans.clustering.utils import assign_to_cluster, calculate_inertia
 
 

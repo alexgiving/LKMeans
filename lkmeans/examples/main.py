@@ -11,7 +11,7 @@ from tap import Tap
 
 from lkmeans.clustering import HardSSLKMeans, LKMeans, SoftSSLKMeans
 from lkmeans.clustering.base import Clustering
-from lkmeans.clustering.supervised.utils import select_supervisor_targets
+from lkmeans.clustering.semi_supervised.utils import select_supervisor_targets
 from lkmeans.examples.data.experiment_data import get_experiment_data
 from lkmeans.examples.data.points_generator import generate_mix_distribution
 
