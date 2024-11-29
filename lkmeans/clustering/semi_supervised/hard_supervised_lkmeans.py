@@ -3,12 +3,12 @@ from copy import deepcopy
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.semi_supervised.supervised_clustering import SupervisedClustering
+from lkmeans.clustering.semi_supervised.supervised_clustering import SemiSupervisedClustering
 from lkmeans.clustering.semi_supervised.utils import assign_to_cluster_with_supervision
 from lkmeans.clustering.utils import calculate_inertia
 
 
-class HardSSLKMeans(SupervisedClustering):
+class HardSemiSupervisedLKMeans(SemiSupervisedClustering):
 
     def _fit(self, X: NDArray, targets: NDArray) -> None:
         self._validate_data(X, self._n_clusters)

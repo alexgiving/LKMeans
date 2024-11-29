@@ -8,7 +8,7 @@ from lkmeans.clustering.unsupervised.lkmeans import init_centroids
 from lkmeans.clustering.utils import set_type
 
 
-class SupervisedClustering(Clustering):
+class SemiSupervisedClustering(Clustering):
 
     def _optimize_centroid(self, cluster: NDArray) -> NDArray:
         data_dimension = cluster.shape[1]
