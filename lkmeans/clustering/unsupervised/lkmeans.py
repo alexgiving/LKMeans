@@ -9,17 +9,6 @@ from lkmeans.clustering.utils import assign_to_cluster, calculate_inertia, init_
 
 class LKMeans(UnsupervisedClustering):
 
-    def _optimize_centroid(self, cluster: NDArray) -> NDArray:
-        data_dimension = cluster.shape[1]
-        new_centroid = np.array([])
-
-        for coordinate_id in range(data_dimension):
-            dimension_slice = cluster[:, coordinate_id]
-            value = self._optimizer(dimension_slice)
-            new_centroid = np.append(new_centroid, value)
-        new_centroid = np.array(new_centroid)
-        return new_centroid
-
     def _fit(self, X: NDArray) -> None:
         self._validate_data(X, self._n_clusters)
 

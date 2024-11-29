@@ -10,17 +10,6 @@ from lkmeans.clustering.utils import set_type
 
 class SemiSupervisedClustering(Clustering):
 
-    def _optimize_centroid(self, cluster: NDArray) -> NDArray:
-        data_dimension = cluster.shape[1]
-        new_centroid = np.array([])
-
-        for coordinate_id in range(data_dimension):
-            dimension_slice = cluster[:, coordinate_id]
-            value = self._optimizer(dimension_slice)
-            new_centroid = np.append(new_centroid, value)
-        new_centroid = np.array(new_centroid)
-        return new_centroid
-
     def _init_supervised_centroids(self, data: NDArray, n_clusters: int, targets: NDArray) -> NDArray:
         unique_targets = set(targets[~np.isnan(targets)])
 

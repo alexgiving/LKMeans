@@ -23,6 +23,17 @@ class Clustering(ABC):
         self._inertia = 0.
         self._cluster_centers = np.array([])
 
+    def _optimize_centroid(self, cluster: NDArray) -> NDArray:
+        data_dimension = cluster.shape[1]
+        new_centroid = np.array([])
+
+        for coordinate_id in range(data_dimension):
+            dimension_slice = cluster[:, coordinate_id]
+            value = self._optimizer(dimension_slice)
+            new_centroid = np.append(new_centroid, value)
+        new_centroid = np.array(new_centroid)
+        return new_centroid
+
     @property
     def inertia_(self) -> float:
         return self._inertia
