@@ -3,11 +3,12 @@ from copy import deepcopy
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.supervised.supervised_clustering import SupervisedClustering
-from lkmeans.clustering.utils import assign_to_cluster, calculate_inertia
+from lkmeans.clustering.semi_supervised.semi_supervised_clustering import SemiSupervisedClustering
+from lkmeans.clustering.semi_supervised.utils import assign_to_cluster_with_supervision
+from lkmeans.clustering.utils import calculate_inertia
 
 
-class SoftSSLKMeans(SupervisedClustering):
+class HardSemiSupervisedLKMeans(SemiSupervisedClustering):
 
     def _fit(self, X: NDArray, targets: NDArray) -> None:
         self._validate_data(X, self._n_clusters)
@@ -20,7 +21,8 @@ class SoftSSLKMeans(SupervisedClustering):
                 break
 
             bias_centroids = deepcopy(centroids)
-            clusters, _ = assign_to_cluster(X, centroids, self._n_clusters, self._distance_calculator)
+            clusters, _ = assign_to_cluster_with_supervision(X, centroids, self._n_clusters,
+                                                             self._distance_calculator, targets)
 
             # update centroids using the specified optimizer
             for cluster_id, cluster in enumerate(clusters):

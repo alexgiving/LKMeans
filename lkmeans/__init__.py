@@ -1,1 +1,1 @@
-from lkmeans.clustering import HardSSLKMeans, LKMeans, SoftSSLKMeans
+from lkmeans.clustering import HardSemiSupervisedLKMeans, LKMeans, SoftSemiSupervisedLKMeans

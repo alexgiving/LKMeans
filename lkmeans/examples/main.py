@@ -9,9 +9,9 @@ from sklearn.metrics import (accuracy_score, adjusted_mutual_info_score, adjuste
                              homogeneity_score, normalized_mutual_info_score, v_measure_score)
 from tap import Tap
 
-from lkmeans.clustering import HardSSLKMeans, LKMeans, SoftSSLKMeans
+from lkmeans.clustering import HardSemiSupervisedLKMeans, LKMeans, SoftSemiSupervisedLKMeans
 from lkmeans.clustering.base import Clustering
-from lkmeans.clustering.supervised.utils import select_supervisor_targets
+from lkmeans.clustering.semi_supervised.utils import select_supervisor_targets
 from lkmeans.examples.data.experiment_data import get_experiment_data
 from lkmeans.examples.data.points_generator import generate_mix_distribution
 
@@ -35,10 +35,10 @@ class ExperimentArguments(Tap):
 
 
 def get_clustering_algorithm(clustering_type: ClusteringAlgorithmType) -> Clustering:
-    clustering_map: Dict[clustering_type, Clustering] = {
+    clustering_map: Dict[ClusteringAlgorithmType, Clustering] = {
         ClusteringAlgorithmType.LKMEANS: LKMeans,
-        ClusteringAlgorithmType.SOFT_SS_LKMEANS: SoftSSLKMeans,
-        ClusteringAlgorithmType.HARD_SS_LKMEANS: HardSSLKMeans
+        ClusteringAlgorithmType.SOFT_SS_LKMEANS: SoftSemiSupervisedLKMeans,
+        ClusteringAlgorithmType.HARD_SS_LKMEANS: HardSemiSupervisedLKMeans
     }
     return clustering_map[clustering_type]
 

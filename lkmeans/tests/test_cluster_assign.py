@@ -3,7 +3,7 @@ import pytest
 from numpy.typing import NDArray
 
 from lkmeans.clustering.base import assign_to_cluster
-from lkmeans.clustering.supervised.utils import assign_to_cluster_with_supervision, select_supervisor_targets
+from lkmeans.clustering.semi_supervised.utils import assign_to_cluster_with_supervision, select_supervisor_targets
 from lkmeans.distance import DistanceCalculator
 
 
