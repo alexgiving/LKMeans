@@ -18,8 +18,8 @@ from lkmeans.examples.data.points_generator import generate_mix_distribution
 
 class ClusteringAlgorithmType(Enum):
     LKMEANS = 'lkmeans'
-    SOFT_SS_LKMEANS = 'soft_ss_lkmeans'
-    HARD_SS_LKMEANS = 'hard_ss_lkmeans'
+    SOFT_SEMI_SUPERVISED_LKMEANS = 'soft_semi_supervised_lkmeans'
+    HARD_SEMI_SUPERVISED_LKMEANS = 'hard_semi_supervised_lkmeans'
 
 
 class ExperimentArguments(Tap):
@@ -37,8 +37,8 @@ class ExperimentArguments(Tap):
 def get_clustering_algorithm(clustering_type: ClusteringAlgorithmType) -> Clustering:
     clustering_map: Dict[ClusteringAlgorithmType, Clustering] = {
         ClusteringAlgorithmType.LKMEANS: LKMeans,
-        ClusteringAlgorithmType.SOFT_SS_LKMEANS: SoftSemiSupervisedLKMeans,
-        ClusteringAlgorithmType.HARD_SS_LKMEANS: HardSemiSupervisedLKMeans
+        ClusteringAlgorithmType.SOFT_SEMI_SUPERVISED_LKMEANS: SoftSemiSupervisedLKMeans,
+        ClusteringAlgorithmType.HARD_SEMI_SUPERVISED_LKMEANS: HardSemiSupervisedLKMeans
     }
     return clustering_map[clustering_type]
 
