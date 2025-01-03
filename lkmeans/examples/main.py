@@ -1,7 +1,7 @@
 import time
 from collections import defaultdict
 from enum import Enum
-from typing import Dict
+from typing import Dict, Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -11,6 +11,9 @@ from tap import Tap
 
 from lkmeans.clustering import HardSemiSupervisedLKMeans, LKMeans, SoftSemiSupervisedLKMeans
 from lkmeans.clustering.base import Clustering
+from lkmeans.clustering.self_supervised.preprocessor import SelfSupervisedPreprocessor
+from lkmeans.clustering.self_supervised.preprocessor_parameters import PreprocessorParameters
+from lkmeans.clustering.self_supervised.preprocessor_type import PreprocessorType
 from lkmeans.clustering.semi_supervised.utils import select_supervisor_targets
 from lkmeans.examples.data.experiment_data import get_experiment_data
 from lkmeans.examples.data.points_generator import generate_mix_distribution
@@ -18,8 +21,8 @@ from lkmeans.examples.data.points_generator import generate_mix_distribution
 
 class ClusteringAlgorithmType(Enum):
     LKMEANS = 'lkmeans'
-    SOFT_SS_LKMEANS = 'soft_ss_lkmeans'
-    HARD_SS_LKMEANS = 'hard_ss_lkmeans'
+    SOFT_SEMI_SUPERVISED_LKMEANS = 'soft_semi_supervised_lkmeans'
+    HARD_SEMI_SUPERVISED_LKMEANS = 'hard_semi_supervised_lkmeans'
 
 
 class ExperimentArguments(Tap):
@@ -27,6 +30,8 @@ class ExperimentArguments(Tap):
     t_parameter: float
     n_points: int
     clustering_algorithm: ClusteringAlgorithmType = ClusteringAlgorithmType.LKMEANS
+    self_supervised_preprocessor_algorithm: Optional[PreprocessorType] = None
+    self_supervised_components: int = 2
 
     num_clusters: int = 2
     dimension: int = 20
@@ -37,8 +42,8 @@ class ExperimentArguments(Tap):
 def get_clustering_algorithm(clustering_type: ClusteringAlgorithmType) -> Clustering:
     clustering_map: Dict[ClusteringAlgorithmType, Clustering] = {
         ClusteringAlgorithmType.LKMEANS: LKMeans,
-        ClusteringAlgorithmType.SOFT_SS_LKMEANS: SoftSemiSupervisedLKMeans,
-        ClusteringAlgorithmType.HARD_SS_LKMEANS: HardSemiSupervisedLKMeans
+        ClusteringAlgorithmType.SOFT_SEMI_SUPERVISED_LKMEANS: SoftSemiSupervisedLKMeans,
+        ClusteringAlgorithmType.HARD_SEMI_SUPERVISED_LKMEANS: HardSemiSupervisedLKMeans
     }
     return clustering_map[clustering_type]
 
@@ -73,6 +78,15 @@ def main() -> None:
             n_samples=args.n_points,
             t=args.t_parameter
         )
+
+        if args.self_supervised_preprocessor_algorithm is not None:
+            self_supervised_parameters = PreprocessorParameters(n_components=args.self_supervised_components)
+
+            self_supervised_preprocessor = SelfSupervisedPreprocessor(
+                args.self_supervised_preprocessor_algorithm,
+                self_supervised_parameters
+            )
+            clusters = self_supervised_preprocessor.preprocess(clusters)
 
         lkmeans = clustering(n_clusters=args.num_clusters, p=args.minkowski_parameter)
 
