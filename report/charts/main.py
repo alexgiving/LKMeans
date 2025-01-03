@@ -2,9 +2,8 @@ import json
 from collections import defaultdict
 from typing import Any, Dict, List
 
-from matplotlib.axes import Axes
-import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
 
 from report.charts.chart_argument_parser import ChartArgumentParser
 from report.log_parser import LogParser
