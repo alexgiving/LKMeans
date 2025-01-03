@@ -6,17 +6,17 @@ set -ex
 mkdir -p ${LOGDIR}
 
 # VALUES
-MINKOSKI_VALUES=(0.5 1 2 5)
-T_VALUES=(0 0.2 0.4 0.6 0.8)
-N_POINTS_VALUES=(100 500 1000)
-PREPROCESSOR_VALUES=(pca tsne)
+MINKOSKI_VALUES=(0.5)
+T_VALUES=(0.2)
+N_POINTS_VALUES=(100)
+PREPROCESSOR_VALUES=(pca spectral_embeddings locally_linear_embeddings mds isomap umap)
 PREPROCESS_COMPONENTS=(2 4 8 16 15)
 DIMENSION_VALUES=(20)
 NUM_CLUSTERS_VALUES=(2 3)
 
 # Constants
 CLUSTERING=lkmeans
-REPEATS=10
+REPEATS=1
 
 source .env
 
