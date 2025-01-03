@@ -1,11 +1,11 @@
 from typing import Union
 
 from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE, SpectralEmbedding, LocallyLinearEmbedding, MDS, Isomap
+from sklearn.manifold import MDS, TSNE, Isomap, LocallyLinearEmbedding, SpectralEmbedding
+from umap import UMAP
 
 from lkmeans.clustering.self_supervised.preprocessor_parameters import PreprocessorParameters
 from lkmeans.clustering.self_supervised.preprocessor_type import PreprocessorType
-from umap import UMAP
 
 AnyPreprocessor = Union[PCA, TSNE, SpectralEmbedding, LocallyLinearEmbedding, MDS, Isomap, UMAP]
 
