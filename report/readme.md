@@ -54,7 +54,9 @@ Below is an example of a configuration file (config.json) to customize the behav
         "ari",
         "ami",
         "time",
-    ]
+    ],
+    "xticks": ["2", "4", "8", "16", "15"],
+    "xlabel": "[Optional] Name of X Axis"
 }
 ```
 
