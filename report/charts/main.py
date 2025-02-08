@@ -51,18 +51,23 @@ def main() -> None:
         chart_name = args.save_path / f'{config_name}_{metric}.png'
         prepared_data = select_metric(data, metric)
 
-        figure = plt.figure(figsize=(4,4), dpi=800)
+        figure = plt.figure(figsize=(5,4), dpi=800)
         axes = figure.gca()
 
         for line_name, values in prepared_data.items():
             axes.plot(values, label=line_name)
 
-        axes.legend()
+        axes.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
+                      ncols=2, mode="expand", borderaxespad=0.)
 
         axes = configure_x_axis(axes, json_data)
 
-        axes.set_title(process_metric_name(metric))
-
+        metric_name = process_metric_name(metric)
+        if args.metric_to_title:
+            axes.set_title(metric_name)
+        else:
+            axes.set_ylabel(ylabel=metric_name)
+        
         figure.tight_layout()
         figure.savefig(chart_name)
         plt.close(figure)
