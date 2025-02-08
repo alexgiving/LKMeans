@@ -1,6 +1,6 @@
 #! bin/bash
 
-LOGDIR=logs
+LOGDIR=experiments_data/logs/self_supervised_clustering
 set -ex
 
 mkdir -p ${LOGDIR}
@@ -17,8 +17,6 @@ NUM_CLUSTERS_VALUES=(2 3)
 # Constants
 CLUSTERING=lkmeans
 REPEATS=10
-
-source .env
 
 for NUM_CLUSTERS in "${NUM_CLUSTERS_VALUES[@]}";do
     for MINKOVSKI in "${MINKOSKI_VALUES[@]}";do
