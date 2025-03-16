@@ -3,7 +3,7 @@
 #SBATCH --output=%x_%j.out
 
 #SBATCH --gpus=0
-#SBATCH --time=7-0:0
+#SBATCH --time=0-2:0
 
 module purge
 module load Python
@@ -14,4 +14,4 @@ source activate lkmeans_venv
 # Executable
 export PYTHONPATH=${PYTHONPATH}:$(pwd)
 
-srun bash ./lkmeans/examples/scripts/runner_self_supervised.sh
+srun bash ./lkmeans/examples/scripts/runner_self_supervised.sh $1 $2
