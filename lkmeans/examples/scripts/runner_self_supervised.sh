@@ -1,6 +1,6 @@
 #! bin/bash
 
-LOGDIR=experiments_data/logs/detailed_self_supervised_clustering_1000
+LOGDIR=logs_super/detailed_self_supervised_clustering_1000_10
 set -ex
 
 mkdir -p ${LOGDIR}
