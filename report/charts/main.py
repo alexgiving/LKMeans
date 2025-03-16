@@ -1,9 +1,9 @@
 import json
 from collections import defaultdict
-from typing import Dict, List
+from typing import Any, Dict, List
 
-import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
 
 from report.charts.chart_argument_parser import ChartArgumentParser
 from report.log_parser import LogParser
@@ -15,6 +15,16 @@ def select_metric(all_data: Dict[str, List[Dict[str, float]]], metric: str) -> D
     for block_name, block_metrics in all_data.items():
         data[block_name] = [metrics[metric] for metrics in block_metrics]
     return data
+
+
+def configure_x_axis(axes: Axes, json_data: Dict[str, Any]) -> Axes:
+    axes.set_xticks(ticks=range(len(json_data['xticks'])))
+    axes.set_xticklabels(json_data['xticks'])
+
+    xlabel = json_data.get('xlabel')
+    if xlabel is not None:
+        axes.set_xlabel(xlabel=xlabel)
+    return axes
 
 
 def main() -> None:
@@ -40,14 +50,19 @@ def main() -> None:
         config_name = json_data['name']
         chart_name = args.save_path / f'{config_name}_{metric}.png'
         prepared_data = select_metric(data, metric)
+
         figure = plt.figure(figsize=(4,4), dpi=800)
         axes = figure.gca()
+
         for line_name, values in prepared_data.items():
             axes.plot(values, label=line_name)
+
         axes.legend()
-        axes.set_xticks(ticks=np.linspace(0, 3, 4))
-        axes.set_xticklabels(['0', '0.1', '0.15', '0.2'])
+
+        axes = configure_x_axis(axes, json_data)
+
         axes.set_title(process_metric_name(metric))
+
         figure.tight_layout()
         figure.savefig(chart_name)
         plt.close(figure)
