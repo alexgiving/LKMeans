@@ -68,6 +68,7 @@ def main() -> None:
     clustering = get_clustering_algorithm(args.clustering_algorithm)
 
     average_result = defaultdict(list)
+    np.random.seed(5)
 
     for _ in range(args.repeats):
 
@@ -78,6 +79,38 @@ def main() -> None:
             n_samples=args.n_points,
             t=args.t_parameter
         )
+
+
+        from sklearn.manifold import SpectralEmbedding, LocallyLinearEmbedding, Isomap, MDS
+        import matplotlib.pyplot as plt
+
+
+        X, _ = clusters, labels
+
+        n_neighbors_list = [1, 5, 10, 99]
+        num_methods = 6
+        color_map = {3: 'red', 1: 'green', 0: 'blue', 3: 'yellow', 4: 'purple'}
+
+        fig, axes = plt.subplots(len(n_neighbors_list), num_methods, figsize=(int(5.2*num_methods), 5*len(n_neighbors_list)))
+        colors = [color_map[label] for label in labels]
+
+        for n_neighbors, row_ax in zip(n_neighbors_list, axes):
+            methods = {
+                f"SE (NN={n_neighbors})": SpectralEmbedding(n_components=2, n_neighbors=n_neighbors),
+                f"LLE (NN={n_neighbors})": LocallyLinearEmbedding(n_components=2, n_neighbors=n_neighbors),
+                f"Isomap (NN={n_neighbors}, Minkowski p=1)": Isomap(n_components=2, n_neighbors=n_neighbors, p=1),
+                f"Isomap (NN={n_neighbors}, Minkowski p=2)": Isomap(n_components=2, n_neighbors=n_neighbors, p=2),
+                f"Isomap (NN={n_neighbors}, Minkowski p=5)": Isomap(n_components=2, n_neighbors=n_neighbors, p=5),
+                f"MDS": MDS(n_components=2, random_state=42)
+            }
+            
+            for ax, (name, method) in zip(row_ax, methods.items()):
+                X_transformed = method.fit_transform(X)
+                ax.scatter(X_transformed[:, 0], X_transformed[:, 1], c=colors)
+                ax.set_title(name)
+
+        fig.savefig(f"decompoition_chart_all.png", dpi=300, bbox_inches='tight')
+        return
 
         if args.self_supervised_preprocessor_algorithm is not None:
             self_supervised_parameters = PreprocessorParameters(n_components=args.self_supervised_components)
