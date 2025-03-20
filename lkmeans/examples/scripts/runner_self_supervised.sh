@@ -1,6 +1,6 @@
 #! bin/bash
 
-LOGDIR=logs_super/detailed_self_supervised_clustering_1000_10
+LOGDIR=experiments_data/logs_super/detailed_self_supervised_clustering_1000_100
 set -ex
 
 mkdir -p ${LOGDIR}
@@ -18,7 +18,7 @@ NUM_CLUSTERS_VALUES=(2)
 
 # Constants
 CLUSTERING=lkmeans
-REPEATS=10
+REPEATS=100
 
 for NUM_CLUSTERS in "${NUM_CLUSTERS_VALUES[@]}";do
     for MINKOVSKI in "${MINKOSKI_VALUES[@]}";do
@@ -31,7 +31,7 @@ for NUM_CLUSTERS in "${NUM_CLUSTERS_VALUES[@]}";do
 
 NAME="${CLUSTERING}_|_self_supervision_${PREPROCESSOR}_|_self_supervision_n_components_${PREPROCESS_COMPONENT}_|_num-clusters_${NUM_CLUSTERS}_|_minkowski_${MINKOVSKI}_|_t_${T}_|_n-points_${N_POINTS}_|_dimension_${DIMENSION}_|_repeats_${REPEATS}.log"
 
-                            echo ${NAME}
+                            echo ${LOGDIR}/${NAME}
                             PARAMETERS="
                             --num-clusters ${NUM_CLUSTERS} \
                             --minkowski-parameter ${MINKOVSKI} \
@@ -52,3 +52,4 @@ NAME="${CLUSTERING}_|_self_supervision_${PREPROCESSOR}_|_self_supervision_n_comp
     done
 done
 
+echo DONE

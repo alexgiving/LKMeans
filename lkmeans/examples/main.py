@@ -105,7 +105,7 @@ def main() -> None:
         result = {**metrics_dict, 'time': experiment_time, 'inertia': lkmeans.inertia_}
         for key, value in result.items():
             average_result[key].append(value)
-    for key, value in result.items():
+    for key, value in average_result.items():
         average_result[key] = np.mean(value)
     print(dict(average_result))
 
