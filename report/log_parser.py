@@ -19,6 +19,6 @@ class LogParser:
 
         try:
             data = json.loads(log_data)
-        except json.decoder.JSONDecodeError:
-            raise ValueError("Error while loading file %s", log_path)
+        except json.decoder.JSONDecodeError as exc:
+            raise ValueError('Error while loading file %s', log_path) from exc
         return data

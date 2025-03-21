@@ -30,7 +30,6 @@ def configure_x_axis(axes: Axes, json_data: Dict[str, Any]) -> Axes:
 def parse_log(parser: LogParser, line: str) -> Dict[str, float]:
     if len(line.split(' ')) > 1:
         return json.loads(line.replace('\'', '"'))
-    
     return parser.parse(line)
 
 
@@ -48,6 +47,7 @@ def main() -> None:
             log_data_dict = parse_log(parser, log_path)
             data[block_name].append(log_data_dict)
 
+    baseline_data_dict = None
     baseline_path = json_data.get('baseline', None)
     if baseline_path:
         baseline_data_dict = parse_log(parser, baseline_path)
@@ -60,11 +60,14 @@ def main() -> None:
         figure = plt.figure(figsize=(5,4), dpi=800)
         axes = figure.gca()
 
+        num_measurements_in_line = 0
         for line_name, values in prepared_data.items():
             axes.plot(values, label=line_name)
-        
+            num_measurements_in_line = max(num_measurements_in_line, len(values))
+
         if baseline_data_dict is not None:
-            axes.plot([baseline_data_dict[metric]]*len(values), '--', label="Baseline")
+            baseline_values = [baseline_data_dict[metric]]*num_measurements_in_line
+            axes.plot(baseline_values, '--', label="Baseline")
 
         axes.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
                       ncols=2, mode="expand", borderaxespad=0.)
@@ -76,7 +79,7 @@ def main() -> None:
             axes.set_title(metric_name)
         else:
             axes.set_ylabel(ylabel=metric_name)
-        
+
         figure.tight_layout()
         figure.savefig(chart_name)
         plt.close(figure)
