@@ -1,22 +1,21 @@
 #! bin/bash
 
-LOGDIR=logs
+LOGDIR=experiments_data/logs_super/unsupervised_clustering_1000_100
 set -ex
 
 mkdir -p ${LOGDIR}
 
 # VALUES
-MINKOSKI_VALUES=(0.5 1 2 5)
-T_VALUES=(0 0.2 0.4 0.6 0.8)
-N_POINTS_VALUES=(100 500 1000)
+MINKOSKI_VALUES=(2)
+T_VALUES=(-0.8 -0.6 -0.4 0 0.4 0.6 0.8)
+N_POINTS_VALUES=(1000)
 DIMENSION_VALUES=(20)
-NUM_CLUSTERS_VALUES=(2 3)
+NUM_CLUSTERS_VALUES=(2)
 
 # Constants
 CLUSTERING=lkmeans
-REPEATS=10
+REPEATS=100
 
-source .env
 
 for NUM_CLUSTERS in "${NUM_CLUSTERS_VALUES[@]}";do
     for MINKOVSKI in "${MINKOSKI_VALUES[@]}";do
