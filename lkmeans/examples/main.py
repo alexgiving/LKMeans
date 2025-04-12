@@ -6,10 +6,11 @@ from typing import Dict, Optional
 import numpy as np
 from numpy.typing import NDArray
 from sklearn import datasets
+from sklearn.datasets import fetch_openml
 from sklearn.metrics import (accuracy_score, adjusted_mutual_info_score, adjusted_rand_score, completeness_score,
                              homogeneity_score, normalized_mutual_info_score, v_measure_score)
 from tap import Tap
-from sklearn.datasets import fetch_openml
+
 from lkmeans.clustering import HardSemiSupervisedLKMeans, LKMeans, SoftSemiSupervisedLKMeans
 from lkmeans.clustering.base import Clustering
 from lkmeans.clustering.self_supervised.preprocessor import SelfSupervisedPreprocessor
@@ -76,7 +77,7 @@ def calculate_metrics(labels: NDArray, generated_labels: NDArray) -> Dict[str, f
 def generate_data(args) -> ExperimentArguments:
     if args.data_type is DataType.GENERATED:
         _, prob, mu_list, cov_matrices = get_experiment_data(args.num_clusters, args.dimension)
-        
+
         data, labels, _ = generate_mix_distribution(
             probability=prob,
             mu_list=mu_list,
@@ -99,10 +100,13 @@ def generate_data(args) -> ExperimentArguments:
     elif args.data_type is DataType.CIFAR10:
         data, labels = fetch_openml('CIFAR_10_small', version=1, return_X_y=True)
         labels = labels.astype(int)
+    else:
+        raise ValueError("Not supported dataset")
 
     num_clusters_in_dataset = len(set(labels))
     if args.num_clusters != num_clusters_in_dataset:
-        print(f"Warning: {args.data_type} has {num_clusters_in_dataset} clusters while num_clusters = {args.num_clusters} is passed. We change the num_clusters to {num_clusters_in_dataset}")
+        print(f"Warning: {args.data_type} has {num_clusters_in_dataset} clusters",
+              f"while num_clusters = {args.num_clusters} is passed. We change the num_clusters to {num_clusters_in_dataset}")
         args.num_clusters = num_clusters_in_dataset
     return data, labels
 
