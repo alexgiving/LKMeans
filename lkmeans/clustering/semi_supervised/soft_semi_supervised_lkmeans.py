@@ -3,7 +3,9 @@ from copy import deepcopy
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.semi_supervised.semi_supervised_clustering import SemiSupervisedClustering
+from lkmeans.clustering.semi_supervised.semi_supervised_clustering import (
+    SemiSupervisedClustering,
+)
 from lkmeans.clustering.utils import assign_to_cluster, calculate_inertia
 
 

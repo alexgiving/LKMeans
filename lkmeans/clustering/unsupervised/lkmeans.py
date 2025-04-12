@@ -3,8 +3,14 @@ from copy import deepcopy
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.unsupervised.unsupervised_clustering import UnsupervisedClustering
-from lkmeans.clustering.utils import assign_to_cluster, calculate_inertia, init_centroids
+from lkmeans.clustering.unsupervised.unsupervised_clustering import (
+    UnsupervisedClustering,
+)
+from lkmeans.clustering.utils import (
+    assign_to_cluster,
+    calculate_inertia,
+    init_centroids,
+)
 
 
 class LKMeans(UnsupervisedClustering):

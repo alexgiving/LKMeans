@@ -5,7 +5,7 @@ from typing import Dict
 
 
 class LogParser:
-    def __init__(self):
+    def __init__(self) -> None:
         self._json_pattern = re.compile(r"\{.*\}")
 
     def parse(self, log_path: Path) -> Dict[str, float]:
@@ -18,7 +18,7 @@ class LogParser:
                 log_data = log_data_line.replace("'", '"')
 
         try:
-            data = json.loads(log_data)
+            data: Dict[str, float] = json.loads(log_data)
         except json.decoder.JSONDecodeError as exc:
-            raise ValueError(f'Error while loading file {log_path}') from exc
+            raise ValueError(f"Error while loading file {log_path}") from exc
         return data

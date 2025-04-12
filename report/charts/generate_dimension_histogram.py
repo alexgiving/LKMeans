@@ -8,15 +8,10 @@ from lkmeans.examples.data.points_generator import generate_mix_distribution
 
 parser = ArgumentParser()
 
-parser.add_argument(
-    '--path',
-    type=Path,
-    default=Path('images'),
-    help='Path to save results'
-)
+parser.add_argument("--path", type=Path, default=Path("images"), help="Path to save results")
 
 
-def main():
+def main() -> None:
     args = parser.parse_args()
     args.path.mkdir(exist_ok=True)
 
@@ -26,21 +21,21 @@ def main():
     n_clusters, prob, mu_list, cov_matrices = get_experiment_data(num_clusters=2, dimension=dimension)
 
     for t in [0.2, 0.4, 0.9]:
-        filename = args.path / f'{n_clusters}_cluster_hist_t_{t}.png'
+        filename = args.path / f"{n_clusters}_cluster_hist_t_{t}.png"
         clusters, _, _ = generate_mix_distribution(
             probability=prob,
             mu_list=mu_list,
             cov_matrices=cov_matrices,
             n_samples=n_points,
-            t=t
+            t=t,
         )
 
         fig, ax = plt.subplots(figsize=(5, 3))
         ax.hist(clusters[:, 0], bins=15)
-        ax.grid(True, color='gray', linestyle='--', linewidth=0.5)
-        fig.savefig(str(filename), dpi=300, bbox_inches='tight')
+        ax.grid(True, color="gray", linestyle="--", linewidth=0.5)
+        fig.savefig(str(filename), dpi=300, bbox_inches="tight")
         plt.close(fig)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

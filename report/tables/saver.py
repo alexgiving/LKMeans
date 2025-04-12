@@ -10,19 +10,17 @@ class Saver(ABC):
         self._convert_path()
 
     @abstractmethod
-    def _convert_path(self) -> None:
-        ...
+    def _convert_path(self) -> None: ...
 
     @abstractmethod
-    def save(self, styler: Styler) -> None:
-        ...
+    def save(self, styler: Styler) -> None: ...
 
 
 class LatexSaver(Saver):
 
     def _convert_path(self) -> None:
-        self._file_name = self._file_name.with_suffix('.tex')
+        self._file_name = self._file_name.with_suffix(".tex")
 
     def save(self, styler: Styler) -> None:
-        with self._file_name.open('w') as file:
-            styler.format(escape='latex', precision=2).to_latex(file, convert_css=True)
+        with self._file_name.open("w") as file:
+            styler.format(escape="latex", precision=2).to_latex(file, convert_css=True)

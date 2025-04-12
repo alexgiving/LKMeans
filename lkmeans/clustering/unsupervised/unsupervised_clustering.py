@@ -9,8 +9,7 @@ from lkmeans.clustering.utils import set_type
 class UnsupervisedClustering(Clustering):
 
     @abstractmethod
-    def _fit(self, X: NDArray) -> None:
-        ...
+    def _fit(self, X: NDArray) -> None: ...
 
     def fit(self, X: NDArray) -> None:
         X = set_type(X)

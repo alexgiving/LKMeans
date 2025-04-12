@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import List
 
 import numpy as np
 from numpy.typing import NDArray
@@ -16,13 +17,13 @@ def select_supervisor_targets(targets: NDArray, selection_ratio: float) -> NDArr
 
 
 def assign_to_cluster_with_supervision(
-        X: NDArray,
-        centroids: NDArray,
-        n_clusters: int,
-        distance_calculator: DistanceCalculator,
-        targets: NDArray,
-        ) -> tuple[list[list[float]], list[int]]:
-    clusters = [[] for _ in range(n_clusters)]
+    X: NDArray,
+    centroids: NDArray,
+    n_clusters: int,
+    distance_calculator: DistanceCalculator,
+    targets: NDArray,
+) -> tuple[List[List[float]], List[int]]:
+    clusters: List[List[float]] = [[] for _ in range(n_clusters)]
     labels = []
 
     for point, real_target in zip(X, targets):

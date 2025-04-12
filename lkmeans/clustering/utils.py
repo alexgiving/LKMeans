@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 
 import numpy as np
 from numpy.typing import NDArray
@@ -16,23 +16,23 @@ def calculate_inertia(X: NDArray, centroids: NDArray) -> float:
     n_clusters = centroids.shape[0]
     distances = np.empty((X.shape[0], n_clusters))
     for i in range(n_clusters):
-        distances[:, i] = np.sum((X - centroids[i, :])**2, axis=1)
-    return np.sum(np.min(distances, axis=1))
+        distances[:, i] = np.sum((X - centroids[i, :]) ** 2, axis=1)
+    return float(np.sum(np.min(distances, axis=1)))
 
 
 def init_centroids(data: NDArray, n_clusters: int) -> NDArray:
     indices = np.random.choice(data.shape[0], n_clusters, replace=False)
     centroids = data[indices]
-    return centroids
+    return np.array(centroids)
 
 
 def assign_to_cluster(
-        X: NDArray,
-        centroids: NDArray,
-        n_clusters: int,
-        distance_calculator: DistanceCalculator,
-        ) -> tuple[list[list[float]], list[int]]:
-    clusters = [[] for _ in range(n_clusters)]
+    X: NDArray,
+    centroids: NDArray,
+    n_clusters: int,
+    distance_calculator: DistanceCalculator,
+) -> tuple[List[List[float]], List[int]]:
+    clusters: List[List[float]] = [[] for _ in range(n_clusters)]
     labels = []
 
     for point in X:

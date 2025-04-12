@@ -9,11 +9,11 @@ from lkmeans.optimizers.optimizer import Optimizer
 
 # pylint: disable=too-few-public-methods
 class BoundOptimizer(Optimizer):
-    '''
+    """
     Special LKMeans optimizer.
     Based on idea that for 0 < p < 1 the minkowski function is a concave function.
     Returns the optimal point of input array with Minkowski metric parameter `p`
-    '''
+    """
 
     def __init__(self, p: Union[float, int]) -> None:
         super().__init__()

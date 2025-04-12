@@ -15,25 +15,24 @@ def main() -> None:
         json_data = json.load(file)
 
     args.save_path.mkdir(parents=True, exist_ok=True)
-    saver = LatexSaver(args.save_path / json_data['name'])
+    saver = LatexSaver(args.save_path / json_data["name"])
 
     parser = LogParser()
     data = []
-    for logs_block in json_data['logs'].values():
+    for logs_block in json_data["logs"].values():
         for log_name, log_path in logs_block.items():
-            if len(log_path.split(' ')) > 1:
-                log_data_dict = json.loads(log_path.replace('\'', '"'))
+            if len(log_path.split(" ")) > 1:
+                log_data_dict = json.loads(log_path.replace("'", '"'))
             else:
                 log_data_dict = parser.parse(log_path)
-            log_data_dict = {'log_name': log_name, **log_data_dict}
+            log_data_dict = {"log_name": log_name, **log_data_dict}
             data.append(log_data_dict)
     data_frame = pd.DataFrame(data)
 
     rules = get_highlight_rules()
-    styler = TableStyler(data_frame, json_data['columns'], rules).style()
+    styler = TableStyler(data_frame, json_data["columns"], rules).style()
     saver.save(styler)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
