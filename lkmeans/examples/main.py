@@ -6,7 +6,6 @@ from typing import Dict, Optional
 import numpy as np
 from numpy.typing import NDArray
 from sklearn import datasets
-from sklearn.datasets import fetch_openml
 from sklearn.metrics import (accuracy_score, adjusted_mutual_info_score, adjusted_rand_score, completeness_score,
                              homogeneity_score, normalized_mutual_info_score, v_measure_score)
 from tap import Tap
@@ -95,10 +94,10 @@ def generate_data(args) -> ExperimentArguments:
         data, labels = datasets.load_digits(return_X_y=True)
 
     elif args.data_type is DataType.MNIST:
-        data, labels = fetch_openml('mnist_784', version=1, return_X_y=True)
+        data, labels = datasets.fetch_openml('mnist_784', version=1, return_X_y=True)
         labels = labels.astype(int)
     elif args.data_type is DataType.CIFAR10:
-        data, labels = fetch_openml('CIFAR_10_small', version=1, return_X_y=True)
+        data, labels = datasets.fetch_openml('CIFAR_10_small', version=1, return_X_y=True)
         labels = labels.astype(int)
     else:
         raise ValueError("Not supported dataset")
@@ -106,7 +105,8 @@ def generate_data(args) -> ExperimentArguments:
     num_clusters_in_dataset = len(set(labels))
     if args.num_clusters != num_clusters_in_dataset:
         print(f"Warning: {args.data_type} has {num_clusters_in_dataset} clusters",
-              f"while num_clusters = {args.num_clusters} is passed. We change the num_clusters to {num_clusters_in_dataset}")
+              f"while num_clusters = {args.num_clusters} is passed.",
+              f"Changed the num_clusters to {num_clusters_in_dataset}")
         args.num_clusters = num_clusters_in_dataset
     return data, labels
 
