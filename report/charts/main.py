@@ -27,6 +27,12 @@ def configure_x_axis(axes: Axes, json_data: Dict[str, Any]) -> Axes:
     return axes
 
 
+def parse_log(parser: LogParser, line: str) -> Dict[str, float]:
+    if len(line.split(' ')) > 1:
+        return json.loads(line.replace('\'', '"'))
+    return parser.parse(line)
+
+
 def main() -> None:
     args = ChartArgumentParser(underscores_to_dashes=True).parse_args()
     with args.config.open() as file:
@@ -37,31 +43,42 @@ def main() -> None:
     parser = LogParser()
     data = defaultdict(list)
     for block_name, logs_block in json_data['logs'].items():
-        if block_name == 'LKMeans':
-            continue
         for log_path in logs_block.values():
-            if len(log_path.split(' ')) > 1:
-                log_data_dict = json.loads(log_path.replace('\'', '"'))
-            else:
-                log_data_dict = parser.parse(log_path)
+            log_data_dict = parse_log(parser, log_path)
             data[block_name].append(log_data_dict)
+
+    baseline_data_dict = None
+    baseline_path = json_data.get('baseline', None)
+    if baseline_path:
+        baseline_data_dict = parse_log(parser, baseline_path)
 
     for metric in json_data['plot_metrics']:
         config_name = json_data['name']
         chart_name = args.save_path / f'{config_name}_{metric}.png'
         prepared_data = select_metric(data, metric)
 
-        figure = plt.figure(figsize=(4,4), dpi=800)
+        figure = plt.figure(figsize=(5,4), dpi=800)
         axes = figure.gca()
 
+        num_measurements_in_line = 0
         for line_name, values in prepared_data.items():
             axes.plot(values, label=line_name)
+            num_measurements_in_line = max(num_measurements_in_line, len(values))
 
-        axes.legend()
+        if baseline_data_dict is not None:
+            baseline_values = [baseline_data_dict[metric]]*num_measurements_in_line
+            axes.plot(baseline_values, '--', label="Baseline")
+
+        axes.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
+                      ncols=2, mode="expand", borderaxespad=0.)
 
         axes = configure_x_axis(axes, json_data)
 
-        axes.set_title(process_metric_name(metric))
+        metric_name = process_metric_name(metric)
+        if args.metric_to_title:
+            axes.set_title(metric_name)
+        else:
+            axes.set_ylabel(ylabel=metric_name)
 
         figure.tight_layout()
         figure.savefig(chart_name)

@@ -1,6 +1,6 @@
 #! bin/bash
 
-LOGDIR=logs
+LOGDIR=experiments_data/logs/semi_supervised_clustering
 set -ex
 
 mkdir -p ${LOGDIR}
@@ -9,15 +9,13 @@ mkdir -p ${LOGDIR}
 MINKOSKI_VALUES=(0.5 1 2 5)
 T_VALUES=(0 0.2 0.4 0.6 0.8)
 N_POINTS_VALUES=(100 500 1000)
-CLUSTERINGS_VALUES=(soft_ss_lkmeans hard_ss_lkmeans)
+CLUSTERINGS_VALUES=(soft_semi_supervised_lkmeans hard_semi_supervised_lkmeans)
 SUPERVISION_RATIO_VALUES=(0.1 0.15 0.2)
 DIMENSION_VALUES=(20)
 NUM_CLUSTERS_VALUES=(2 3)
 
 # Constants
 REPEATS=10
-
-source .env
 
 for NUM_CLUSTERS in "${NUM_CLUSTERS_VALUES[@]}";do
     for MINKOVSKI in "${MINKOSKI_VALUES[@]}";do
