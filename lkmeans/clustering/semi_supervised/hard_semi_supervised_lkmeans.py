@@ -3,7 +3,9 @@ from copy import deepcopy
 import numpy as np
 from numpy.typing import NDArray
 
-from lkmeans.clustering.semi_supervised.semi_supervised_clustering import SemiSupervisedClustering
+from lkmeans.clustering.semi_supervised.semi_supervised_clustering import (
+    SemiSupervisedClustering,
+)
 from lkmeans.clustering.semi_supervised.utils import assign_to_cluster_with_supervision
 from lkmeans.clustering.utils import calculate_inertia
 
@@ -21,8 +23,9 @@ class HardSemiSupervisedLKMeans(SemiSupervisedClustering):
                 break
 
             bias_centroids = deepcopy(centroids)
-            clusters, _ = assign_to_cluster_with_supervision(X, centroids, self._n_clusters,
-                                                             self._distance_calculator, targets)
+            clusters, _ = assign_to_cluster_with_supervision(
+                X, centroids, self._n_clusters, self._distance_calculator, targets
+            )
 
             # update centroids using the specified optimizer
             for cluster_id, cluster in enumerate(clusters):

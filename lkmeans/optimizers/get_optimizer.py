@@ -16,4 +16,4 @@ def get_optimizer(p: Union[float, int]) -> Optimizer:
         return BoundOptimizer(p)
     if p > 1:
         return SegmentSLSQPOptimizer(p)
-    raise ValueError('Parameter p must be greater than 0!')
+    raise ValueError("Parameter p must be greater than 0!")

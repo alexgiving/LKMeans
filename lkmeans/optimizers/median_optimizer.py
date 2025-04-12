@@ -6,10 +6,10 @@ from lkmeans.optimizers.optimizer import Optimizer
 
 # pylint: disable=too-few-public-methods
 class MedianOptimizer(Optimizer):
-    '''
+    """
     Standard K-Medoids optimizer.
     Returns the optimal `median` point of input array
-    '''
+    """
 
     def _optimize(self, data: NDArray) -> float:
         return float(np.median(data))

@@ -6,13 +6,13 @@ from numpy.typing import NDArray
 from sklearn.manifold import TSNE
 
 
-def get_tsne_clusters(clusters: NDArray,
-                      labels: NDArray,
-                      centroids: Optional[NDArray] = None):
+def get_tsne_clusters(
+    clusters: NDArray, labels: NDArray, centroids: Optional[NDArray] = None
+) -> plt.Figure:
 
     fig = plt.figure()
     axe = fig.add_subplot(1, 1, 1)
-    color_map = {0: 'red', 1: 'green', 2: 'blue', 3: 'yellow', 4: 'purple'}
+    color_map = {0: "red", 1: "green", 2: "blue", 3: "yellow", 4: "purple"}
 
     colors = [color_map[label] for label in labels]
     tsne = TSNE(n_components=2, random_state=42)
@@ -21,10 +21,18 @@ def get_tsne_clusters(clusters: NDArray,
         concatenated = np.concatenate((clusters, np.array(centroids)), axis=0)
         clusters_tsne = tsne.fit_transform(concatenated)
 
-        axe.scatter(clusters_tsne[:-len(centroids), 0],
-                    clusters_tsne[:-len(centroids), 1], c=colors)
-        axe.scatter(clusters_tsne[-len(centroids):, 0],
-                    clusters_tsne[-len(centroids):, 1], marker='*', s=100, c='black')
+        axe.scatter(
+            clusters_tsne[: -len(centroids), 0],
+            clusters_tsne[: -len(centroids), 1],
+            c=colors,
+        )
+        axe.scatter(
+            clusters_tsne[-len(centroids) :, 0],
+            clusters_tsne[-len(centroids) :, 1],
+            marker="*",
+            s=100,
+            c="black",
+        )
     else:
         clusters_tsne = tsne.fit_transform(clusters)
         axe.scatter(clusters_tsne[:, 0], clusters_tsne[:, 1], c=colors)

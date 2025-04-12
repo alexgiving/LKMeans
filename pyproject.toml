@@ -1,3 +1,144 @@
+[tool.isort]
+line_length = 100
+profile = "black"
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.mypy]
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+# Ignore specific packages
+[[tool.mypy.overrides]]
+module = [
+    "sklearn.*",
+    "umap.*",
+    "matplotlib.*",
+    "scipy.*",
+]
+ignore_missing_imports = true
+follow_imports = "skip"
+
+[tool.pylint]
+analyse-fallback-blocks = false
+fail-under = 10
+ignore = ["CVS"]
+ignore-patterns = ["^\\.#"]
+jobs = 1
+limit-inference-results = 100
+persistent = true
+py-version = "3.10"
+suggestion-mode = true
+unsafe-load-any-extension = false
+argument-naming-style = "snake_case"
+attr-naming-style = "snake_case"
+bad-names = ["foo", "bar", "baz", "toto", "tutu", "tata"]
+class-attribute-naming-style = "any"
+class-const-naming-style = "UPPER_CASE"
+class-naming-style = "PascalCase"
+const-naming-style = "UPPER_CASE"
+docstring-min-length = -1
+function-naming-style = "snake_case"
+good-names = ["i", "j", "k", "ex", "Run", "_"]
+include-naming-hint = false
+inlinevar-naming-style = "any"
+method-naming-style = "snake_case"
+module-naming-style = "snake_case"
+no-docstring-rgx = "^_"
+property-classes = ["abc.abstractproperty"]
+variable-naming-style = "snake_case"
+check-protected-access-in-special-methods = false
+defining-attr-methods = ["__init__", "__new__", "setUp", "__post_init__"]
+exclude-protected = ["_asdict", "_fields", "_replace", "_source", "_make"]
+valid-classmethod-first-arg = "cls"
+valid-metaclass-classmethod-first-arg = "cls"
+max-args = 7
+max-attributes = 15
+max-bool-expr = 5
+max-branches = 12
+max-locals = 25
+max-parents = 7
+max-public-methods = 20
+max-returns = 6
+max-statements = 50
+min-public-methods = 1
+overgeneral-exceptions = ["builtins.BaseException", "builtins.Exception"]
+expected-line-ending-format = ""
+ignore-long-lines = "^\\s*(# )?<https?://\\S+>?$"
+indent-after-paren = 4
+indent-string = "    "
+max-line-length = 120
+max-module-lines = 1000
+single-line-class-stmt = false
+single-line-if-stmt = false
+allow-any-import-level = false
+allow-wildcard-with-all = false
+known-third-party = ["enchant"]
+logging-format-style = "old"
+logging-modules = ["logging"]
+confidence = ["HIGH", "CONTROL_FLOW", "INFERENCE", "INFERENCE_FAILURE", "UNDEFINED"]
+disable = [
+    "raw-checker-failed",
+    "bad-inline-option",
+    "locally-disabled",
+    "file-ignored",
+    "suppressed-message",
+    "useless-suppression",
+    "deprecated-pragma",
+    "use-symbolic-message-instead",
+    "missing-module-docstring",
+    "missing-function-docstring",
+    "invalid-name",
+    "missing-class-docstring",
+    "R0801"
+]
+enable = ["c-extension-no-member"]
+timeout-methods = [
+    "requests.api.delete",
+    "requests.api.get",
+    "requests.api.head",
+    "requests.api.options",
+    "requests.api.patch",
+    "requests.api.post",
+    "requests.api.put",
+    "requests.api.request"
+]
+notes = ["FIXME", "XXX", "TODO"]
+max-nested-blocks = 5
+never-returning-functions = ["sys.exit", "argparse.parse_error"]
+evaluation = "max(0, 0 if fatal else 10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10))"
+reports = false
+score = true
+ignore-comments = true
+ignore-docstrings = true
+ignore-imports = true
+ignore-signatures = true
+min-similarity-lines = 4
+max-spelling-suggestions = 4
+spelling-ignore-comment-directives = ["fmt: on", "fmt: off", "noqa:", "noqa", "nosec", "isort:skip", "mypy:"]
+check-quote-consistency = false
+check-str-concat-over-line-jumps = false
+contextmanager-decorators = ["contextlib.contextmanager"]
+generated-members = ["cv2.*"]
+ignore-none = true
+ignore-on-opaque-inference = true
+ignored-checks-for-mixins = ["no-member", "not-async-context-manager", "not-context-manager", "attribute-defined-outside-init"]
+ignored-classes = ["optparse.Values", "thread._local", "_thread._local", "argparse.Namespace"]
+missing-member-hint = true
+missing-member-hint-distance = 1
+missing-member-max-choices = 1
+mixin-class-rgx = ".*[Mm]ixin"
+allow-global-unused-variables = true
+callbacks = ["cb_", "_cb"]
+dummy-variables-rgx = "_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_"
+ignored-argument-names = "_.*|^ignored_|^unused_"
+init-import = false
+redefining-builtins-modules = ["six.moves", "past.builtins", "future.builtins", "builtins", "io"]
+
 [tool.poetry]
 name = "lkmeans"
 version = "0.0.2"
@@ -26,6 +167,3 @@ matplotlib = "3.6.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.isort]
-line_length = 120

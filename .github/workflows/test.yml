@@ -24,8 +24,14 @@ jobs:
     - name: Analyzing the code with pylint
       run: |
         source config/bootstrap.sh
-        pylint lkmeans/ --rcfile config/.pylintrc
-        pylint report/ --rcfile config/.pylintrc
+        pylint lkmeans/
+        pylint report/
+
+    - name: Analyzing the code with mypy
+      run: |
+        source config/bootstrap.sh
+        mypy lkmeans/
+        mypy report/
 
     - name: Analyzing the code with isort
       run: |

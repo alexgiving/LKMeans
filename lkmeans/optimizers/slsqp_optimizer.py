@@ -23,13 +23,12 @@ class SLSQPOptimizer(Optimizer):
         bounds = [(min(data), max(data))]
 
         with warnings.catch_warnings():
-            warnings.simplefilter('ignore')
+            warnings.simplefilter("ignore")
             res = minimize(
-                fun=lambda centre: self._distance_calculator.get_distance(
-                    centre, data),
+                fun=lambda centre: self._distance_calculator.get_distance(centre, data),
                 x0=x0,
-                method='SLSQP',
+                method="SLSQP",
                 bounds=bounds,
-                tol=self._tol
+                tol=self._tol,
             ).x[0]
         return float(res)

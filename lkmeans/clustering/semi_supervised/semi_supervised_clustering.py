@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Set
 
 import numpy as np
 from numpy.typing import NDArray
@@ -10,8 +11,10 @@ from lkmeans.clustering.utils import set_type
 
 class SemiSupervisedClustering(Clustering):
 
-    def _init_supervised_centroids(self, data: NDArray, n_clusters: int, targets: NDArray) -> NDArray:
-        unique_targets = set(targets[~np.isnan(targets)])
+    def _init_supervised_centroids(
+        self, data: NDArray, n_clusters: int, targets: NDArray
+    ) -> NDArray:
+        unique_targets: Set[int] = set(targets[~np.isnan(targets)])
 
         centroids = []
         for target_id in unique_targets:
@@ -25,11 +28,10 @@ class SemiSupervisedClustering(Clustering):
             remain_centroids = n_clusters - len(unique_targets)
             padding_centroids = init_centroids(no_target_data, remain_centroids)
             output_centroids = np.concatenate([output_centroids, padding_centroids], axis=0)
-        return output_centroids
+        return np.array(output_centroids)
 
     @abstractmethod
-    def _fit(self, X: NDArray, targets: NDArray) -> None:
-        ...
+    def _fit(self, X: NDArray, targets: NDArray) -> None: ...
 
     def fit(self, X: NDArray, targets: NDArray) -> None:
         X = set_type(X)

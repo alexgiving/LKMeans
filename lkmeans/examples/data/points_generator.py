@@ -8,7 +8,7 @@ def move_towards_mean(mu: NDArray, mu_mean: NDArray, t: float) -> NDArray:
     point(t) = point + t * (mean - point), 0 ≤ t ≤ 1
     '''
     new_mu = mu + t * (mu_mean - mu)
-    return new_mu
+    return np.array(new_mu)
 
 
 def split_points_by_clusters(n_points: int, n_clusters: int, probability: float) -> list[int]:
