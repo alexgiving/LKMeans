@@ -5,6 +5,7 @@ from typing import Dict, Optional
 
 import numpy as np
 from numpy.typing import NDArray
+from sklearn import datasets
 from sklearn.metrics import (accuracy_score, adjusted_mutual_info_score, adjusted_rand_score, completeness_score,
                              homogeneity_score, normalized_mutual_info_score, v_measure_score)
 from tap import Tap
@@ -25,6 +26,15 @@ class ClusteringAlgorithmType(Enum):
     HARD_SEMI_SUPERVISED_LKMEANS = 'hard_semi_supervised_lkmeans'
 
 
+class DataType(Enum):
+    GENERATED = 'generated'
+    WINE = 'wine'
+    BREAST_CANCER = 'breast_cancer'
+    IRIS = 'iris'
+    CIFAR10 = "cifar10"
+    CIFAR100 = "cifar100"
+
+
 class ExperimentArguments(Tap):
     minkowski_parameter: float
     t_parameter: float
@@ -37,6 +47,8 @@ class ExperimentArguments(Tap):
     dimension: int = 20
     repeats: int = 10
     supervision_ratio: float = 0
+
+    data_type: DataType = DataType.GENERATED
 
 
 def get_clustering_algorithm(clustering_type: ClusteringAlgorithmType) -> Clustering:
@@ -60,10 +72,33 @@ def calculate_metrics(labels: NDArray, generated_labels: NDArray) -> Dict[str, f
     }
 
 
+def generate_data(args) -> ExperimentArguments:
+    if args.data_type is DataType.GENERATED:
+        _, prob, mu_list, cov_matrices = get_experiment_data(args.num_clusters, args.dimension)
+        
+        data, labels, _ = generate_mix_distribution(
+            probability=prob,
+            mu_list=mu_list,
+            cov_matrices=cov_matrices,
+            n_samples=args.n_points,
+            t=args.t_parameter
+        )
+    elif args.data_type is DataType.WINE:
+        data, labels = datasets.load_breast_cancer(return_X_y=True)
+    elif args.data_type is DataType.BREAST_CANCER:
+        data, labels = datasets.load_breast_cancer(return_X_y=True)
+    elif args.data_type is DataType.IRIS:
+        data, labels = datasets.load_iris(return_X_y=True)
+
+    num_clusters_in_dataset = len(set(labels))
+    if args.num_clusters != num_clusters_in_dataset:
+        print(f"Warning: {args.data_type} has {num_clusters_in_dataset} clusters while num_clusters = {args.num_clusters} is passed. We change the num_clusters to {num_clusters_in_dataset}")
+        args.num_clusters = num_clusters_in_dataset
+    return data, labels
+
+
 def main() -> None:
     args = ExperimentArguments(underscores_to_dashes=True).parse_args()
-
-    _, prob, mu_list, cov_matrices = get_experiment_data(args.num_clusters, args.dimension)
 
     clustering = get_clustering_algorithm(args.clustering_algorithm)
 
@@ -71,13 +106,7 @@ def main() -> None:
 
     for _ in range(args.repeats):
 
-        clusters, labels, _ = generate_mix_distribution(
-            probability=prob,
-            mu_list=mu_list,
-            cov_matrices=cov_matrices,
-            n_samples=args.n_points,
-            t=args.t_parameter
-        )
+        clusters, labels = generate_data(args)
 
         if args.self_supervised_preprocessor_algorithm is not None:
             self_supervised_parameters = PreprocessorParameters(n_components=args.self_supervised_components)
