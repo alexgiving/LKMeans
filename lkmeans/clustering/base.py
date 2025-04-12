@@ -51,11 +51,15 @@ class Clustering(ABC):
     @staticmethod
     def _validate_data(data: NDArray, n_clusters: int) -> None:
         if data.shape[0] < n_clusters:
-            raise ValueError(f"Clustering of {data.shape[0]} samples with {n_clusters} centers is not possible")
+            raise ValueError(
+                f"Clustering of {data.shape[0]} samples with {n_clusters} centers is not possible"
+            )
 
     def predict(self, X: NDArray) -> list[int]:
         X = set_type(X)
-        _, labels = assign_to_cluster(X, self._cluster_centers, self._n_clusters, self._distance_calculator)
+        _, labels = assign_to_cluster(
+            X, self._cluster_centers, self._n_clusters, self._distance_calculator
+        )
         return labels
 
     def _get_repr_params(self) -> str:

@@ -10,7 +10,9 @@ from report.log_parser import LogParser
 from report.metric_name_processor import process_metric_name
 
 
-def select_metric(all_data: Dict[str, List[Dict[str, float]]], metric: str) -> Dict[str, List[float]]:
+def select_metric(
+    all_data: Dict[str, List[Dict[str, float]]], metric: str
+) -> Dict[str, List[float]]:
     data = {}
     for block_name, block_metrics in all_data.items():
         data[block_name] = [metrics[metric] for metrics in block_metrics]

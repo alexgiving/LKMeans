@@ -22,7 +22,9 @@ class SoftSemiSupervisedLKMeans(SemiSupervisedClustering):
                 break
 
             bias_centroids = deepcopy(centroids)
-            clusters, _ = assign_to_cluster(X, centroids, self._n_clusters, self._distance_calculator)
+            clusters, _ = assign_to_cluster(
+                X, centroids, self._n_clusters, self._distance_calculator
+            )
 
             # update centroids using the specified optimizer
             for cluster_id, cluster in enumerate(clusters):

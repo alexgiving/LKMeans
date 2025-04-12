@@ -26,7 +26,9 @@ class LKMeans(UnsupervisedClustering):
                 break
 
             bias_centroids = deepcopy(centroids)
-            clusters, _ = assign_to_cluster(X, centroids, self._n_clusters, self._distance_calculator)
+            clusters, _ = assign_to_cluster(
+                X, centroids, self._n_clusters, self._distance_calculator
+            )
 
             for cluster_id, cluster in enumerate(clusters):
                 cluster = np.array(cluster, copy=True)

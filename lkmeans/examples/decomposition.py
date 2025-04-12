@@ -6,7 +6,9 @@ from numpy.typing import NDArray
 from sklearn.manifold import TSNE
 
 
-def get_tsne_clusters(clusters: NDArray, labels: NDArray, centroids: Optional[NDArray] = None) -> plt.Figure:
+def get_tsne_clusters(
+    clusters: NDArray, labels: NDArray, centroids: Optional[NDArray] = None
+) -> plt.Figure:
 
     fig = plt.figure()
     axe = fig.add_subplot(1, 1, 1)

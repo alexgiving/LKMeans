@@ -94,7 +94,9 @@ def main() -> None:
         )
 
         if args.self_supervised_preprocessor_algorithm is not None:
-            self_supervised_parameters = PreprocessorParameters(n_components=args.self_supervised_components)
+            self_supervised_parameters = PreprocessorParameters(
+                n_components=args.self_supervised_components
+            )
 
             self_supervised_preprocessor = SelfSupervisedPreprocessor(
                 args.self_supervised_preprocessor_algorithm, self_supervised_parameters

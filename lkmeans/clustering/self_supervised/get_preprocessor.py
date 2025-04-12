@@ -18,7 +18,9 @@ from lkmeans.clustering.self_supervised.preprocessor_type import PreprocessorTyp
 AnyPreprocessor = Union[PCA, TSNE, SpectralEmbedding, LocallyLinearEmbedding, MDS, Isomap, UMAP]
 
 
-def get_preprocessor(preprocessor_type: PreprocessorType, parameters: PreprocessorParameters) -> AnyPreprocessor:
+def get_preprocessor(
+    preprocessor_type: PreprocessorType, parameters: PreprocessorParameters
+) -> AnyPreprocessor:
     preprocessor_map = {
         PreprocessorType.PCA: PCA,
         PreprocessorType.TSNE: TSNE,

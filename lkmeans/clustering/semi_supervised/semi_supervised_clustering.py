@@ -11,7 +11,9 @@ from lkmeans.clustering.utils import set_type
 
 class SemiSupervisedClustering(Clustering):
 
-    def _init_supervised_centroids(self, data: NDArray, n_clusters: int, targets: NDArray) -> NDArray:
+    def _init_supervised_centroids(
+        self, data: NDArray, n_clusters: int, targets: NDArray
+    ) -> NDArray:
         unique_targets: Set[int] = set(targets[~np.isnan(targets)])
 
         centroids = []

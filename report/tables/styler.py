@@ -16,21 +16,27 @@ class TableStyler:
 
     def _highlight_max(self, styler: Styler) -> Styler:
         columns_for_highlight = [
-            name for name, highlight_rule in self._rules.items() if highlight_rule is HighlightRule.MAX
+            name
+            for name, highlight_rule in self._rules.items()
+            if highlight_rule is HighlightRule.MAX
         ]
         columns = list(set(self._columns).intersection(set(columns_for_highlight)))
         return styler.highlight_max(subset=columns, props=FORMAT_BOLD)
 
     def _highlight_min(self, styler: Styler) -> Styler:
         columns_for_highlight = [
-            name for name, highlight_rule in self._rules.items() if highlight_rule is HighlightRule.MIN
+            name
+            for name, highlight_rule in self._rules.items()
+            if highlight_rule is HighlightRule.MIN
         ]
         columns = list(set(self._columns).intersection(set(columns_for_highlight)))
         return styler.highlight_min(subset=columns, props=FORMAT_BOLD)
 
     def _round_values(self, styler: Styler) -> Styler:
         columns_for_rounding = [
-            name for name, highlight_rule in self._rules.items() if highlight_rule is not HighlightRule.NONE
+            name
+            for name, highlight_rule in self._rules.items()
+            if highlight_rule is not HighlightRule.NONE
         ]
         columns = list(set(self._columns).intersection(set(columns_for_rounding)))
         return styler.format(lambda value: f"{value:.2f}", na_rep="N/A", subset=columns)
