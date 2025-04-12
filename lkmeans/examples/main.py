@@ -9,7 +9,7 @@ from sklearn import datasets
 from sklearn.metrics import (accuracy_score, adjusted_mutual_info_score, adjusted_rand_score, completeness_score,
                              homogeneity_score, normalized_mutual_info_score, v_measure_score)
 from tap import Tap
-
+from sklearn.datasets import fetch_openml
 from lkmeans.clustering import HardSemiSupervisedLKMeans, LKMeans, SoftSemiSupervisedLKMeans
 from lkmeans.clustering.base import Clustering
 from lkmeans.clustering.self_supervised.preprocessor import SelfSupervisedPreprocessor
@@ -31,8 +31,9 @@ class DataType(Enum):
     WINE = 'wine'
     BREAST_CANCER = 'breast_cancer'
     IRIS = 'iris'
+    DIGITS = 'digits'
+    MNIST = 'mnist'
     CIFAR10 = "cifar10"
-    CIFAR100 = "cifar100"
 
 
 class ExperimentArguments(Tap):
@@ -89,6 +90,15 @@ def generate_data(args) -> ExperimentArguments:
         data, labels = datasets.load_breast_cancer(return_X_y=True)
     elif args.data_type is DataType.IRIS:
         data, labels = datasets.load_iris(return_X_y=True)
+    elif args.data_type is DataType.DIGITS:
+        data, labels = datasets.load_digits(return_X_y=True)
+
+    elif args.data_type is DataType.MNIST:
+        data, labels = fetch_openml('mnist_784', version=1, return_X_y=True)
+        labels = labels.astype(int)
+    elif args.data_type is DataType.CIFAR10:
+        data, labels = fetch_openml('CIFAR_10_small', version=1, return_X_y=True)
+        labels = labels.astype(int)
 
     num_clusters_in_dataset = len(set(labels))
     if args.num_clusters != num_clusters_in_dataset:
