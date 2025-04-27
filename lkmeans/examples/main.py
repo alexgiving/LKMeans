@@ -38,8 +38,8 @@ class DataType(Enum):
 
 class ExperimentArguments(Tap):
     minkowski_parameter: float
-    t_parameter: float
-    n_points: int
+    t_parameter: Optional[float] = None
+    n_points: Optional[int] = None
     clustering_algorithm: ClusteringAlgorithmType = ClusteringAlgorithmType.LKMEANS
     self_supervised_preprocessor_algorithm: Optional[PreprocessorType] = None
     self_supervised_components: int = 2
@@ -49,7 +49,13 @@ class ExperimentArguments(Tap):
     repeats: int = 10
     supervision_ratio: float = 0
 
-    data_type: DataType = DataType.GENERATED
+    dataset: DataType = DataType.GENERATED
+
+def validate_args(args: ExperimentArguments) -> None:
+    if args.dataset is DataType.GENERATED and args.t_parameter is None:
+        raise ValueError(f"Specify {args.t_parameter}")
+    if args.dataset is DataType.GENERATED and args.n_points is None:
+        raise ValueError(f"Specify {args.n_points}")
 
 
 def get_clustering_algorithm(clustering_type: ClusteringAlgorithmType) -> Clustering:
@@ -74,7 +80,7 @@ def calculate_metrics(labels: NDArray, generated_labels: NDArray) -> Dict[str, f
 
 
 def generate_data(args) -> ExperimentArguments:
-    if args.data_type is DataType.GENERATED:
+    if args.dataset is DataType.GENERATED:
         _, prob, mu_list, cov_matrices = get_experiment_data(args.num_clusters, args.dimension)
 
         data, labels, _ = generate_mix_distribution(
@@ -84,19 +90,19 @@ def generate_data(args) -> ExperimentArguments:
             n_samples=args.n_points,
             t=args.t_parameter
         )
-    elif args.data_type is DataType.WINE:
+    elif args.dataset is DataType.WINE:
         data, labels = datasets.load_breast_cancer(return_X_y=True)
-    elif args.data_type is DataType.BREAST_CANCER:
+    elif args.dataset is DataType.BREAST_CANCER:
         data, labels = datasets.load_breast_cancer(return_X_y=True)
-    elif args.data_type is DataType.IRIS:
+    elif args.dataset is DataType.IRIS:
         data, labels = datasets.load_iris(return_X_y=True)
-    elif args.data_type is DataType.DIGITS:
+    elif args.dataset is DataType.DIGITS:
         data, labels = datasets.load_digits(return_X_y=True)
 
-    elif args.data_type is DataType.MNIST:
+    elif args.dataset is DataType.MNIST:
         data, labels = datasets.fetch_openml('mnist_784', version=1, return_X_y=True)
         labels = labels.astype(int)
-    elif args.data_type is DataType.CIFAR10:
+    elif args.dataset is DataType.CIFAR10:
         data, labels = datasets.fetch_openml('CIFAR_10_small', version=1, return_X_y=True)
         labels = labels.astype(int)
     else:
@@ -104,7 +110,7 @@ def generate_data(args) -> ExperimentArguments:
 
     num_clusters_in_dataset = len(set(labels))
     if args.num_clusters != num_clusters_in_dataset:
-        print(f"Warning: {args.data_type} has {num_clusters_in_dataset} clusters",
+        print(f"Warning: {args.dataset} has {num_clusters_in_dataset} clusters",
               f"while num_clusters = {args.num_clusters} is passed.",
               f"Changed the num_clusters to {num_clusters_in_dataset}")
         args.num_clusters = num_clusters_in_dataset
@@ -113,6 +119,7 @@ def generate_data(args) -> ExperimentArguments:
 
 def main() -> None:
     args = ExperimentArguments(underscores_to_dashes=True).parse_args()
+    validate_args(args)
 
     clustering = get_clustering_algorithm(args.clustering_algorithm)
 
