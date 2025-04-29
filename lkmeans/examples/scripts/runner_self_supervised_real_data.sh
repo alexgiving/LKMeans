@@ -8,15 +8,16 @@ mkdir -p ${LOGDIR}
 # VALUES
 DATASET=$1
 MINKOSKI_VALUES=(2)
-PREPROCESSOR_VALUES=(pca spectral_embeddings locally_linear_embeddings mds isomap umap)
+# PREPROCESSOR_VALUES=(pca spectral_embeddings locally_linear_embeddings mds isomap umap)
 PREPROCESS_COMPONENT=$2
+PREPROCESSOR=$3
 
 # Constants
 CLUSTERING=lkmeans
-REPEATS=1000
+REPEATS=100
 
 for MINKOVSKI in "${MINKOSKI_VALUES[@]}";do
-    for PREPROCESSOR in "${PREPROCESSOR_VALUES[@]}";do
+    # for PREPROCESSOR in "${PREPROCESSOR_VALUES[@]}";do
         # for DATASET in "${DATASETS[@]}";do
             # for PREPROCESS_COMPONENT in "${PREPROCESS_COMPONENTS[@]}";do
 
@@ -35,7 +36,7 @@ NAME="${CLUSTERING}_|_self_supervision_${PREPROCESSOR}_|_self_supervision_n_comp
                 python lkmeans/examples/main.py ${PARAMETERS} &> ${LOGDIR}/${NAME}
             # done
         # done
-    done
+    # done
 done
 
 echo DONE

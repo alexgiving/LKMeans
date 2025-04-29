@@ -14,4 +14,4 @@ source activate lkmeans_venv
 # Executable
 export PYTHONPATH=${PYTHONPATH}:$(pwd)
 
-srun bash ./lkmeans/examples/scripts/runner_unsupervised_real_data.sh
+srun bash ./lkmeans/examples/scripts/runner_unsupervised_real_data.sh $1
