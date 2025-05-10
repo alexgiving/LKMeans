@@ -64,7 +64,8 @@ def main():
     ]
 
     parameters = PreprocessorParameters(n_components=2)
-    for item, row_ax in enumerate(axes):
+    item = 0
+    for row_ax in axes:
         for ax in row_ax:
             name, preprocessor_type = preprocessors[item]
             method = get_preprocessor(preprocessor_type, parameters)
