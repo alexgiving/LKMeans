@@ -1,7 +1,7 @@
 import time
 from collections import defaultdict
 from enum import Enum
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
@@ -79,7 +79,7 @@ def calculate_metrics(labels: NDArray, generated_labels: NDArray) -> Dict[str, f
     }
 
 
-def generate_data(args) -> ExperimentArguments:
+def generate_data(args: ExperimentArguments) -> Tuple[NDArray, NDArray]:
     if args.dataset is DataType.GENERATED:
         _, prob, mu_list, cov_matrices = get_experiment_data(args.num_clusters, args.dimension)
 
@@ -91,7 +91,7 @@ def generate_data(args) -> ExperimentArguments:
             t=args.t_parameter
         )
     elif args.dataset is DataType.WINE:
-        data, labels = datasets.load_breast_cancer(return_X_y=True)
+        data, labels = datasets.load_wine(return_X_y=True)
     elif args.dataset is DataType.BREAST_CANCER:
         data, labels = datasets.load_breast_cancer(return_X_y=True)
     elif args.dataset is DataType.IRIS:
