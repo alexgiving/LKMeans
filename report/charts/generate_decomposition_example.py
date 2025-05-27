@@ -2,17 +2,13 @@ from pathlib import Path
 from typing import Optional
 
 import matplotlib.pyplot as plt
+import numpy as np
+from tap import Tap
 
 from lkmeans.clustering.self_supervised.get_preprocessor import get_preprocessor
 from lkmeans.clustering.self_supervised.preprocessor_parameters import PreprocessorParameters
 from lkmeans.clustering.self_supervised.preprocessor_type import PreprocessorType
-
-
-import matplotlib.pyplot as plt
 from lkmeans.examples.main import DataType, generate_data
-import numpy as np
-
-from tap import Tap
 
 
 class ArgumentParser(Tap):
