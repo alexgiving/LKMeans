@@ -1,10 +1,11 @@
 import time
 from collections import defaultdict
 from enum import Enum
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
+from sklearn import datasets
 from sklearn.metrics import (accuracy_score, adjusted_mutual_info_score, adjusted_rand_score, completeness_score,
                              homogeneity_score, normalized_mutual_info_score, v_measure_score)
 from tap import Tap
@@ -25,10 +26,20 @@ class ClusteringAlgorithmType(Enum):
     HARD_SEMI_SUPERVISED_LKMEANS = 'hard_semi_supervised_lkmeans'
 
 
+class DataType(Enum):
+    GENERATED = 'generated'
+    WINE = 'wine'
+    BREAST_CANCER = 'breast_cancer'
+    IRIS = 'iris'
+    DIGITS = 'digits'
+    MNIST = 'mnist'
+    CIFAR10 = "cifar10"
+
+
 class ExperimentArguments(Tap):
     minkowski_parameter: float
-    t_parameter: float
-    n_points: int
+    t_parameter: Optional[float] = None
+    n_points: Optional[int] = None
     clustering_algorithm: ClusteringAlgorithmType = ClusteringAlgorithmType.LKMEANS
     self_supervised_preprocessor_algorithm: Optional[PreprocessorType] = None
     self_supervised_components: int = 2
@@ -37,6 +48,14 @@ class ExperimentArguments(Tap):
     dimension: int = 20
     repeats: int = 10
     supervision_ratio: float = 0
+
+    dataset: DataType = DataType.GENERATED
+
+def validate_args(args: ExperimentArguments) -> None:
+    if args.dataset is DataType.GENERATED and args.t_parameter is None:
+        raise ValueError(f"Specify {args.t_parameter}")
+    if args.dataset is DataType.GENERATED and args.n_points is None:
+        raise ValueError(f"Specify {args.n_points}")
 
 
 def get_clustering_algorithm(clustering_type: ClusteringAlgorithmType) -> Clustering:
@@ -60,10 +79,47 @@ def calculate_metrics(labels: NDArray, generated_labels: NDArray) -> Dict[str, f
     }
 
 
+def generate_data(args: ExperimentArguments) -> Tuple[NDArray, NDArray]:
+    if args.dataset is DataType.GENERATED:
+        _, prob, mu_list, cov_matrices = get_experiment_data(args.num_clusters, args.dimension)
+
+        data, labels, _ = generate_mix_distribution(
+            probability=prob,
+            mu_list=mu_list,
+            cov_matrices=cov_matrices,
+            n_samples=args.n_points,
+            t=args.t_parameter
+        )
+    elif args.dataset is DataType.WINE:
+        data, labels = datasets.load_wine(return_X_y=True)
+    elif args.dataset is DataType.BREAST_CANCER:
+        data, labels = datasets.load_breast_cancer(return_X_y=True)
+    elif args.dataset is DataType.IRIS:
+        data, labels = datasets.load_iris(return_X_y=True)
+    elif args.dataset is DataType.DIGITS:
+        data, labels = datasets.load_digits(return_X_y=True)
+
+    elif args.dataset is DataType.MNIST:
+        data, labels = datasets.fetch_openml('mnist_784', version=1, return_X_y=True)
+        labels = labels.astype(int)
+    elif args.dataset is DataType.CIFAR10:
+        data, labels = datasets.fetch_openml('CIFAR_10_small', version=1, return_X_y=True)
+        labels = labels.astype(int)
+    else:
+        raise ValueError("Not supported dataset")
+
+    num_clusters_in_dataset = len(set(labels))
+    if args.num_clusters != num_clusters_in_dataset:
+        print(f"Warning: {args.dataset} has {num_clusters_in_dataset} clusters",
+              f"while num_clusters = {args.num_clusters} is passed.",
+              f"Changed the num_clusters to {num_clusters_in_dataset}")
+        args.num_clusters = num_clusters_in_dataset
+    return data, labels
+
+
 def main() -> None:
     args = ExperimentArguments(underscores_to_dashes=True).parse_args()
-
-    _, prob, mu_list, cov_matrices = get_experiment_data(args.num_clusters, args.dimension)
+    validate_args(args)
 
     clustering = get_clustering_algorithm(args.clustering_algorithm)
 
@@ -71,13 +127,7 @@ def main() -> None:
 
     for _ in range(args.repeats):
 
-        clusters, labels, _ = generate_mix_distribution(
-            probability=prob,
-            mu_list=mu_list,
-            cov_matrices=cov_matrices,
-            n_samples=args.n_points,
-            t=args.t_parameter
-        )
+        clusters, labels = generate_data(args)
 
         if args.self_supervised_preprocessor_algorithm is not None:
             self_supervised_parameters = PreprocessorParameters(n_components=args.self_supervised_components)

@@ -1,4 +1,5 @@
 import json
+from typing import Dict
 
 import pandas as pd
 
@@ -7,6 +8,14 @@ from report.tables.highlight_rule import get_highlight_rules
 from report.tables.saver import LatexSaver
 from report.tables.styler import TableStyler
 from report.tables.table_argument_parser import TableArgumentParser
+
+
+def parse_log(parser: LogParser, line: str) -> Dict[str, float]:
+    if isinstance(line, dict):
+        return line
+    if len(line.split(' ')) > 1:
+        return json.loads(line.replace('\'', '"'))
+    return parser.parse(line)
 
 
 def main() -> None:
@@ -19,12 +28,14 @@ def main() -> None:
 
     parser = LogParser()
     data = []
+
+    log_data_dict = parse_log(parser, json_data['baseline'])
+    log_data_dict = {'log_name': "Baseline", **log_data_dict}
+    data.append(log_data_dict)
+
     for logs_block in json_data['logs'].values():
         for log_name, log_path in logs_block.items():
-            if len(log_path.split(' ')) > 1:
-                log_data_dict = json.loads(log_path.replace('\'', '"'))
-            else:
-                log_data_dict = parser.parse(log_path)
+            log_data_dict = parse_log(parser, log_path)
             log_data_dict = {'log_name': log_name, **log_data_dict}
             data.append(log_data_dict)
     data_frame = pd.DataFrame(data)

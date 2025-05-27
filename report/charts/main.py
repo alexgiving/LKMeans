@@ -28,6 +28,8 @@ def configure_x_axis(axes: Axes, json_data: Dict[str, Any]) -> Axes:
 
 
 def parse_log(parser: LogParser, line: str) -> Dict[str, float]:
+    if isinstance(line, dict):
+        return line
     if len(line.split(' ')) > 1:
         return json.loads(line.replace('\'', '"'))
     return parser.parse(line)
